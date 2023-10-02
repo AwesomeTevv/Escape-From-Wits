@@ -1,4 +1,10 @@
-import { Component, HostListener } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  ElementRef,
+  NgZone,
+  OnInit,
+} from '@angular/core';
 import RAPIER, {
   ColliderDesc,
   RigidBody,
@@ -22,13 +28,46 @@ import Stats from 'three/examples/jsm/libs/stats.module';
   templateUrl: './level-one.component.html',
   styleUrls: ['./level-one.component.css'],
 })
-export class LevelOneComponent {
+export class LevelOneComponent implements OnInit {
+  constructor(private elementRef: ElementRef, private ngZone: NgZone) {}
+
+  ngOnInit(): void {
+    this.ngZone.runOutsideAngular(() => {
+      this.elementRef.nativeElement.addEventListener(
+        'mousemove',
+        this.handleMouseMove.bind(this)
+      );
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.elementRef.nativeElement.removeEventListener(
+      'mousemove',
+      this.handleMouseMove.bind(this)
+    );
+  }
+
   togglePause = false;
   @HostListener('window:keyup', ['$event'])
   keyEvent(event: KeyboardEvent) {
     if (event.key === 'Escape') {
       console.log('Toggled Pause!\n');
       this.togglePause = !this.togglePause;
+    }
+  }
+
+  @HostListener('document:pointerlockchange', ['$event'])
+  onPointerLockChange(event: Event): void {
+    if (document.pointerLockElement === this.elementRef.nativeElement) {
+      // Perform actions when pointer lock is enabled
+    }
+  }
+
+  handleMouseMove(event: MouseEvent): void {
+    if (document.pointerLockElement === this.elementRef.nativeElement) {
+      // Access your camera or other logic here
+      camera.rotation.x -= event.movementX / 500;
+      camera.rotation.y -= event.movementY / 500;
     }
   }
 }
@@ -65,6 +104,13 @@ controls.addEventListener(
   'unlock',
   () => (document.body.style.display = 'block')
 );
+
+document.body.addEventListener('mousemove', (event) => {
+  if (document.pointerLockElement === document.body) {
+    camera.rotation.x -= event.movementX / 500;
+    camera.rotation.y -= event.movementY / 500;
+  }
+});
 // controls.lookSpeed = 2;
 // controls.movementSpeed = 5;
 // orbitcontrols.enableDamping = true;

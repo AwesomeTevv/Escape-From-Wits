@@ -6,7 +6,7 @@ import { LevelOneComponent } from './level-one/level-one.component';
 const routes: Routes = [
   { path: 'levelOne', component: LevelOneComponent },
   { path: 'mainMenu', component: MainMenuComponent },
-  {path: "**", redirectTo:"mainMenu",pathMatch:'full'},
+  { path: '**', redirectTo: 'mainMenu', pathMatch: 'full' },
   //{ path: '**', redirectTo: 'levelOne', pathMatch: 'full' }, // Temporary change so that Level One is shown by default
 ];
 
