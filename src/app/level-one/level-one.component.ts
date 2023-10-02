@@ -15,6 +15,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import Stats from 'three/examples/jsm/libs/stats.module';
 
 @Component({
   selector: 'app-level-one',
@@ -58,6 +59,12 @@ camera.position.set(10, 3, 10);
  * Controls
  */
 const controls = new PointerLockControls(camera, renderer.domElement);
+// controls.unlock();
+controls.addEventListener('lock', () => (document.body.style.display = 'none'));
+controls.addEventListener(
+  'unlock',
+  () => (document.body.style.display = 'block')
+);
 // controls.lookSpeed = 2;
 // controls.movementSpeed = 5;
 // orbitcontrols.enableDamping = true;
@@ -246,6 +253,35 @@ bodys.push(coneBody);
 //   );
 // });
 
+const onKeyDown = function (event: KeyboardEvent) {
+  switch (event.code) {
+    case 'KeyW':
+      controls.moveForward(0.25);
+      break;
+    case 'KeyA':
+      controls.moveRight(-0.25);
+      break;
+    case 'KeyS':
+      controls.moveForward(-0.25);
+      break;
+    case 'KeyD':
+      controls.moveRight(0.25);
+      break;
+  }
+};
+document.addEventListener('keydown', onKeyDown, false);
+
+window.addEventListener('resize', onWindowResize, false);
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  render();
+}
+
+const stats = new Stats();
+document.body.appendChild(stats.dom);
+
 const clock = new THREE.Clock();
 function animate() {
   let deltaT = clock.getDelta();
@@ -270,8 +306,14 @@ function animate() {
 
   requestAnimationFrame(animate);
   // controls.update(clock.getDelta());
+  stats.update();
+  render();
+}
+
+function render() {
   renderer.render(scene, camera);
 }
+
 animate();
 
 // const keysPressed: any = {};
