@@ -30,11 +30,11 @@ camera.lookAt(0, 0, 0);
  * Controls
  */
 const orbitcontrols = new OrbitControls(camera, renderer.domElement);
-orbitcontrols.enableDamping = true;
-orbitcontrols.minDistance = 2;
-orbitcontrols.maxDistance = 3;
-orbitcontrols.enablePan = false;
-orbitcontrols.maxPolarAngle = Math.PI / 2 - 0.05;
+// orbitcontrols.enableDamping = true;
+// orbitcontrols.minDistance = 2;
+// orbitcontrols.maxDistance = 3;
+// orbitcontrols.enablePan = false;
+// orbitcontrols.maxPolarAngle = Math.PI / 2 - 0.05;
 orbitcontrols.update();
 
 const loader = new GLTFLoader();
@@ -49,6 +49,26 @@ scene.add(light);
 // White directional light at half intensity shining from the top.
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
 scene.add(directionalLight);
+
+/**
+ * Helpers
+ * REMOVE AT THE END
+ */
+const axesHelper = new THREE.AxesHelper(5);
+scene.add(axesHelper);
+
+/**
+ * Ground Plane
+ */
+
+const planeGeometry = new THREE.PlaneGeometry(100, 100);
+const planeMaterial = new THREE.MeshPhongMaterial({
+  color: 0xffff00,
+  side: THREE.DoubleSide,
+});
+const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+plane.rotateX(-Math.PI / 2);
+scene.add(plane);
 
 const clock = new THREE.Clock();
 function animate() {
