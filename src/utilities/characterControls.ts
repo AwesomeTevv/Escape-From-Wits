@@ -187,7 +187,7 @@ export class CharacterControls {
 
         // update camera target
         this.cameraTarget.x = rigidTranslation.x
-        this.cameraTarget.y = rigidTranslation.y + 1
+        this.cameraTarget.y = rigidTranslation.y + 1.5
         this.cameraTarget.z = rigidTranslation.z
         this.orbitControl.target = this.cameraTarget
     }

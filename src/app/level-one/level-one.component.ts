@@ -45,13 +45,31 @@ camera.lookAt(0, 0, 0);
 /**
  * Controls
  */
+const raycaster = new THREE.Raycaster();
+const sceneMeshes: THREE.Mesh[] = []
+const dir = new THREE.Vector3()
+let intersects: THREE.Intersection[] = []
+
 const orbitcontrols = new OrbitControls(camera, renderer.domElement);
-// orbitcontrols.enableDamping = true;
-// orbitcontrols.minDistance = 2;
-// orbitcontrols.maxDistance = 3;
-// orbitcontrols.enablePan = false;
-// orbitcontrols.maxPolarAngle = Math.PI / 2 - 0.05;
+orbitcontrols.enableDamping = true;
+orbitcontrols.minDistance = 2;
+orbitcontrols.maxDistance = 3;
+orbitcontrols.enablePan = false;
+orbitcontrols.maxPolarAngle = Math.PI / 2 - 0.05;
 // orbitcontrols.minPolarAngle = Math.PI / 4;
+orbitcontrols.addEventListener('change',function(){
+  raycaster.set(
+    orbitcontrols.target,
+    dir.subVectors(camera.position,orbitcontrols.target).normalize()
+  )
+
+  intersects = raycaster.intersectObjects(sceneMeshes,false)
+  if(intersects.length > 0){
+    if(intersects[0].distance < orbitcontrols.target.distanceTo(camera.position)){
+      camera.position.copy(intersects[0].point)
+    }
+  }
+})
 orbitcontrols.update();
 
 const loader = new GLTFLoader();
@@ -99,10 +117,11 @@ const bodys: { rigid: RigidBody, mesh: THREE.Mesh }[] = [];
 
 // Creating Ground Plane
 let scale = new RAPIER.Vector3(100.0, 3.0, 100.0);
-const planeGeometry = new THREE.PlaneGeometry(100,100);
+const planeGeometry = new THREE.PlaneGeometry(400,400);
 const planeMaterial = new THREE.MeshPhongMaterial({
   color: 0xffff00,
   side: THREE.DoubleSide,
+  wireframe: true
 });
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 plane.rotateX(-Math.PI / 2);
@@ -113,15 +132,45 @@ scene.add(plane);
 let groundBodyDesc = RAPIER.RigidBodyDesc.fixed();
 let groundBody = world.createRigidBody(groundBodyDesc);
 let groundCollider = RAPIER.ColliderDesc.cuboid(
-  50,0,50
+  400,0,400
 );
 world.createCollider(groundCollider,groundBody);
+
+
+// Import map
+let Level;
+loader.load('../assets/level1.glb', function(gltf){
+  Level = gltf.scene
+  Level.position.set(0,3,0);
+  Level.traverse((node : any) =>{
+    if(node.isMesh){
+      // let mesh : THREE.Mesh = node
+      // node.material.wireframe = true;
+
+      // let bodyDesc: RigidBodyDesc =  RAPIER.RigidBodyDesc.kinematicPositionBased();
+      // let rigidBody = world.createRigidBody(bodyDesc);
+    
+      // const geo = mesh.geometry;
+      // const positionAttr = geo.getAttribute('position');
+      // const positionArray = positionAttr.array;
+      // const float32Positions = new Float32Array(positionArray);
+      // let collider = RAPIER.ColliderDesc.convexHull(float32Positions);
+      // world.createCollider(collider!,rigidBody);
+
+      sceneMeshes.push(node);
+      // bodys.push({rigid: rigidBody, mesh: node});
+    }
+  });
+
+  scene.add(Level);
+});
 
 // Creating Some Shape
 const staticB = body(scene, world, 'kinematicPositionBased', 'cube',
 { hx: 10, hy: 0.8, hz: 10 }, { x: 0, y: 2.5, z: 0 },
 { x: 0, y: 0, z: Math.PI/2 }, 'pink');
-bodys.push(staticB);
+bodys.push(staticB); 
+sceneMeshes.push(staticB.mesh)
 
 const cubeBody = body(scene, world, 'dynamic', 'cube',
 { hx: 0.5, hy: 0.5, hz: 0.5 }, { x: 0, y: 15, z: 0 },
