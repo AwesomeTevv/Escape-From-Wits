@@ -271,10 +271,10 @@ document.addEventListener(
   },
   false
 );
-
+let model: any;
 var characterControls: CharacterControls;
 loader.load('../../assets/Soldier.glb', function (gltf) {
-  const model = gltf.scene;
+  model = gltf.scene;
   model.traverse(function (object: any) {
     if (object.isMesh) {
       object.castShadow = true;
@@ -358,4 +358,20 @@ function render() {
   renderer.render(scene, camera);
 }
 
+
+
 animate();
+
+let isInteracting = false;
+let sword;
+
+loader.load('./assets/sword/scene.gltf',function(gltf){
+  sword = gltf.scene;
+
+  sword.scale.set(0.001,0.001,0.001)
+  sword.position.set(model.position.x  - 10.1,model.position.y + 1.15,model.position.z - 11)
+ 
+  model.add(sword);
+  
+  
+});
