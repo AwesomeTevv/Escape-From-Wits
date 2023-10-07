@@ -12,8 +12,21 @@ function worldLight() {
   scene.add(hemisphereLight);
 }
 
+function worldPlane() {
+  const geometry = new THREE.PlaneGeometry(1, 1);
+  const material = new THREE.MeshBasicMaterial({
+    color: 0xffff00,
+    side: THREE.DoubleSide,
+  });
+  const plane = new THREE.Mesh(geometry, material);
+  scene.add(plane);
+}
+
 function init() {
   scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x88ccee);
+  scene.fog = new THREE.Fog(0x88ccee, 0, 50);
+
   camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
@@ -21,28 +34,21 @@ function init() {
     1000
   );
 
-  renderer = new THREE.WebGLRenderer();
+  renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
   worldLight();
 
-  const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
-  const cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
+  worldPlane();
+}
 
-  camera.position.z = 5;
+function animate() {
+  requestAnimationFrame(animate);
 
-  function animate() {
-    requestAnimationFrame(animate);
-
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
-
-    renderer.render(scene, camera);
-  }
-  animate();
+  renderer.render(scene, camera);
 }
 
 init();
+
+animate();
