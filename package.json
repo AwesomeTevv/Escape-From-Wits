@@ -1,0 +1,26 @@
+{
+  "name": "escape-from-wits",
+  "version": "1.0.0",
+  "description": "Computer Graphics and Visualisation game",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AwesomeTevv/Escape-From-Wits.git"
+  },
+  "author": "JMSP",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AwesomeTevv/Escape-From-Wits/issues"
+  },
+  "homepage": "https://github.com/AwesomeTevv/Escape-From-Wits#readme",
+  "dependencies": {
+    "@dimforge/rapier3d": "^0.11.2",
+    "three": "^0.157.0"
+  },
+  "devDependencies": {
+    "vite": "^4.4.11"
+  }
+}
