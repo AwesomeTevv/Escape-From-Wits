@@ -4,6 +4,14 @@ let scene;
 let camera;
 let renderer;
 
+function worldLight() {
+  const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
+  scene.add(ambientLight);
+
+  const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+  scene.add(hemisphereLight);
+}
+
 function init() {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(
@@ -17,8 +25,10 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
+  worldLight();
+
   const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+  const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
   const cube = new THREE.Mesh(geometry, material);
   scene.add(cube);
 
