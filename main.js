@@ -41,14 +41,14 @@ function worldPlane() {
 }
 
 function helpers() {
-  const axesHelper = new THREE.AxesHelper(5);
+  const axesHelper = new THREE.AxesHelper(100);
   scene.add(axesHelper);
 }
 
 function init() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x88ccee);
-  scene.fog = new THREE.Fog(0x88ccee, 0, 50);
+  //   scene.fog = new THREE.Fog(0x88ccee, 0, 50);
 
   camera = new THREE.PerspectiveCamera(
     75,
@@ -70,6 +70,8 @@ function init() {
   document.body.appendChild(stats.domElement);
 
   controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
 
   worldLight();
   worldPlane();
