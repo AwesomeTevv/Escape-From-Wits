@@ -1,11 +1,25 @@
 import * as THREE from "three";
 import Stats from "three/examples/jsm/libs/stats.module";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 let scene;
 let camera;
 let renderer;
+let stats;
+let controls;
 
 const clock = new THREE.Clock();
+
+init();
+animate();
+
+window.addEventListener("resize", onWindowResize);
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
 
 function worldLight() {
   const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
@@ -42,11 +56,20 @@ function init() {
     0.1,
     1000
   );
+  camera.lookAt(0, 0, 0);
+  camera.position.set(10, 10, 10);
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMap.enabled = true;
   document.body.appendChild(renderer.domElement);
+
+  stats = new Stats();
+  stats.domElement.style.position = "absolute";
+  stats.domElement.style.top = "0px";
+  document.body.appendChild(stats.domElement);
+
+  controls = new OrbitControls(camera, renderer.domElement);
 
   worldLight();
   worldPlane();
@@ -56,10 +79,8 @@ function init() {
 
 function animate() {
   requestAnimationFrame(animate);
+  stats.update();
+  controls.update();
 
   renderer.render(scene, camera);
 }
-
-init();
-
-animate();
