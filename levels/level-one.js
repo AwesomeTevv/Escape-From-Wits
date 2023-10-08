@@ -123,9 +123,9 @@ function worldPlane() {
 
   const material = new THREE.MeshPhongMaterial({
     specular: 0x666666,
-    shininess: 10,
+    shininess: 25,
     bumpMap: bmap,
-    bumpScale: 0.3,
+    bumpScale: 0.5,
     displacementMap: dmap,
     displacementScale: 0.5,
     map: map,
