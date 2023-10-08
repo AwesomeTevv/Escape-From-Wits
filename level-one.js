@@ -18,6 +18,9 @@ let rendererMap;
 let material = new THREE.MeshLambertMaterial({ color: 0xdddddd });
 const clock = new THREE.Clock();
 
+let mirrorSphereCamera;
+let	mirrorSphere
+
 let world = new CANNON.World();
 let sphereShape = new CANNON.Sphere();
 let sphereBody = new CANNON.Body();
@@ -33,9 +36,9 @@ const boxes = [];
 const boxMeshes = [];
 
 // Number of voxels
-const nx = 100;
-const ny = 8;
-const nz = 100;
+const nx = 100
+const ny = 4
+const nz = 100
 
 // Scale of voxels
 const sx = 1;
@@ -292,6 +295,19 @@ function initCannon() {
     ballBody.position.set(x, y, z);
     ballMesh.position.copy(ballBody.position);
   });
+
+   // Create the user collision sphere
+
+  const mirrorRenderTarget = new THREE.WebGLCubeRenderTarget(128, {generateMipmaps: true, minFilter: THREE.LinearMipMapLinearFilter});
+  var sphereGeom =  new THREE.SphereGeometry( 2, 32, 16 ); // radius, segmentsWidth, segmentsHeight
+  	// mirrorCubeCamera.renderTarget.minFilter = THREE.LinearMipMapLinearFilter;
+  mirrorSphereCamera = new THREE.CubeCamera( 0.1, 5000, mirrorRenderTarget )
+  scene.add( mirrorSphereCamera );
+  var mirrorSphereMaterial = new THREE.MeshBasicMaterial( { envMap: mirrorSphereCamera.renderTarget.texture } );
+  mirrorSphere = new THREE.Mesh( sphereGeom, mirrorSphereMaterial );
+  mirrorSphere.position.set(2,2,0);
+  mirrorSphereCamera.position.copy(mirrorSphere.position);
+  scene.add(mirrorSphere);
 }
 
 function initPointerLock() {
