@@ -17,8 +17,39 @@ let rendererMap;
 // let controls;
 // let material = new THREE.MeshPhongMaterial({ color: 0xdddddd });
 // let material = new THREE.MeshNormalMaterial();
-let material = new THREE.MeshToonMaterial();
 const clock = new THREE.Clock();
+const loader = new THREE.TextureLoader();
+
+const vmap = loader.load(
+  "/assets/ConcreteBlocksPavingSquareStack001_COL_1K.png"
+);
+
+const vbmap = loader.load(
+  "/assets/ConcreteBlocksPavingSquareStack001_BUMP_1K.png"
+);
+
+const vdmap = loader.load(
+  "/assets/ConcreteBlocksPavingSquareStack001_DISP_1K.png"
+);
+
+vmap.wrapS = vmap.wrapT = THREE.RepeatWrapping;
+vmap.repeat.set(50, 50);
+
+vbmap.wrapS = vbmap.wrapT = THREE.RepeatWrapping;
+vbmap.repeat.set(50, 50);
+
+vdmap.wrapS = vdmap.wrapT = THREE.RepeatWrapping;
+vdmap.repeat.set(50, 50);
+
+let material = new THREE.MeshPhongMaterial({
+  specular: 0x666666,
+  shininess: 25,
+  bumpMap: vbmap,
+  bumpScale: 0.5,
+  displacementMap: vdmap,
+  displacementScale: 0,
+  map: vmap,
+});
 
 let mirrorSphereCamera;
 let mirrorSphere;
@@ -72,7 +103,7 @@ function worldLight() {
 }
 
 function worldPlane() {
-  const loader = new THREE.TextureLoader();
+  // Loading in textures
   const map = loader.load("/assets/GroundDirtRocky020_COL_1K.jpg");
 
   const bmap = loader.load("/assets/GroundDirtRocky020_BUMP_1K.jpg");
@@ -99,6 +130,10 @@ function worldPlane() {
     displacementScale: 0.5,
     map: map,
   });
+
+  // Finished loading in textures
+  // const material = new THREE.MeshPhongMaterial({color: 0xff86});
+
   const plane = new THREE.Mesh(geometry, material);
   plane.rotateX(-Math.PI / 2);
   scene.add(plane);
