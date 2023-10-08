@@ -11,12 +11,13 @@ let renderer;
 let stats;
 
 let mapCamera;
-let mapCanvas = document.getElementById("minimap");
+let mapCanvas;
 let rendererMap;
 
 // let controls;
 // let material = new THREE.MeshPhongMaterial({ color: 0xdddddd });
-let material = new THREE.MeshNormalMaterial();
+// let material = new THREE.MeshNormalMaterial();
+let material = new THREE.MeshToonMaterial();
 const clock = new THREE.Clock();
 
 let mirrorSphereCamera;
@@ -47,8 +48,6 @@ const sy = 1;
 const sz = 1;
 
 init();
-initCannon();
-initPointerLock();
 animate();
 
 window.addEventListener("resize", onWindowResize);
@@ -59,34 +58,46 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// document.body.addEventListener("mousedown", () => {
-//   document.body.requestPointerLock();
-
-//   mouseTime = performance.now();
-// });
-
-// document.addEventListener("mouseup", () => {});
-
-// document.body.addEventListener("mousemove", (event) => {
-//   if (document.pointerLockElement === document.body) {
-//     camera.rotation.y -= event.movementX / 500;
-//     camera.rotation.x -= event.movementY / 500;
-//   }
-// });
-
 function worldLight() {
   const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
   scene.add(ambientLight);
 
   const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
   scene.add(hemisphereLight);
+
+  const pointLight = new THREE.PointLight(0xffffbb, 1, 100);
+  pointLight.position.set(-5, 5, -5);
+  pointLight.castShadow = true;
+  scene.add(pointLight);
 }
 
 function worldPlane() {
+  const loader = new THREE.TextureLoader();
+  const map = loader.load("/assets/GroundDirtRocky020_COL_1K.jpg");
+
+  const bmap = loader.load("/assets/GroundDirtRocky020_BUMP_1K.jpg");
+
+  const dmap = loader.load("/assets/GroundDirtRocky020_DISP_1K.jpg");
+
+  map.wrapS = map.wrapT = THREE.RepeatWrapping;
+  map.repeat.set(50, 50);
+
+  bmap.wrapS = bmap.wrapT = THREE.RepeatWrapping;
+  bmap.repeat.set(50, 50);
+
+  dmap.wrapS = dmap.wrapT = THREE.RepeatWrapping;
+  dmap.repeat.set(50, 50);
+
   const geometry = new THREE.PlaneGeometry(100, 100);
+
   const material = new THREE.MeshPhongMaterial({
-    color: 0xffff00,
-    side: THREE.DoubleSide,
+    specular: 0x666666,
+    shininess: 10,
+    bumpMap: bmap,
+    bumpScale: 0.3,
+    displacementMap: dmap,
+    displacementScale: 0.5,
+    map: map,
   });
   const plane = new THREE.Mesh(geometry, material);
   plane.rotateX(-Math.PI / 2);
@@ -109,14 +120,10 @@ function init() {
     0.1,
     1000
   );
-  // camera = new THREE.PerspectiveCamera(
-  //   75,
-  //   window.innerWidth / window.innerHeight,
-  //   0.1,
-  //   1000
-  // );
-  // camera.lookAt(0, 0, 0);
-  // camera.position.set(10, 10, 10);
+
+  const light = new THREE.PointLight(0xffffff, 10, 100);
+  light.castShadow = true;
+  camera.add(light);
 
   // orthographic cameras
   mapCamera = new THREE.OrthographicCamera(
@@ -131,6 +138,7 @@ function init() {
   mapCamera.lookAt(new THREE.Vector3(0, -1, 0));
   mapCamera.position.set(0, 20, 0);
   scene.add(mapCamera);
+  mapCanvas = document.getElementById("minimap");
   rendererMap = new THREE.WebGLRenderer({ canvas: mapCanvas });
   rendererMap.setSize(200, 200);
 
@@ -147,6 +155,9 @@ function init() {
   // controls = new OrbitControls(camera, renderer.domElement);
   // controls.enableDamping = true;
   // controls.dampingFactor = 0.05;
+
+  initCannon();
+  initPointerLock();
 
   worldLight();
   worldPlane();
@@ -207,41 +218,7 @@ function initCannon() {
   world.addBody(groundBody);
 
   // Voxels
-  voxels = new VoxelLandscape(world, nx, ny, nz, sx, sy, sz);
-
-  for (let i = 0; i < nx; i++) {
-    for (let j = 0; j < ny; j++) {
-      for (let k = 0; k < nz; k++) {
-        let filled = true;
-
-        // Insert map constructing logic here
-        if (Math.sin(i * 0.1) * Math.sin(k * 0.1) < (j / ny) * 2 - 1) {
-          filled = false;
-        }
-
-        voxels.setFilled(i, j, k, filled);
-      }
-    }
-  }
-
-  voxels.update();
-
-  console.log(`${voxels.boxes.length} voxel physics bodies`);
-
-  // Voxel meshes
-  for (let i = 0; i < voxels.boxes.length; i++) {
-    const box = voxels.boxes[i];
-    const voxelGeometry = new THREE.BoxGeometry(
-      voxels.sx * box.nx,
-      voxels.sy * box.ny,
-      voxels.sz * box.nz
-    );
-    const voxelMesh = new THREE.Mesh(voxelGeometry, material);
-    voxelMesh.castShadow = true;
-    voxelMesh.receiveShadow = true;
-    boxMeshes.push(voxelMesh);
-    scene.add(voxelMesh);
-  }
+  VoxelsWorld();
 
   // The shooting balls
   const shootVelocity = 15;
@@ -334,6 +311,7 @@ function initPointerLock() {
     instructions.style.display = null;
   });
 }
+
 function animate() {
   requestAnimationFrame(animate);
   const time = performance.now() / 1000;
@@ -369,4 +347,43 @@ function animate() {
   stats.update();
   renderer.render(scene, camera);
   rendererMap.render(scene, mapCamera);
+}
+
+function VoxelsWorld() {
+  // Voxels
+  voxels = new VoxelLandscape(world, nx, ny, nz, sx, sy, sz);
+
+  for (let i = 0; i < nx; i++) {
+    for (let j = 0; j < ny; j++) {
+      for (let k = 0; k < nz; k++) {
+        let filled = true;
+
+        // Insert map constructing logic here
+        if (Math.sin(i * 0.1) * Math.sin(k * 0.1) < (j / ny) * 2 - 1) {
+          filled = false;
+        }
+
+        voxels.setFilled(i, j, k, filled);
+      }
+    }
+  }
+
+  voxels.update();
+
+  console.log(`${voxels.boxes.length} voxel physics bodies`);
+
+  // Voxel meshes
+  for (let i = 0; i < voxels.boxes.length; i++) {
+    const box = voxels.boxes[i];
+    const voxelGeometry = new THREE.BoxGeometry(
+      voxels.sx * box.nx,
+      voxels.sy * box.ny,
+      voxels.sz * box.nz
+    );
+    const voxelMesh = new THREE.Mesh(voxelGeometry, material);
+    voxelMesh.castShadow = true;
+    voxelMesh.receiveShadow = true;
+    boxMeshes.push(voxelMesh);
+    scene.add(voxelMesh);
+  }
 }
