@@ -10,10 +10,6 @@ let camera;
 let renderer;
 let stats;
 
-let mapCamera;
-const mapCanvas = document.getElementById("minimap")
-let rendererMap;
-
 // let controls;
 let material = new THREE.MeshLambertMaterial({ color: 0xdddddd });
 const clock = new THREE.Clock();
@@ -54,6 +50,29 @@ function onWindowResize() {
 
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
+
+document.addEventListener("keydown", (event) => {
+  keyStates[event.code] = true;
+});
+
+document.addEventListener("keyup", (event) => {
+  keyStates[event.code] = false;
+});
+
+// document.body.addEventListener("mousedown", () => {
+//   document.body.requestPointerLock();
+
+//   mouseTime = performance.now();
+// });
+
+// document.addEventListener("mouseup", () => {});
+
+// document.body.addEventListener("mousemove", (event) => {
+//   if (document.pointerLockElement === document.body) {
+//     camera.rotation.y -= event.movementX / 500;
+//     camera.rotation.x -= event.movementY / 500;
+//   }
+// });
 
 function worldLight() {
   const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
@@ -127,6 +146,16 @@ function init() {
   worldPlane();
 
   helpers(); // ! Temporary -- Remove at the end
+
+  box();
+}
+
+function box() {
+  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+  cube = new THREE.Mesh(geometry, material);
+  cube.position.set(0, 0.5, 0);
+  scene.add(cube);
 }
 
 function initCannon() {
