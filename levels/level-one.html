@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Escape from Wits: Level 1</title>
+    <style>
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body></body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>cannon.js + three.js - voxel shooter</title>
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+    <style>
+      #instructions {
+        position: fixed;
+        left: 0;
+        top: 0;
+
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #ffffff;
+        text-align: center;
+
+        cursor: pointer;
+      }
+      #instructions span {
+        font-size: 40px;
+      }
+
+      #minimap {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        border: 3px solid black;
+        width: 200px;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="instructions">
+      <span>Click to play</span>
+      <br />
+      (W,A,S,D = Move, SPACE = Jump, MOUSE = Look, CLICK = Shoot)
+    </div>
+    <canvas id="minimap" style="width: 100px; height: 100px"></canvas>
+    <script type="module" src="/levels/level-one.js"></script>
+  </body>
+</html>
