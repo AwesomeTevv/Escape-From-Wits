@@ -15,7 +15,8 @@ let mapCanvas = document.getElementById("minimap");
 let rendererMap;
 
 // let controls;
-let material = new THREE.MeshPhongMaterial({ color: 0xdddddd });
+// let material = new THREE.MeshPhongMaterial({ color: 0xdddddd });
+let material = new THREE.MeshNormalMaterial();
 const clock = new THREE.Clock();
 
 let mirrorSphereCamera;
