@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import Stats from "three/examples/jsm/libs/stats.module";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import * as CANNON from "cannon-es";
 
 import { PointerLockControlsCannon } from "../utilities/PointerLockControlsCannon";
@@ -17,45 +18,45 @@ let rendererMap;
 let skybox;
 const skyboxImage = "nebula3/nebula3";
 
+const modelLoader = new GLTFLoader();
+
 // let controls;
 // let material = new THREE.MeshPhongMaterial({ color: 0xdddddd });
-let material = new THREE.MeshNormalMaterial();
+// let material = new THREE.MeshNormalMaterial();
 const clock = new THREE.Clock();
 const loader = new THREE.TextureLoader();
 
-// const vmap = loader.load(
-//   "/assets/ConcreteBlocksPavingSquareStack001_COL_1K.png"
-// );
+const vmap = loader.load("/assets/gold/MetalGoldPaint002_COL_1K_METALNESS.png");
 
-// const vbmap = loader.load(
-//   "/assets/ConcreteBlocksPavingSquareStack001_BUMP_1K.png"
-// );
+const vbmap = loader.load(
+  "/assets/gold/MetalGoldPaint002_BUMP_1K_METALNESS.png"
+);
 
-// const vdmap = loader.load(
-//   "/assets/ConcreteBlocksPavingSquareStack001_DISP_1K.png"
-// );
+const vdmap = loader.load(
+  "/assets/gold/MetalGoldPaint002_DISP_1K_METALNESS.png"
+);
 
-// vmap.wrapS = vmap.wrapT = THREE.RepeatWrapping;
-// vmap.repeat.set(50, 50);
+vmap.wrapS = vmap.wrapT = THREE.RepeatWrapping;
+vmap.repeat.set(50, 50);
 
-// vbmap.wrapS = vbmap.wrapT = THREE.RepeatWrapping;
-// vbmap.repeat.set(50, 50);
+vbmap.wrapS = vbmap.wrapT = THREE.RepeatWrapping;
+vbmap.repeat.set(50, 50);
 
-// vdmap.wrapS = vdmap.wrapT = THREE.RepeatWrapping;
-// vdmap.repeat.set(50, 50);
+vdmap.wrapS = vdmap.wrapT = THREE.RepeatWrapping;
+vdmap.repeat.set(50, 50);
 
-// let material = new THREE.MeshPhongMaterial({
-//   specular: 0x666666,
-//   shininess: 25,
-//   bumpMap: vbmap,
-//   bumpScale: 0.5,
-//   displacementMap: vdmap,
-//   displacementScale: 0,
-//   map: vmap,
-// });
+let material = new THREE.MeshPhongMaterial({
+  specular: 0x666666,
+  shininess: 10,
+  bumpMap: vbmap,
+  bumpScale: 0.5,
+  displacementMap: vdmap,
+  displacementScale: 0.01,
+  map: vmap,
+});
 
-let mirrorSphereCamera;
-let mirrorSphere;
+// let mirrorSphereCamera;
+// let mirrorSphere;
 
 let world = new CANNON.World();
 let sphereShape = new CANNON.Sphere();
@@ -92,6 +93,20 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+function maze() {
+  modelLoader.load(
+    "/assets/mcMaze.glb",
+    function (gltf) {
+      gltf.scene.position.set(0, 1, 0);
+      scene.add(gltf.scene);
+    },
+    undefined,
+    function (error) {
+      console.error(error);
+    }
+  );
+}
+
 function worldLight() {
   const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
   scene.add(ambientLight);
@@ -99,8 +114,8 @@ function worldLight() {
   const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
   scene.add(hemisphereLight);
 
-  const helper = new THREE.HemisphereLightHelper(hemisphereLight, 5);
-  scene.add(helper);
+  // const helper = new THREE.HemisphereLightHelper(hemisphereLight, 5);
+  // scene.add(helper);
 }
 
 function worldPlane() {
@@ -136,6 +151,8 @@ function worldPlane() {
 
   const plane = new THREE.Mesh(geometry, material);
   plane.rotateX(-Math.PI / 2);
+  plane.castShadow = true;
+  plane.receiveShadow = true;
   scene.add(plane);
 }
 
@@ -158,6 +175,8 @@ function createMaterialArray(filename) {
       map: texture,
       side: THREE.BackSide,
       fog: false,
+      transparent: true,
+      opacity: 0.5,
     });
   });
   return materialArray;
@@ -178,8 +197,9 @@ function helpers() {
 function init() {
   scene = new THREE.Scene();
   // scene.background = new THREE.Color(0x88ccee);
+  scene.background = new THREE.Color(0x000000);
   // scene.fog = new THREE.Fog(0x88ccee, 0, 50);
-  // scene.fog = new THREE.Fog(0x000000, 0, 40); // Commented for dev purposes
+  // scene.fog = new THREE.Fog(0x000000, 0, 50); // Commented for dev purposes
 
   camera = new THREE.PerspectiveCamera(
     75,
@@ -192,6 +212,11 @@ function init() {
   const light = new THREE.PointLight(0xffffff, 10, 10);
   light.castShadow = true;
   camera.add(light);
+
+  light.shadow.mapSize.width = 512; // default
+  light.shadow.mapSize.height = 512; // default
+  light.shadow.camera.near = 0.5; // default
+  light.shadow.camera.far = 500; // default
 
   // orthographic cameras
   mapCamera = new THREE.OrthographicCamera(
@@ -213,6 +238,7 @@ function init() {
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
   document.body.appendChild(renderer.domElement);
 
   stats = new Stats();
@@ -232,6 +258,8 @@ function init() {
   worldPlane();
 
   helpers(); // ! Temporary -- Remove at the end
+
+  maze();
 }
 
 function initCannon() {
@@ -262,7 +290,7 @@ function initCannon() {
     physicsMaterial,
     physicsMaterial,
     {
-      friction: 0.0,
+      friction: 0.4,
       restitution: 0.3,
     }
   );
@@ -273,7 +301,7 @@ function initCannon() {
   // Create the user collision sphere
   const radius = 1.3;
   sphereShape = new CANNON.Sphere(radius);
-  sphereBody = new CANNON.Body({ mass: 5, material: physicsMaterial });
+  sphereBody = new CANNON.Body({ mass: 5, material: physics_physics });
   sphereBody.addShape(sphereShape);
   sphereBody.position.set(nx * sx * 0.5, ny * sy + radius * 2, nz * sz * 0.5);
   sphereBody.linearDamping = 0.9;
@@ -281,7 +309,7 @@ function initCannon() {
 
   // Create the ground plane
   const groundShape = new CANNON.Plane();
-  const groundBody = new CANNON.Body({ mass: 0, material: physicsMaterial });
+  const groundBody = new CANNON.Body({ mass: 0, material: physics_physics });
   groundBody.addShape(groundShape);
   groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
   world.addBody(groundBody);
