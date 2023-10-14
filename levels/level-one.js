@@ -99,10 +99,8 @@ function worldLight() {
   const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
   scene.add(hemisphereLight);
 
-  const pointLight = new THREE.PointLight(0xffffbb, 1, 100);
-  pointLight.position.set(-5, 5, -5);
-  pointLight.castShadow = true;
-  scene.add(pointLight);
+  const helper = new THREE.HemisphereLightHelper(hemisphereLight, 5);
+  scene.add(helper);
 }
 
 function worldPlane() {
@@ -111,16 +109,17 @@ function worldPlane() {
   const bmap = loader.load("/assets/ground/GroundDirtRocky020_BUMP_1K.jpg");
   const dmap = loader.load("/assets/ground/GroundDirtRocky020_DISP_1K.jpg");
 
+  const scale = 500;
   map.wrapS = map.wrapT = THREE.RepeatWrapping;
-  map.repeat.set(50, 50);
+  map.repeat.set(scale, scale);
 
   bmap.wrapS = bmap.wrapT = THREE.RepeatWrapping;
-  bmap.repeat.set(50, 50);
+  bmap.repeat.set(scale, scale);
 
   dmap.wrapS = dmap.wrapT = THREE.RepeatWrapping;
-  dmap.repeat.set(50, 50);
+  dmap.repeat.set(scale, scale);
 
-  const geometry = new THREE.PlaneGeometry(100, 100);
+  const geometry = new THREE.PlaneGeometry(1000, 1000);
 
   const material = new THREE.MeshPhongMaterial({
     specular: 0x666666,
