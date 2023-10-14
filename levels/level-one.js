@@ -14,42 +14,45 @@ let mapCamera;
 let mapCanvas;
 let rendererMap;
 
+let skybox;
+const skyboxImage = "nebula3/nebula3";
+
 // let controls;
 // let material = new THREE.MeshPhongMaterial({ color: 0xdddddd });
-// let material = new THREE.MeshNormalMaterial();
+let material = new THREE.MeshNormalMaterial();
 const clock = new THREE.Clock();
 const loader = new THREE.TextureLoader();
 
-const vmap = loader.load(
-  "/assets/ConcreteBlocksPavingSquareStack001_COL_1K.png"
-);
+// const vmap = loader.load(
+//   "/assets/ConcreteBlocksPavingSquareStack001_COL_1K.png"
+// );
 
-const vbmap = loader.load(
-  "/assets/ConcreteBlocksPavingSquareStack001_BUMP_1K.png"
-);
+// const vbmap = loader.load(
+//   "/assets/ConcreteBlocksPavingSquareStack001_BUMP_1K.png"
+// );
 
-const vdmap = loader.load(
-  "/assets/ConcreteBlocksPavingSquareStack001_DISP_1K.png"
-);
+// const vdmap = loader.load(
+//   "/assets/ConcreteBlocksPavingSquareStack001_DISP_1K.png"
+// );
 
-vmap.wrapS = vmap.wrapT = THREE.RepeatWrapping;
-vmap.repeat.set(50, 50);
+// vmap.wrapS = vmap.wrapT = THREE.RepeatWrapping;
+// vmap.repeat.set(50, 50);
 
-vbmap.wrapS = vbmap.wrapT = THREE.RepeatWrapping;
-vbmap.repeat.set(50, 50);
+// vbmap.wrapS = vbmap.wrapT = THREE.RepeatWrapping;
+// vbmap.repeat.set(50, 50);
 
-vdmap.wrapS = vdmap.wrapT = THREE.RepeatWrapping;
-vdmap.repeat.set(50, 50);
+// vdmap.wrapS = vdmap.wrapT = THREE.RepeatWrapping;
+// vdmap.repeat.set(50, 50);
 
-let material = new THREE.MeshPhongMaterial({
-  specular: 0x666666,
-  shininess: 25,
-  bumpMap: vbmap,
-  bumpScale: 0.5,
-  displacementMap: vdmap,
-  displacementScale: 0,
-  map: vmap,
-});
+// let material = new THREE.MeshPhongMaterial({
+//   specular: 0x666666,
+//   shininess: 25,
+//   bumpMap: vbmap,
+//   bumpScale: 0.5,
+//   displacementMap: vdmap,
+//   displacementScale: 0,
+//   map: vmap,
+// });
 
 let mirrorSphereCamera;
 let mirrorSphere;
@@ -104,11 +107,9 @@ function worldLight() {
 
 function worldPlane() {
   // Loading in textures
-  const map = loader.load("/assets/GroundDirtRocky020_COL_1K.jpg");
-
-  const bmap = loader.load("/assets/GroundDirtRocky020_BUMP_1K.jpg");
-
-  const dmap = loader.load("/assets/GroundDirtRocky020_DISP_1K.jpg");
+  const map = loader.load("/assets/ground/GroundDirtRocky020_COL_1K.jpg");
+  const bmap = loader.load("/assets/ground/GroundDirtRocky020_BUMP_1K.jpg");
+  const dmap = loader.load("/assets/ground/GroundDirtRocky020_DISP_1K.jpg");
 
   map.wrapS = map.wrapT = THREE.RepeatWrapping;
   map.repeat.set(50, 50);
@@ -127,7 +128,7 @@ function worldPlane() {
     bumpMap: bmap,
     bumpScale: 0.5,
     displacementMap: dmap,
-    displacementScale: 0.5,
+    displacementScale: 0.1,
     map: map,
   });
 
@@ -139,6 +140,37 @@ function worldPlane() {
   scene.add(plane);
 }
 
+function createPathStrings(filename) {
+  const basePath = "/assets/skybox/";
+  const baseFilename = basePath + filename;
+  const fileType = ".png";
+  const sides = ["ft", "bk", "up", "dn", "rt", "lf"];
+  const pathStings = sides.map((side) => {
+    return baseFilename + "_" + side + fileType;
+  });
+
+  return pathStings;
+}
+function createMaterialArray(filename) {
+  const skyboxImagepaths = createPathStrings(filename);
+  const materialArray = skyboxImagepaths.map((image) => {
+    let texture = loader.load(image);
+    return new THREE.MeshBasicMaterial({
+      map: texture,
+      side: THREE.BackSide,
+      fog: false,
+    });
+  });
+  return materialArray;
+}
+
+function initSkybox() {
+  const materialArray = createMaterialArray(skyboxImage);
+  const skyboxGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
+  skybox = new THREE.Mesh(skyboxGeometry, materialArray);
+  scene.add(skybox);
+}
+
 function helpers() {
   const axesHelper = new THREE.AxesHelper(100);
   scene.add(axesHelper);
@@ -146,17 +178,19 @@ function helpers() {
 
 function init() {
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x88ccee);
-  scene.fog = new THREE.Fog(0x88ccee, 0, 50);
+  // scene.background = new THREE.Color(0x88ccee);
+  // scene.fog = new THREE.Fog(0x88ccee, 0, 50);
+  // scene.fog = new THREE.Fog(0x000000, 0, 40); // Commented for dev purposes
 
   camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    10000
   );
+  camera.position.set(0, 0, 0);
 
-  const light = new THREE.PointLight(0xffffff, 10, 100);
+  const light = new THREE.PointLight(0xffffff, 10, 10);
   light.castShadow = true;
   camera.add(light);
 
@@ -194,6 +228,7 @@ function init() {
   initCannon();
   initPointerLock();
 
+  initSkybox();
   worldLight();
   worldPlane();
 
@@ -253,7 +288,7 @@ function initCannon() {
   world.addBody(groundBody);
 
   // Voxels
-  VoxelsWorld();
+  // VoxelsWorld();
 
   // The shooting balls
   const shootVelocity = 15;
@@ -311,21 +346,21 @@ function initCannon() {
 
   // Create the user collision sphere
 
-  const mirrorRenderTarget = new THREE.WebGLCubeRenderTarget(128, {
-    generateMipmaps: true,
-    minFilter: THREE.LinearMipMapLinearFilter,
-  });
-  var sphereGeom = new THREE.SphereGeometry(2, 32, 16); // radius, segmentsWidth, segmentsHeight
-  // mirrorCubeCamera.renderTarget.minFilter = THREE.LinearMipMapLinearFilter;
-  mirrorSphereCamera = new THREE.CubeCamera(0.1, 5000, mirrorRenderTarget);
-  scene.add(mirrorSphereCamera);
-  var mirrorSphereMaterial = new THREE.MeshBasicMaterial({
-    envMap: mirrorSphereCamera.renderTarget.texture,
-  });
-  mirrorSphere = new THREE.Mesh(sphereGeom, mirrorSphereMaterial);
-  mirrorSphere.position.set(2, 2, 0);
-  mirrorSphereCamera.position.copy(mirrorSphere.position);
-  scene.add(mirrorSphere);
+  // const mirrorRenderTarget = new THREE.WebGLCubeRenderTarget(128, {
+  //   generateMipmaps: true,
+  //   minFilter: THREE.LinearMipMapLinearFilter,
+  // });
+  // var sphereGeom = new THREE.SphereGeometry(2, 32, 16); // radius, segmentsWidth, segmentsHeight
+  // // mirrorCubeCamera.renderTarget.minFilter = THREE.LinearMipMapLinearFilter;
+  // mirrorSphereCamera = new THREE.CubeCamera(0.1, 5000, mirrorRenderTarget);
+  // scene.add(mirrorSphereCamera);
+  // var mirrorSphereMaterial = new THREE.MeshBasicMaterial({
+  //   envMap: mirrorSphereCamera.renderTarget.texture,
+  // });
+  // mirrorSphere = new THREE.Mesh(sphereGeom, mirrorSphereMaterial);
+  // mirrorSphere.position.set(2, 2, 0);
+  // mirrorSphereCamera.position.copy(mirrorSphere.position);
+  // scene.add(mirrorSphere);
 }
 
 function initPointerLock() {
@@ -349,6 +384,10 @@ function initPointerLock() {
 
 function animate() {
   requestAnimationFrame(animate);
+
+  skybox.rotation.x += 0.0005;
+  skybox.rotation.y += 0.0005;
+
   const time = performance.now() / 1000;
   const dt = time - lastCallTime;
   lastCallTime = time;
@@ -362,21 +401,23 @@ function animate() {
       ballMeshes[i].quaternion.copy(balls[i].quaternion);
     }
 
-    // Update box positions
-    for (let i = 0; i < voxels.boxes.length; i++) {
-      boxMeshes[i].position.copy(voxels.boxes[i].position);
-      boxMeshes[i].quaternion.copy(voxels.boxes[i].quaternion);
-    }
+    // // Update box positions
+    // for (let i = 0; i < voxels.boxes.length; i++) {
+    //   boxMeshes[i].position.copy(voxels.boxes[i].position);
+    //   boxMeshes[i].quaternion.copy(voxels.boxes[i].quaternion);
+    // }
   }
 
   let pos = sphereBody.position.clone();
   mapCamera.position.x = pos.x;
   mapCamera.position.z = pos.z;
   mapCamera.lookAt(new THREE.Vector3(pos.x, -1, pos.z));
+  // let rot = camera.rotation.clone();
+  // mapCamera.rotation.y = rot.y;
 
-  mirrorSphere.visible = false;
-  mirrorSphereCamera.update(renderer, scene);
-  mirrorSphere.visible = true;
+  // mirrorSphere.visible = false;
+  // mirrorSphereCamera.update(renderer, scene);
+  // mirrorSphere.visible = true;
 
   controls.update(dt);
   stats.update();
