@@ -98,6 +98,7 @@ function maze() {
     "/assets/mcMaze.glb",
     function (gltf) {
       gltf.scene.position.set(0, 1, 0);
+      gltf.scene.castShadow = true;
       scene.add(gltf.scene);
     },
     undefined,
@@ -147,6 +148,7 @@ function worldPlane() {
   });
 
   // Finished loading in textures
+
   // const material = new THREE.MeshPhongMaterial({color: 0xff86});
 
   const plane = new THREE.Mesh(geometry, material);
@@ -199,7 +201,7 @@ function init() {
   // scene.background = new THREE.Color(0x88ccee);
   scene.background = new THREE.Color(0x000000);
   // scene.fog = new THREE.Fog(0x88ccee, 0, 50);
-  // scene.fog = new THREE.Fog(0x000000, 0, 50); // Commented for dev purposes
+  scene.fog = new THREE.Fog(0x000000, 0, 50); // Commented for dev purposes
 
   camera = new THREE.PerspectiveCamera(
     75,
@@ -229,7 +231,7 @@ function init() {
   ); // Far
   // mapCamera.up = new THREE.Vector3(0,0,-1);
   mapCamera.lookAt(new THREE.Vector3(0, -1, 0));
-  mapCamera.position.set(0, 20, 0);
+  mapCamera.position.set(0, 5, 0);
   scene.add(mapCamera);
   mapCanvas = document.getElementById("minimap");
   rendererMap = new THREE.WebGLRenderer({ canvas: mapCanvas });
@@ -318,7 +320,7 @@ function initCannon() {
   // VoxelsWorld();
 
   // The shooting balls
-  const shootVelocity = 15;
+  const shootVelocity = 25;
   const ballShape = new CANNON.Sphere(0.2);
   const ballGeometry = new THREE.SphereGeometry(ballShape.radius, 32, 32);
 
