@@ -683,7 +683,7 @@ function bobObject(object) {
   if (object === undefined) {
   } else {
     object.position.y =
-      0.4 + Math.abs(0.5 * Math.sin(Math.PI * animationnum * 0.001));
+      0.2 + Math.abs(0.5 * Math.sin(Math.PI * animationnum * 0.005));
   }
 }
 
