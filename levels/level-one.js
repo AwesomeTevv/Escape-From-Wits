@@ -70,6 +70,7 @@ let torch;
 let torchTarget;
 let togglegun = true;
 let gun;
+let animationnum = 0;
 let sword;
 let swordToggled = false;
 let mapToggled = false;
@@ -419,10 +420,10 @@ function initCannon() {
   // Stabilization time in number of timesteps
   world.defaultContactMaterial.contactEquationRelaxation = 4;
 
-  const solver = new CANNON.GSSolver();
-  solver.iterations = 7;
-  solver.tolerance = 0.1;
-  world.solver = new CANNON.SplitSolver(solver);
+  // const solver = new CANNON.GSSolver();
+  // solver.iterations = 7;
+  // solver.tolerance = 0.1;
+  // world.solver = new CANNON.SplitSolver(solver);
   // use this to test non-split solver
   // world.solver = solver
 
@@ -595,6 +596,7 @@ function initPointerLock() {
 function animate() {
   requestAnimationFrame(animate);
   console.log(sphereBody.position);
+  animationnum += 1;
   // Calculate the distance between the player cube and the goal cube
   const playerPosition = sphereBody.position.clone();
   const goalPosition = triggerBody.position.clone();
@@ -652,6 +654,48 @@ function animate() {
   //   generateCharacterEquipment();
   //  // sphereBody.add(torch);
   // }
+  // console.log(gunToggled);
+  
+  if (gunToggled === false){
+    
+    //gun.rotate(Math.PI)
+    rotateObject(gun);
+    bobObject(gun);
+  }
+
+  if (mapToggled === false){
+    
+    //gun.rotate(Math.PI)
+    rotateObject(map);
+    bobObject(map);
+  }
+
+  if (swordToggled === false){
+    
+    //gun.rotate(Math.PI)
+    rotateObject(sword);
+    bobObject(sword);
+  }
+
+
+
+}
+
+function rotateObject(object){
+  if (object === undefined){
+
+  }else{
+  object.rotation.y += 0.01
+  
+  }
+}
+function bobObject(object){
+  if (object === undefined){
+
+  }else{
+  
+  object.position.y = 0.4 + Math.abs(0.5 * Math.sin(Math.PI * animationnum * 0.001))
+  }
 }
 
 function VoxelsWorld() {
@@ -734,6 +778,7 @@ function performInteraction() {
     numberOfKeys++;
     
     sword.position.set(0,0,0);
+    sword.rotation.y = 0;
     camera.add(sword);
     sword.scale.set(0.0002, 0.0002, 0.0002);
     sword.position.y = sword.position.y - 0.5;
@@ -745,6 +790,7 @@ function performInteraction() {
     mapToggled = true;
     numberOfKeys++;
     map.position.set(0,0,0);
+    map.rotation.y = 0;
     camera.add(map);
     map.scale.set(0.2, 0.2, 0.2);
     map.position.y = map.position.y - 0.53;
@@ -754,6 +800,8 @@ function performInteraction() {
   }else if (gun_distance < proximityThreshold && gunToggled == false){
     gunToggled = true;
     gun.position.set(0,0,0);
+    gun.rotation.y = 0;
+    
     camera.add(gun);
     gun.position.y = gun.position.y - 0.7;
     gun.position.z = gun.position.z - 0.9;
