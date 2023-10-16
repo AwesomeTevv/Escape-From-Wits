@@ -80,7 +80,8 @@ const timeStep = 1 / 60;
 let lastCallTime = performance.now() / 1000;
 let numberOfKeys = 0;
 
-const balls = [];1
+const balls = [];
+1;
 const ballMeshes = [];
 const boxes = [];
 const boxMeshes = [];
@@ -227,7 +228,7 @@ function worldLight() {
   const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
   scene.add(ambientLight);
 
-  const hemisphereLight = new THREE.HemisphereLight(0x808080, 0x080820, 10);
+  const hemisphereLight = new THREE.HemisphereLight(0x808080, 0x080820, 1);
   scene.add(hemisphereLight);
 
   // const helper = new THREE.HemisphereLightHelper(hemisphereLight, 5);
@@ -316,7 +317,7 @@ function init() {
   // scene.background = new THREE.Color(0x88ccee);
   scene.background = new THREE.Color(0x000000);
   // scene.fog = new THREE.Fog(0x88ccee, 0, 50);
-  // scene.fog = new THREE.Fog(0x000000, 0, 50); // Commented for dev purposes
+  scene.fog = new THREE.Fog(0x000000, 0, 50); // Commented for dev purposes
 
   camera = new THREE.PerspectiveCamera(
     75,
@@ -522,23 +523,22 @@ function initCannon() {
   trigger.position.set(5, radius, 0);
   world.addBody(triggerBody);
 
-   // It is possible to run code on the exit/enter
-   // of the trigger.
-   triggerBody.addEventListener('collide', (event) => {
-     if (event.body === sphereBody) {
-       console.log('The sphere entered the trigger!', event)
-       console.log("You are in possestion of " + numberOfKeys + " keys!");
-       
-     }
-   })
-   world.addEventListener('endContact', (event) => {
-     if (
-       (event.bodyA === sphereBody && event.bodyB === triggerBody) ||
-       (event.bodyB === sphereBody && event.bodyA === triggerBody)
-     ) {
-       console.log('The sphere exited the trigger!', event)
-     }
-   });
+  // It is possible to run code on the exit/enter
+  // of the trigger.
+  triggerBody.addEventListener("collide", (event) => {
+    if (event.body === sphereBody) {
+      console.log("The sphere entered the trigger!", event);
+      console.log("You are in possestion of " + numberOfKeys + " keys!");
+    }
+  });
+  world.addEventListener("endContact", (event) => {
+    if (
+      (event.bodyA === sphereBody && event.bodyB === triggerBody) ||
+      (event.bodyB === sphereBody && event.bodyA === triggerBody)
+    ) {
+      console.log("The sphere exited the trigger!", event);
+    }
+  });
 
   // Create the user collision sphere
 

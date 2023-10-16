@@ -41,20 +41,44 @@ function add(
 
 function perimeter(scene, world) {
   const height = 15;
-  const length = 100;
-  const thickness = 10;
+  const length = 10;
+  const thickness = 5;
+
+  // Loading in textures
+  const map = loader.load(
+    "/assets/desertWall/StuccoRoughCast001_COL_2K_SPECULAR.png"
+  );
+  const bmap = loader.load(
+    "/assets/desertWall/StuccoRoughCast001_BUMP_2K_SPECULAR.png"
+  );
+  const dmap = loader.load(
+    "/assets/desertWall/StuccoRoughCast001_DISP_2K_SPECULAR.png"
+  );
+
+  const scale = 10;
+  map.wrapS = map.wrapT = THREE.RepeatWrapping;
+  map.repeat.set(scale, scale / 1);
+
+  bmap.wrapS = bmap.wrapT = THREE.RepeatWrapping;
+  bmap.repeat.set(scale, scale / 1);
+
+  dmap.wrapS = dmap.wrapT = THREE.RepeatWrapping;
+  dmap.repeat.set(scale, scale / 1);
+
+  const material = new THREE.MeshPhongMaterial({
+    specular: 0x666666,
+    shininess: 50,
+    bumpMap: bmap,
+    bumpScale: 0.3,
+    displacementMap: dmap,
+    displacementScale: 0,
+    map: map,
+  });
 
   //   const geometry = new THREE.BoxGeometry(length, height, thickness);
-  const material = new THREE.MeshPhongMaterial({ color: 0x0000bb });
+  // const material = new THREE.MeshPhongMaterial({ color: 0x0000bb });
 
   for (let i = -5; i < 5; i++) {
-    // scene.add(
-    //   new THREE.Mesh(new THREE.BoxGeometry(length, height, thickness), material)
-    //     .rotateY(Math.PI / 2)
-    //     .translateX((i + 0.5) * 100)
-    //     .translateZ(500)
-    //     .translateY(height / 2)
-    // );
     add(
       scene,
       world,
@@ -62,18 +86,11 @@ function perimeter(scene, world) {
       height,
       thickness,
       Math.PI / 2,
-      (i + 0.5) * 100,
-      500,
+      (i + 0.5) * 10,
+      50,
       material
     );
 
-    // scene.add(
-    //   new THREE.Mesh(new THREE.BoxGeometry(length, height, thickness), material)
-    //     .rotateY(Math.PI / 2)
-    //     .translateX((-i - 0.5) * 100)
-    //     .translateZ(-500)
-    //     .translateY(height / 2)
-    // );
     add(
       scene,
       world,
@@ -81,8 +98,8 @@ function perimeter(scene, world) {
       height,
       thickness,
       Math.PI / 2,
-      (-i - 0.5) * 100,
-      -500,
+      (-i - 0.5) * 10,
+      -50,
       material
     );
   }
@@ -105,8 +122,8 @@ function perimeter(scene, world) {
         height,
         thickness,
         0,
-        (i + 0.5) * 100,
-        500,
+        (i + 0.5) * 10,
+        50,
         material
       );
 
@@ -126,8 +143,8 @@ function perimeter(scene, world) {
         height,
         thickness,
         0,
-        (-i - 0.5) * 100,
-        -500,
+        (-i - 0.5) * 10,
+        -50,
         material
       );
     }
@@ -136,6 +153,10 @@ function perimeter(scene, world) {
 
 export function Maze(scene, world) {
   perimeter(scene, world);
+
+  const length = 15;
+  const height = 10;
+  const thickness = 5;
 
   // Loading in textures
   const map = loader.load(
@@ -148,15 +169,15 @@ export function Maze(scene, world) {
     "/assets/bricks/BricksReclaimedWhitewashedOffset001_DISP_2K_METALNESS.png"
   );
 
-  const scale = 20;
+  const scale = 2;
   map.wrapS = map.wrapT = THREE.RepeatWrapping;
-  map.repeat.set(scale, scale / 10);
+  map.repeat.set(scale, scale * (height / length));
 
   bmap.wrapS = bmap.wrapT = THREE.RepeatWrapping;
-  bmap.repeat.set(scale, scale / 10);
+  bmap.repeat.set(scale, scale * (height / length));
 
   dmap.wrapS = dmap.wrapT = THREE.RepeatWrapping;
-  dmap.repeat.set(scale, scale / 10);
+  dmap.repeat.set(scale, scale * (height / length));
 
   const material = new THREE.MeshPhongMaterial({
     specular: 0x666666,
@@ -167,10 +188,6 @@ export function Maze(scene, world) {
     displacementScale: 0,
     map: map,
   });
-
-  const length = 105;
-  const height = 10;
-  const thickness = 1;
 
   //   const material = new THREE.MeshPhongMaterial({ color: 0xff00ff });
 
@@ -299,8 +316,8 @@ export function Maze(scene, world) {
       height,
       thickness,
       rotations[i],
-      (tx[i] + 0.5) * 100,
-      tz[i] * 100,
+      (tx[i] + 0.5) * 10,
+      tz[i] * 10,
       material
     );
   }
