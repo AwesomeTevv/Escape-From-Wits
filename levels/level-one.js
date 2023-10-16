@@ -78,8 +78,9 @@ let voxels;
 let controls;
 const timeStep = 1 / 60;
 let lastCallTime = performance.now() / 1000;
+let numberOfKeys = 0;
 
-const balls = [];
+const balls = [];1
 const ballMeshes = [];
 const boxes = [];
 const boxMeshes = [];
@@ -559,6 +560,8 @@ function initCannon() {
    triggerBody.addEventListener('collide', (event) => {
      if (event.body === sphereBody) {
        console.log('The sphere entered the trigger!', event)
+       console.log("You are in possestion of " + numberOfKeys + " keys!");
+       
      }
    })
    world.addEventListener('endContact', (event) => {
@@ -754,12 +757,13 @@ function performInteraction(){
 
   if (sword_distance < proximityThreshold  && swordToggled == false) {
     swordToggled = true;
-    
+    numberOfKeys++;
     sword.scale.set(0.0004, 0.0004, 0.0004);
     camera.add(sword);
 
   } else if (map_distance < proximityThreshold && mapToggled == false) {
     mapToggled = true;
+    numberOfKeys++;
     camera.add(map);
     map.scale.set(2, 2, 2);
     map.position.y = map.position.y + 2.3;
