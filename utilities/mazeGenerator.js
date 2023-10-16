@@ -27,7 +27,7 @@ function add(
   const body = new CANNON.Body({
     type: CANNON.Body.STATIC,
     shape: new CANNON.Box(
-      new CANNON.Vec3(length / 2, height / 2, thickness / 2)
+      new CANNON.Vec3(length * 0.5, height, thickness * 0.5)
     ),
   });
   body.position.copy(mesh.position);
