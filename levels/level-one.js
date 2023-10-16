@@ -189,15 +189,10 @@ function loadgun() {
 function loadSword() {
   modelLoader.load("/assets/sword/scene.gltf", function (gltf) {
     sword = gltf.scene;
-    // sword.traverse((node) =>{
-
-    //   if(node.isMesh){
-    //     sceneMeshes.push(node);
-    //     // node.material.wireframe = true;
-    //   }
-    // })
-    sword.scale.set(0.0004, 0.0004, 0.0004);
-    camera.add(sword);
+    //sword.scale.set(0.0004, 0.0004, 0.0004);
+    sword.scale.set(0.001, 0.001, 0.001);
+   // camera.add(sword);
+    scene.add(sword);
     sword.position.y = sword.position.y + 0.3;
     sword.position.z = sword.position.z - 0.9;
     sword.position.x = sword.position.x - 1;
@@ -210,13 +205,6 @@ function loadSword() {
 function loadKey() {
   modelLoader.load("/assets/tokens/key.glb", function (gltf) {
     key = gltf.scene;
-    // sword.traverse((node) =>{
-
-    //   if(node.isMesh){
-    //     sceneMeshes.push(node);
-    //     // node.material.wireframe = true;
-    //   }
-    // })
     key.scale.set(20, 20, 20);
     camera.add(key);
     key.position.y = key.position.y + 0.3;
@@ -229,18 +217,15 @@ function loadKey() {
 function loadMap() {
   modelLoader.load("/assets/tokens/map.glb", function (gltf) {
     map = gltf.scene;
-    // sword.traverse((node) =>{
-
-    //   if(node.isMesh){
-    //     sceneMeshes.push(node);
-    //     // node.material.wireframe = true;
-    //   }
-    // })
-    map.scale.set(0.4, 0.4, 0.4);
-    camera.add(map);
+    //map.scale.set(0.4, 0.4, 0.4);
+    //camera.add(map);
+    scene.add(map);
+    // map.position.y = map.position.y + 0.5;
+    // map.position.z = map.position.z - 0.9;
+    // map.position.x = map.position.x - 1.1;
     map.position.y = map.position.y + 0.5;
-    map.position.z = map.position.z - 0.9;
-    map.position.x = map.position.x - 1.1;
+    map.position.z = map.position.z - 5;
+    map.position.x = map.position.x - 5;
     map.rotation.y = Math.PI * 0.5;
     //body.add(sword)
   });
@@ -722,4 +707,57 @@ function VoxelsWorld() {
     boxMeshes.push(voxelMesh);
     scene.add(voxelMesh);
   }
+}
+
+// CONTROL KEYS
+const keysPressed = {};
+document.addEventListener(
+  "keydown",
+  (event) => {
+   
+      if (event.key.toLowerCase() === 'e') {
+        performInteraction();
+      } else {
+        (keysPressed)[event.key.toLowerCase()] = true;
+      }
+    
+  },
+  false
+);
+document.addEventListener(
+  "keyup",
+  (event) => {
+    (keysPressed)[event.key.toLowerCase()] = false;
+  },
+  false
+);
+
+
+function performInteraction(){
+
+
+  event.preventDefault();
+  // Calculate the distance between the character and sphereTwo
+  const characterPosition = camera.position;
+  const swordPos = sword.position;
+  const mapPos = map.position;
+ 
+  let sword_distance = characterPosition.distanceTo(swordPos);
+  let map_distance = characterPosition.distanceTo(mapPos);
+
+  // Define a threshold distance for character proximity
+  const proximityThreshold = 3; // Adjust this threshold as needed
+
+  
+
+  if (sword_distance < proximityThreshold) {
+   
+    
+    sword.scale.set(0.0004, 0.0004, 0.0004);
+    camera.add(sword);
+
+  }
+
+
+
 }
