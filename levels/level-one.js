@@ -736,10 +736,10 @@ function performInteraction() {
     sword.position.set(0,0,0);
     camera.add(sword);
     sword.scale.set(0.0002, 0.0002, 0.0002);
-    // sword.position.y = sword.position.y - 0.5;
-    // sword.position.z = sword.position.z - 0.9;
-    // sword.position.x = sword.position.x;
-    // sword.rotation.y = Math.PI * 1.5;
+    sword.position.y = sword.position.y - 0.5;
+    sword.position.z = sword.position.z - 0.9;
+    sword.position.x = sword.position.x;
+    sword.rotation.y = Math.PI * 1.5;
 
   } else if (map_distance < proximityThreshold && mapToggled == false) {
     mapToggled = true;
@@ -747,17 +747,17 @@ function performInteraction() {
     map.position.set(0,0,0);
     camera.add(map);
     map.scale.set(0.2, 0.2, 0.2);
-    // map.position.y = map.position.y - 0.53;
-    // map.position.z = map.position.z - 0.9;
-    // map.position.x = map.position.x - 0.4;
-    // map.rotation.y = Math.PI * 0.5;
+    map.position.y = map.position.y - 0.53;
+    map.position.z = map.position.z - 0.9;
+    map.position.x = map.position.x - 0.4;
+    map.rotation.y = Math.PI * 0.5;
   }else if (gun_distance < proximityThreshold && gunToggled == false){
     gunToggled = true;
     gun.position.set(0,0,0);
     camera.add(gun);
-    // gun.position.y = gun.position.y - 0.7;
-    // gun.position.z = gun.position.z - 0.9;
-    // gun.position.x = gun.position.x + 0.3;
-    // gun.rotation.x = Math.PI / 15;
+    gun.position.y = gun.position.y - 0.7;
+    gun.position.z = gun.position.z - 0.9;
+    gun.position.x = gun.position.x + 0.3;
+    gun.rotation.x = Math.PI / 15;
   }
 }
