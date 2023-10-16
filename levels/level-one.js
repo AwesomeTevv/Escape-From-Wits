@@ -226,7 +226,7 @@ function worldLight() {
   const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
   scene.add(ambientLight);
 
-  const hemisphereLight = new THREE.HemisphereLight(0x808080, 0x080820, 1);
+  const hemisphereLight = new THREE.HemisphereLight(0x808080, 0x080820, 10);
   scene.add(hemisphereLight);
 
   // const helper = new THREE.HemisphereLightHelper(hemisphereLight, 5);
@@ -382,10 +382,10 @@ function init() {
   helpers(); // ! Temporary -- Remove at the end
 
   // mazeTemplate();
-  // maze();
+  // maze();s
 
   let maze = new THREE.Scene();
-  Maze(maze);
+  Maze(maze, world);
   scene.add(maze);
 
   audio.play();

@@ -5,7 +5,41 @@ import * as CANNON from "cannon-es";
 
 const loader = new THREE.TextureLoader();
 
-function perimeter(maze) {
+function add(
+  scene,
+  world,
+  length,
+  height,
+  thickness,
+  rotation,
+  tx,
+  tz,
+  material
+) {
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(length, height, thickness),
+    material
+  )
+    .rotateY(rotation)
+    .translateX(tx)
+    .translateY(height / 2)
+    .translateZ(tz);
+  scene.add(mesh);
+
+  const body = new CANNON.Body({
+    type: CANNON.Body.STATIC,
+    shape: new CANNON.Box(new CANNON.Vec3(length, height, thickness)),
+    position: new CANNON.Vec3(
+      mesh.position.x,
+      mesh.position.y,
+      mesh.position.z
+    ),
+    quaternion: new CANNON.Quaternion(mesh.quaternion.clone()),
+  });
+  world.addBody(body);
+}
+
+function perimeter(scene, world) {
   const height = 15;
   const length = 100;
   const thickness = 10;
@@ -14,50 +48,94 @@ function perimeter(maze) {
   const material = new THREE.MeshPhongMaterial({ color: 0x0000bb });
 
   for (let i = -5; i < 5; i++) {
-    maze.add(
-      new THREE.Mesh(new THREE.BoxGeometry(length, height, thickness), material)
-        .rotateY(Math.PI / 2)
-        .translateX((i + 0.5) * 100)
-        .translateZ(500)
-        .translateY(height / 2)
+    // scene.add(
+    //   new THREE.Mesh(new THREE.BoxGeometry(length, height, thickness), material)
+    //     .rotateY(Math.PI / 2)
+    //     .translateX((i + 0.5) * 100)
+    //     .translateZ(500)
+    //     .translateY(height / 2)
+    // );
+    add(
+      scene,
+      world,
+      length,
+      height,
+      thickness,
+      Math.PI / 2,
+      (i + 0.5) * 100,
+      500,
+      material
     );
 
-    maze.add(
-      new THREE.Mesh(new THREE.BoxGeometry(length, height, thickness), material)
-        .rotateY(Math.PI / 2)
-        .translateX((-i - 0.5) * 100)
-        .translateZ(-500)
-        .translateY(height / 2)
+    // scene.add(
+    //   new THREE.Mesh(new THREE.BoxGeometry(length, height, thickness), material)
+    //     .rotateY(Math.PI / 2)
+    //     .translateX((-i - 0.5) * 100)
+    //     .translateZ(-500)
+    //     .translateY(height / 2)
+    // );
+    add(
+      scene,
+      world,
+      length,
+      height,
+      thickness,
+      Math.PI / 2,
+      (-i - 0.5) * 100,
+      -500,
+      material
     );
   }
 
   for (let i = -5; i < 5; i++) {
     if (i != -1) {
-      maze.add(
-        new THREE.Mesh(
-          new THREE.BoxGeometry(length, height, thickness),
-          material
-        )
-          .translateX((i + 0.5) * 100)
-          .translateZ(500)
-          .translateY(height / 2)
+      //   scene.add(
+      //     new THREE.Mesh(
+      //       new THREE.BoxGeometry(length, height, thickness),
+      //       material
+      //     )
+      //       .translateX((i + 0.5) * 100)
+      //       .translateZ(500)
+      //       .translateY(height / 2)
+      //   );
+      add(
+        scene,
+        world,
+        length,
+        height,
+        thickness,
+        0,
+        (i + 0.5) * 100,
+        500,
+        material
       );
 
-      maze.add(
-        new THREE.Mesh(
-          new THREE.BoxGeometry(length, height, thickness),
-          material
-        )
-          .translateX((-i - 0.5) * 100)
-          .translateZ(-500)
-          .translateY(height / 2)
+      //   scene.add(
+      //     new THREE.Mesh(
+      //       new THREE.BoxGeometry(length, height, thickness),
+      //       material
+      //     )
+      //       .translateX((-i - 0.5) * 100)
+      //       .translateZ(-500)
+      //       .translateY(height / 2)
+      //   );
+      add(
+        scene,
+        world,
+        length,
+        height,
+        thickness,
+        0,
+        (-i - 0.5) * 100,
+        -500,
+        material
       );
     }
   }
 }
 
-export function Maze(maze) {
-  perimeter(maze);
+export function Maze(scene, world) {
+  perimeter(scene, world);
 
   // Loading in textures
   const map = loader.load(
@@ -99,7 +177,7 @@ export function Maze(maze) {
   //   const help = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 
   //   for (let i = -500; i <= 500; i += 100) {
-  //     maze.add(
+  //     scene.add(
   //       new THREE.Mesh(new THREE.BoxGeometry(1000, height, 0.1), help)
   //         .rotateY(Math.PI / 2)
   //         .translateX(0)
@@ -107,7 +185,7 @@ export function Maze(maze) {
   //         .translateY(height / 2)
   //     );
 
-  //     maze.add(
+  //     scene.add(
   //       new THREE.Mesh(new THREE.BoxGeometry(1000, height, 0.1), help)
   //         .translateX(0)
   //         .translateZ(i)
@@ -115,860 +193,115 @@ export function Maze(maze) {
   //     );
   //   }
 
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(3.5 * 100)
-      .translateZ(-4 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-0.5 * 100)
-      .translateZ(-4 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-3.5 * 100)
-      .translateZ(-4 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(3.5 * 100)
-      .translateZ(-3 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(2.5 * 100)
-      .translateZ(-3 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-1.5 * 100)
-      .translateZ(-3 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-2.5 * 100)
-      .translateZ(-3 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(2.5 * 100)
-      .translateZ(-2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(1.5 * 100)
-      .translateZ(-2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(0.5 * 100)
-      .translateZ(-2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-0.5 * 100)
-      .translateZ(-2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-3.5 * 100)
-      .translateZ(-2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(4.5 * 100)
-      .translateZ(-1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(1.5 * 100)
-      .translateZ(-1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-1.5 * 100)
-      .translateZ(-1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-2.5 * 100)
-      .translateZ(-1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-3.5 * 100)
-      .translateZ(-1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(4.5 * 100)
-      .translateZ(0 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(0.5 * 100)
-      .translateZ(0 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-0.5 * 100)
-      .translateZ(0 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-1.5 * 100)
-      .translateZ(0 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(3.5 * 100)
-      .translateZ(1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(0.5 * 100)
-      .translateZ(1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-0.5 * 100)
-      .translateZ(1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-2.5 * 100)
-      .translateZ(1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-4.5 * 100)
-      .translateZ(1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(4.5 * 100)
-      .translateZ(2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(0.5 * 100)
-      .translateZ(2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-0.5 * 100)
-      .translateZ(2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-1.5 * 100)
-      .translateZ(2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-3.5 * 100)
-      .translateZ(2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(3.5 * 100)
-      .translateZ(3 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(2.5 * 100)
-      .translateZ(3 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-0.5 * 100)
-      .translateZ(3 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(-2.5 * 100)
-      .translateZ(3 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(4.5 * 100)
-      .translateZ(4 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .rotateY(Math.PI / 2)
-      .translateX(3.5 * 100)
-      .translateZ(4 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-4.5 * 100)
-      .translateZ(-3 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-4.5 * 100)
-      .translateZ(-1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-4.5 * 100)
-      .translateZ(2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-3.5 * 100)
-      .translateZ(-2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-3.5 * 100)
-      .translateZ(-1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-3.5 * 100)
-      .translateZ(0 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-3.5 * 100)
-      .translateZ(3 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-3.5 * 100)
-      .translateZ(4 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-2.5 * 100)
-      .translateZ(-4 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-2.5 * 100)
-      .translateZ(-2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-2.5 * 100)
-      .translateZ(0 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-2.5 * 100)
-      .translateZ(2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-2.5 * 100)
-      .translateZ(3 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-1.5 * 100)
-      .translateZ(-3 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-1.5 * 100)
-      .translateZ(0 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-1.5 * 100)
-      .translateZ(2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-0.5 * 100)
-      .translateZ(-3 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-0.5 * 100)
-      .translateZ(-2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-0.5 * 100)
-      .translateZ(-1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-0.5 * 100)
-      .translateZ(1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(-0.5 * 100)
-      .translateZ(4 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(0.5 * 100)
-      .translateZ(-4 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(0.5 * 100)
-      .translateZ(-3 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(0.5 * 100)
-      .translateZ(-2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(0.5 * 100)
-      .translateZ(1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(0.5 * 100)
-      .translateZ(3 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(1.5 * 100)
-      .translateZ(-3 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(1.5 * 100)
-      .translateZ(-2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(1.5 * 100)
-      .translateZ(2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(1.5 * 100)
-      .translateZ(4 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(2.5 * 100)
-      .translateZ(-4 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(2.5 * 100)
-      .translateZ(-4 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(2.5 * 100)
-      .translateZ(-2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(2.5 * 100)
-      .translateZ(-1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(2.5 * 100)
-      .translateZ(2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(2.5 * 100)
-      .translateZ(4 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(3.5 * 100)
-      .translateZ(-2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(3.5 * 100)
-      .translateZ(-1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(3.5 * 100)
-      .translateZ(0 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(3.5 * 100)
-      .translateZ(1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(3.5 * 100)
-      .translateZ(2 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(3.5 * 100)
-      .translateZ(4 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(4.5 * 100)
-      .translateZ(-1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(4.5 * 100)
-      .translateZ(1 * 100)
-      .translateY(height / 2)
-  );
-
-  maze.add(
-    new THREE.Mesh(
-      new THREE.BoxGeometry(length, height, thickness + 4),
-      material
-    )
-      .translateX(4.5 * 100)
-      .translateZ(3 * 100)
-      .translateY(height / 2)
-  );
+  let rotations = [
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    Math.PI / 2,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+  ];
+  let tx = [
+    3, -1, -4, 3, 2, -2, -3, 2, 1, 0, -1, -4, 4, 1, -2, -3, -4, 4, 0, -1, -2, 3,
+    0, -1, -3, -5, 4, 0, -1, -2, -4, 4, 3, 2, -1, -3, 4, 3, -5, -5, -5, -4, -4,
+    -4, -4, -4, -3, -3, -3, -3, -3, -2, -2, -2, -1, -1, -1, -1, -1, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4,
+  ];
+  let tz = [
+    -4, -4, -4, -3, -3, -3, -3, -2, -2, -2, -2, -2, -1, -1, -1, -1, -1, 0, 0, 0,
+    1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, -3, -1, 2, -2, -1, 0, 3,
+    4, -4, -2, 0, 2, 3, -3, 0, 2, -3, -2, -1, 1, 4, -4, -3, -2, 1, 3, -3, -2, 2,
+    4, -4, -2, -1, 2, 4, -2, -1, 0, 1, 2, 4, -1, 1, 3,
+  ];
+
+  for (let i = 0; i < rotations.length; i++) {
+    add(
+      scene,
+      world,
+      length,
+      height,
+      thickness,
+      rotations[i],
+      (tx[i] + 0.5) * 100,
+      tz[i] * 100,
+      material
+    );
+  }
 }
