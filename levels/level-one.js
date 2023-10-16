@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import Stats from "three/examples/jsm/libs/stats.module";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as CANNON from "cannon-es";
 
 import { PointerLockControlsCannon } from "../utilities/PointerLockControlsCannon";
@@ -93,11 +94,11 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-function maze() {
+function mazeTemplate() {
   modelLoader.load(
-    "/assets/mcMaze.glb",
+    "/assets/grassMaze.gltf",
     function (gltf) {
-      gltf.scene.position.set(0, 1, 0);
+      gltf.scene.position.set(0, 0, 0);
       gltf.scene.castShadow = true;
       scene.add(gltf.scene);
     },
@@ -108,11 +109,51 @@ function maze() {
   );
 }
 
+function outerWall() {
+  const height = 15;
+  const length = 100;
+  const thickness = 1;
+
+  const geometry = new THREE.BoxGeometry(length, height, thickness);
+  const material = new THREE.MeshNormalMaterial();
+
+  let pos = [
+    new THREE.Vector3(0, height / 2, length / 2),
+    new THREE.Vector3(length / 2, height / 2, 0),
+    new THREE.Vector3(0, height / 2, -length / 2),
+    new THREE.Vector3(-length / 2, height / 2, 0),
+  ];
+
+  const wall0 = new THREE.Mesh(geometry, material);
+  wall0.rotation.y = (0 * Math.PI) / 2;
+  wall0.position.set(0, height / 2, length / 2);
+  scene.add(wall0);
+
+  const wall1 = new THREE.Mesh(geometry, material);
+  wall1.rotateY((1 * Math.PI) / 2);
+  wall1.position.set(0, height / 2, length / 2);
+  scene.add(wall1);
+
+  const wall2 = new THREE.Mesh(geometry, material);
+  wall2.rotateY((2 * Math.PI) / 2);
+  wall2.position.set(0, height / 2, length / 2);
+  scene.add(wall2);
+
+  const wall3 = new THREE.Mesh(geometry, material);
+  wall3.position.set(0, height / 2, length / 2);
+  wall3.rotateY((3 * Math.PI) / 2);
+  scene.add(wall3);
+}
+
+function maze() {
+  outerWall();
+}
+
 function worldLight() {
   const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
   scene.add(ambientLight);
 
-  const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+  const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 2); // set to 1
   scene.add(hemisphereLight);
 
   // const helper = new THREE.HemisphereLightHelper(hemisphereLight, 5);
@@ -137,19 +178,19 @@ function worldPlane() {
 
   const geometry = new THREE.PlaneGeometry(1000, 1000);
 
-  const material = new THREE.MeshPhongMaterial({
-    specular: 0x666666,
-    shininess: 25,
-    bumpMap: bmap,
-    bumpScale: 0.5,
-    displacementMap: dmap,
-    displacementScale: 0.1,
-    map: map,
-  });
+  // const material = new THREE.MeshPhongMaterial({
+  //   specular: 0x666666,
+  //   shininess: 25,
+  //   bumpMap: bmap,
+  //   bumpScale: 0.5,
+  //   displacementMap: dmap,
+  //   displacementScale: 0.1,
+  //   map: map,
+  // });
 
   // Finished loading in textures
 
-  // const material = new THREE.MeshPhongMaterial({color: 0xff86});
+  const material = new THREE.MeshPhongMaterial({ color: 0x606060 });
 
   const plane = new THREE.Mesh(geometry, material);
   plane.rotateX(-Math.PI / 2);
@@ -201,7 +242,7 @@ function init() {
   // scene.background = new THREE.Color(0x88ccee);
   scene.background = new THREE.Color(0x000000);
   // scene.fog = new THREE.Fog(0x88ccee, 0, 50);
-  scene.fog = new THREE.Fog(0x000000, 0, 50); // Commented for dev purposes
+  // scene.fog = new THREE.Fog(0x000000, 0, 50); // Commented for dev purposes
 
   camera = new THREE.PerspectiveCamera(
     75,
@@ -227,8 +268,8 @@ function init() {
     window.innerHeight / 25, // Top
     window.innerHeight / -25, // Bottom
     -5000, // Near
-    10000
-  ); // Far
+    10000 // Far
+  );
   // mapCamera.up = new THREE.Vector3(0,0,-1);
   mapCamera.lookAt(new THREE.Vector3(0, -1, 0));
   mapCamera.position.set(0, 5, 0);
@@ -261,6 +302,7 @@ function init() {
 
   helpers(); // ! Temporary -- Remove at the end
 
+  // mazeTemplate();
   maze();
 }
 
