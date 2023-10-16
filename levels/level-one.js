@@ -319,7 +319,7 @@ function init() {
   // scene.background = new THREE.Color(0x88ccee);
   scene.background = new THREE.Color(0x000000);
   // scene.fog = new THREE.Fog(0x88ccee, 0, 50);
-  scene.fog = new THREE.Fog(0x000000, 0, 50); // Commented for dev purposes
+  scene.fog = new THREE.Fog(0x000000, 0, 10); // Commented for dev purposes
 
   camera = new THREE.PerspectiveCamera(
     75,
