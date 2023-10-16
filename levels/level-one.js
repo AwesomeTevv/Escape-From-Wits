@@ -65,8 +65,11 @@ let sphereBody = new CANNON.Body();
 let physicsMaterial = new CANNON.Material();
 let torch;
 let torchTarget;
-let toggleSword = true;
+let togglegun = true;
+let gun;
 let sword;
+let map;
+let key;
 let voxels;
 let controls;
 const timeStep = 1 / 60;
@@ -153,8 +156,28 @@ function maze() {
   outerWall();
 }
 
-function loadSword() {
+function loadgun() {
   modelLoader.load("/assets/weapons/gun.glb", function (gltf) {
+    gun = gltf.scene;
+    // gun.traverse((node) =>{
+
+    //   if(node.isMesh){
+    //     sceneMeshes.push(node);
+    //     // node.material.wireframe = true;
+    //   }
+    // })
+    gun.scale.set(3, 3, 3);
+    camera.add(gun);
+    gun.position.y = gun.position.y - 0.7;
+    gun.position.z = gun.position.z - 0.9;
+    gun.position.x = gun.position.x + 0.3;
+    gun.rotation.x = Math.PI / 15;
+    //body.add(gun)
+  });
+}
+
+function loadSword() {
+  modelLoader.load("/assets/sword/scene.gltf", function (gltf) {
     sword = gltf.scene;
     // sword.traverse((node) =>{
 
@@ -163,13 +186,52 @@ function loadSword() {
     //     // node.material.wireframe = true;
     //   }
     // })
-
-    sword.scale.set(3, 3, 3);
+    sword.scale.set(0.0004, 0.0004, 0.0004);
     camera.add(sword);
-    sword.position.y = sword.position.y - 0.7;
+    sword.position.y = sword.position.y + 0.3;
     sword.position.z = sword.position.z - 0.9;
-    sword.position.x = sword.position.x + 0.3;
-    sword.rotation.x = Math.PI / 15;
+    sword.position.x = sword.position.x - 1;
+    sword.rotation.y = Math.PI * 1.5;
+    //sword.rotation.z = Math.PI;
+    //body.add(sword)
+  });
+}
+
+function loadKey() {
+  modelLoader.load("/assets/tokens/key.glb", function (gltf) {
+    key = gltf.scene;
+    // sword.traverse((node) =>{
+
+    //   if(node.isMesh){
+    //     sceneMeshes.push(node);
+    //     // node.material.wireframe = true;
+    //   }
+    // })
+    key.scale.set(20, 20, 20);
+    camera.add(key);
+    key.position.y = key.position.y + 0.3;
+    key.position.z = key.position.z - 0.9;
+    key.position.x = key.position.x - 0.5;
+   // key.rotation.x = Math.PI / 15;
+    //body.add(sword)
+  });
+}
+function loadMap() {
+  modelLoader.load("/assets/tokens/map.glb", function (gltf) {
+    map = gltf.scene;
+    // sword.traverse((node) =>{
+
+    //   if(node.isMesh){
+    //     sceneMeshes.push(node);
+    //     // node.material.wireframe = true;
+    //   }
+    // })
+    map.scale.set(0.4, 0.4, 0.4);
+    camera.add(map);
+    map.position.y = map.position.y + 0.5;
+    map.position.z = map.position.z - 0.9;
+    map.position.x = map.position.x - 1.1;
+    map.rotation.y = Math.PI * 0.5;
     //body.add(sword)
   });
 }
@@ -310,6 +372,9 @@ function init() {
   // light.castShadow = true;
 
   // camera.add(light);
+  loadgun();
+  loadMap();
+  loadKey();
   loadSword();
   generateCharacterEquipment();
 
