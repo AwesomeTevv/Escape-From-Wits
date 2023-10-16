@@ -11,7 +11,7 @@ let scene;
 let camera;
 let renderer;
 let stats;
-
+let triggerBody;
 let mapCamera;
 let mapCanvas;
 let rendererMap;
@@ -88,6 +88,14 @@ const nz = 100;
 const sx = 1;
 const sy = 1;
 const sz = 1;
+
+// Audio setup
+const audio = new Audio('../assets/scary.mp3');
+audio.loop = true;
+const audioListener = new THREE.AudioListener();
+const audioSource = new THREE.Audio(audioListener);
+audioSource.setMediaElementSource(audio);
+audioSource.setVolume(0.1); // Initial volume
 
 init();
 animate();
@@ -363,6 +371,9 @@ function init() {
 
   // mazeTemplate();
   maze();
+
+  audio.play();
+  camera.add(audioListener);
 }
 
 function initCannon() {
@@ -479,6 +490,35 @@ function initCannon() {
     ballMesh.position.copy(ballBody.position);
   });
 
+   // Trigger body
+   const triggerGeometry = new THREE.BoxGeometry(4, 4, 10);
+   const triggerMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 , wireframe: true});
+   const trigger = new THREE.Mesh(triggerGeometry, triggerMaterial);
+   scene.add(trigger);
+   const boxShape = new CANNON.Box(new CANNON.Vec3(2, 2, 5))
+   triggerBody = new CANNON.Body({ isTrigger: true })
+   triggerBody.addShape(boxShape)
+   triggerBody.position.set(5, radius, 0)
+   trigger.position.set(5,radius,0);
+   world.addBody(triggerBody)
+
+   // It is possible to run code on the exit/enter
+   // of the trigger.
+   triggerBody.addEventListener('collide', (event) => {
+     if (event.body === sphereBody) {
+       console.log('The sphere entered the trigger!', event)
+     }
+   })
+   world.addEventListener('endContact', (event) => {
+     if (
+       (event.bodyA === sphereBody && event.bodyB === triggerBody) ||
+       (event.bodyB === sphereBody && event.bodyA === triggerBody)
+     ) {
+       console.log('The sphere exited the trigger!', event)
+     }
+   });
+
+
   // Create the user collision sphere
 
   // const mirrorRenderTarget = new THREE.WebGLCubeRenderTarget(128, {
@@ -519,6 +559,22 @@ function initPointerLock() {
 
 function animate() {
   requestAnimationFrame(animate);
+
+    // Calculate the distance between the player cube and the goal cube
+    const playerPosition = sphereBody.position.clone();
+    const goalPosition = triggerBody.position.clone();
+    playerPosition.y = 0; // Ignore vertical position
+    goalPosition.y = 0; // Ignore vertical position
+    const distance = playerPosition.distanceTo(goalPosition);
+  
+    // Adjust the audio volume based on the distance
+    const maxDistance = 5; // Adjust this value as needed
+    const minVolume = 0.1; // Adjust this value as needed
+    const maxVolume = 1.0; // Adjust this value as needed
+    const volume = Math.max(minVolume, maxVolume - (distance / maxDistance));
+  
+    audioSource.setVolume(volume);
+  
 
   // skybox.rotation.x += 0.0005;
   // skybox.rotation.y += 0.0005;
