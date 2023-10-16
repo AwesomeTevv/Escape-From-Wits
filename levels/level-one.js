@@ -385,7 +385,8 @@ function init() {
   // maze();
 
   let maze = new THREE.Scene();
-  Maze(maze, scene);
+  Maze(maze);
+  scene.add(maze);
 
   audio.play();
   camera.add(audioListener);

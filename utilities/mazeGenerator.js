@@ -1,12 +1,11 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-let scene;
-let maze;
+import * as CANNON from "cannon-es";
 
 const loader = new THREE.TextureLoader();
 
-function perimeter(maze, scene) {
+function perimeter(maze) {
   const height = 15;
   const length = 100;
   const thickness = 10;
@@ -57,8 +56,8 @@ function perimeter(maze, scene) {
   }
 }
 
-export function Maze(maze, scene) {
-  perimeter(maze, scene);
+export function Maze(maze) {
+  perimeter(maze);
 
   // Loading in textures
   const map = loader.load(
@@ -71,7 +70,7 @@ export function Maze(maze, scene) {
     "/assets/bricks/BricksReclaimedWhitewashedOffset001_DISP_2K_METALNESS.png"
   );
 
-  const scale = 10;
+  const scale = 20;
   map.wrapS = map.wrapT = THREE.RepeatWrapping;
   map.repeat.set(scale, scale / 10);
 
@@ -972,6 +971,4 @@ export function Maze(maze, scene) {
       .translateZ(3 * 100)
       .translateY(height / 2)
   );
-
-  scene.add(maze);
 }
