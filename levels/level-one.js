@@ -16,7 +16,9 @@ let mapCanvas;
 let rendererMap;
 
 let skybox;
-const skyboxImage = "nebula3/nebula3";
+const skyboxImage = "mayhem/mayhem8/flame";
+// const skyboxImage = "mayhem/mayhem3/scorched";
+
 
 const modelLoader = new GLTFLoader();
 
@@ -216,7 +218,7 @@ function worldPlane() {
 function createPathStrings(filename) {
   const basePath = "/assets/skybox/";
   const baseFilename = basePath + filename;
-  const fileType = ".png";
+  const fileType = ".jpg";
   const sides = ["ft", "bk", "up", "dn", "rt", "lf"];
   const pathStings = sides.map((side) => {
     return baseFilename + "_" + side + fileType;
@@ -353,6 +355,10 @@ function initCannon() {
     {
       friction: 0.4,
       restitution: 0.3,
+      contactEquationStiffness: 1e8,
+      contactEquationRelaxation: 3,
+      frictionEquationStiffness: 1e8,
+      frictionEquationRegularizationTime: 3,
     }
   );
 
@@ -402,7 +408,8 @@ function initCannon() {
     const ballBody = new CANNON.Body({ mass: 1 });
     ballBody.addShape(ballShape);
     const ballMesh = new THREE.Mesh(ballGeometry, material);
-
+    ballBody.angularDamping = 0.31;
+    ballBody.linearDamping = 0.31;
     ballMesh.castShadow = true;
     ballMesh.receiveShadow = true;
 
@@ -473,8 +480,8 @@ function initPointerLock() {
 function animate() {
   requestAnimationFrame(animate);
 
-  skybox.rotation.x += 0.0005;
-  skybox.rotation.y += 0.0005;
+  // skybox.rotation.x += 0.0005;
+  // skybox.rotation.y += 0.0005;
 
   const time = performance.now() / 1000;
   const dt = time - lastCallTime;
