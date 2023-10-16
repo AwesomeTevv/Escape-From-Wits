@@ -73,6 +73,7 @@ function perimeter(scene, world) {
     displacementMap: dmap,
     displacementScale: 0,
     map: map,
+    depthTest: true,
   });
 
   //   const geometry = new THREE.BoxGeometry(length, height, thickness);
@@ -187,6 +188,7 @@ export function Maze(scene, world) {
     displacementMap: dmap,
     displacementScale: 0,
     map: map,
+    depthTest: true,
   });
 
   //   const material = new THREE.MeshPhongMaterial({ color: 0xff00ff });
