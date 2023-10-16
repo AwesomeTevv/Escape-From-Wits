@@ -746,7 +746,7 @@ function performInteraction(){
  
   let sword_distance = characterPosition.distanceTo(swordPos);
   let map_distance = characterPosition.distanceTo(mapPos);
-  console.log(sword_distance);
+  
   // Define a threshold distance for character proximity
   const proximityThreshold = 3; // Adjust this threshold as needed
 
