@@ -242,6 +242,8 @@ function worldPlane() {
   const map = loader.load("/assets/ground/GroundDirtRocky020_COL_1K.jpg");
   const bmap = loader.load("/assets/ground/GroundDirtRocky020_BUMP_1K.jpg");
   const dmap = loader.load("/assets/ground/GroundDirtRocky020_DISP_1K.jpg");
+  const nmap = loader.load("/assets/ground/GroundDirtRocky020_NRM_1K.jpg");
+  const amap = loader.load("/assets/ground/GroundDirtRocky020_AO_1K.jpg");
 
   const scale = 500;
   map.wrapS = map.wrapT = THREE.RepeatWrapping;
@@ -253,15 +255,23 @@ function worldPlane() {
   dmap.wrapS = dmap.wrapT = THREE.RepeatWrapping;
   dmap.repeat.set(scale, scale);
 
+  nmap.wrapS = nmap.wrapT = THREE.RepeatWrapping;
+  nmap.repeat.set(scale, scale);
+
+  amap.wrapS = amap.wrapT = THREE.RepeatWrapping;
+  amap.repeat.set(scale, scale);
+
   const geometry = new THREE.PlaneGeometry(1000, 1000);
 
   const material = new THREE.MeshPhongMaterial({
     specular: 0x666666,
-    shininess: 25,
+    shininess: 10,
     bumpMap: bmap,
-    bumpScale: 0.5,
+    bumpScale: 1,
     displacementMap: dmap,
     displacementScale: 0.1,
+    normalMap: nmap,
+    aoMap: amap,
     map: map,
     depthTest: true,
   });
@@ -396,7 +406,7 @@ function init() {
   audio.play();
   camera.add(audioListener);
 
-  sphereBody.position.set(-4.6,sphereBody.position.y, 55.17);
+  sphereBody.position.set(-4.6, sphereBody.position.y, 55.17);
 }
 
 function initCannon() {
@@ -585,7 +595,7 @@ function initPointerLock() {
 
 function animate() {
   requestAnimationFrame(animate);
- 
+
   // Calculate the distance between the player cube and the goal cube
   const playerPosition = sphereBody.position.clone();
   const goalPosition = triggerBody.position.clone();
@@ -733,7 +743,7 @@ function performInteraction() {
     map.position.y = map.position.y + 2.3;
     map.position.z = map.position.z;
     map.position.x = map.position.x - 1.1;
-  }else if (gun_distance < proximityThreshold && gunToggled == false){
+  } else if (gun_distance < proximityThreshold && gunToggled == false) {
     gunToggled = true;
     camera.add(gun);
     gun.position.y = gun.position.y - 0.7;

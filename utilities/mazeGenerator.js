@@ -29,13 +29,9 @@ function add(
   const body = new CANNON.Body({
     type: CANNON.Body.STATIC,
     shape: new CANNON.Box(new CANNON.Vec3(length, height, thickness)),
-    position: new CANNON.Vec3(
-      mesh.position.x,
-      mesh.position.y,
-      mesh.position.z
-    ),
-    quaternion: new CANNON.Quaternion(mesh.quaternion.clone()),
   });
+  body.position.copy(mesh.position);
+  body.quaternion.copy(mesh.quaternion);
   world.addBody(body);
 }
 
@@ -54,6 +50,12 @@ function perimeter(scene, world) {
   const dmap = loader.load(
     "/assets/desertWall/StuccoRoughCast001_DISP_2K_SPECULAR.png"
   );
+  const nmap = loader.load(
+    "/assets/desertWall/StuccoRoughCast001_NRM_2K_SPECULAR.png"
+  );
+  const amap = loader.load(
+    "/assets/desertWall/StuccoRoughCast001_AO_2K_SPECULAR.png"
+  );
 
   const scale = 10;
   map.wrapS = map.wrapT = THREE.RepeatWrapping;
@@ -65,13 +67,22 @@ function perimeter(scene, world) {
   dmap.wrapS = dmap.wrapT = THREE.RepeatWrapping;
   dmap.repeat.set(scale, scale / 1);
 
+  nmap.wrapS = nmap.wrapT = THREE.RepeatWrapping;
+  nmap.repeat.set(scale, scale / 1);
+
+  amap.wrapS = amap.wrapT = THREE.RepeatWrapping;
+  amap.repeat.set(scale, scale / 1);
+
   const material = new THREE.MeshPhongMaterial({
     specular: 0x666666,
-    shininess: 50,
+    shininess: 10,
     bumpMap: bmap,
-    bumpScale: 0.3,
+    bumpScale: 1,
     displacementMap: dmap,
     displacementScale: 0,
+    normalMap: nmap,
+    normalMapType: THREE.TangentSpaceNormalMap,
+    aoMap: amap,
     map: map,
     depthTest: true,
   });
@@ -107,15 +118,6 @@ function perimeter(scene, world) {
 
   for (let i = -5; i < 5; i++) {
     if (i != -1) {
-      //   scene.add(
-      //     new THREE.Mesh(
-      //       new THREE.BoxGeometry(length, height, thickness),
-      //       material
-      //     )
-      //       .translateX((i + 0.5) * 100)
-      //       .translateZ(500)
-      //       .translateY(height / 2)
-      //   );
       add(
         scene,
         world,
@@ -128,15 +130,6 @@ function perimeter(scene, world) {
         material
       );
 
-      //   scene.add(
-      //     new THREE.Mesh(
-      //       new THREE.BoxGeometry(length, height, thickness),
-      //       material
-      //     )
-      //       .translateX((-i - 0.5) * 100)
-      //       .translateZ(-500)
-      //       .translateY(height / 2)
-      //   );
       add(
         scene,
         world,
@@ -169,6 +162,12 @@ export function Maze(scene, world) {
   const dmap = loader.load(
     "/assets/bricks/BricksReclaimedWhitewashedOffset001_DISP_2K_METALNESS.png"
   );
+  const nmap = loader.load(
+    "/assets/bricks/BricksReclaimedWhitewashedOffset001_NRM_2K_METALNESS.png"
+  );
+  const amap = loader.load(
+    "/assets/bricks/BricksReclaimedWhitewashedOffset001_AO_2K_METALNESS.png"
+  );
 
   const scale = 2;
   map.wrapS = map.wrapT = THREE.RepeatWrapping;
@@ -180,13 +179,21 @@ export function Maze(scene, world) {
   dmap.wrapS = dmap.wrapT = THREE.RepeatWrapping;
   dmap.repeat.set(scale, scale * (height / length));
 
+  nmap.wrapS = nmap.wrapT = THREE.RepeatWrapping;
+  nmap.repeat.set(scale, scale * (height / length));
+
+  amap.wrapS = amap.wrapT = THREE.RepeatWrapping;
+  amap.repeat.set(scale, scale * (height / length));
+
   const material = new THREE.MeshPhongMaterial({
     specular: 0x666666,
-    shininess: 50,
+    shininess: 10,
     bumpMap: bmap,
-    bumpScale: 0.3,
+    bumpScale: 1,
     displacementMap: dmap,
     displacementScale: 0,
+    normalMap: nmap,
+    aoMap: amap,
     map: map,
     depthTest: true,
   });
