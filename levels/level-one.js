@@ -237,6 +237,8 @@ function worldPlane() {
   const map = loader.load("/assets/ground/GroundDirtRocky020_COL_1K.jpg");
   const bmap = loader.load("/assets/ground/GroundDirtRocky020_BUMP_1K.jpg");
   const dmap = loader.load("/assets/ground/GroundDirtRocky020_DISP_1K.jpg");
+  const nmap = loader.load("/assets/ground/GroundDirtRocky020_NRM_1K.jpg");
+  const amap = loader.load("/assets/ground/GroundDirtRocky020_AO_1K.jpg");
 
   const scale = 500;
   map.wrapS = map.wrapT = THREE.RepeatWrapping;
@@ -248,15 +250,23 @@ function worldPlane() {
   dmap.wrapS = dmap.wrapT = THREE.RepeatWrapping;
   dmap.repeat.set(scale, scale);
 
+  nmap.wrapS = nmap.wrapT = THREE.RepeatWrapping;
+  nmap.repeat.set(scale, scale);
+
+  amap.wrapS = amap.wrapT = THREE.RepeatWrapping;
+  amap.repeat.set(scale, scale);
+
   const geometry = new THREE.PlaneGeometry(1000, 1000);
 
   const material = new THREE.MeshPhongMaterial({
     specular: 0x666666,
-    shininess: 25,
+    shininess: 10,
     bumpMap: bmap,
-    bumpScale: 0.5,
+    bumpScale: 1,
     displacementMap: dmap,
     displacementScale: 0.1,
+    normalMap: nmap,
+    aoMap: amap,
     map: map,
     depthTest: true,
   });
