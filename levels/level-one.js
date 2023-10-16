@@ -6,12 +6,13 @@ import * as CANNON from "cannon-es";
 
 import { PointerLockControlsCannon } from "../utilities/PointerLockControlsCannon";
 import { VoxelLandscape } from "../utilities/VoxelLandscape.js";
+import { Maze } from "../utilities/mazeGenerator";
 
 let scene;
 let camera;
 let renderer;
 let stats;
-
+let triggerBody;
 let mapCamera;
 let mapCanvas;
 let rendererMap;
@@ -19,7 +20,6 @@ let rendererMap;
 let skybox;
 const skyboxImage = "mayhem/mayhem8/flame";
 // const skyboxImage = "mayhem/mayhem3/scorched";
-
 
 const modelLoader = new GLTFLoader();
 
@@ -56,6 +56,7 @@ let material = new THREE.MeshPhongMaterial({
   displacementMap: vdmap,
   displacementScale: 0.01,
   map: vmap,
+  depthTest: true,
 });
 
 // let mirrorSphereCamera;
@@ -70,14 +71,18 @@ let torchTarget;
 let togglegun = true;
 let gun;
 let sword;
+let swordToggled = false;
+let mapToggled = false;
 let map;
 let key;
 let voxels;
 let controls;
 const timeStep = 1 / 60;
 let lastCallTime = performance.now() / 1000;
+let numberOfKeys = 0;
 
 const balls = [];
+1;
 const ballMeshes = [];
 const boxes = [];
 const boxMeshes = [];
@@ -91,6 +96,14 @@ const nz = 100;
 const sx = 1;
 const sy = 1;
 const sz = 1;
+
+// Audio setup
+const audio = new Audio("../assets/scary.mp3");
+audio.loop = true;
+const audioListener = new THREE.AudioListener();
+const audioSource = new THREE.Audio(audioListener);
+audioSource.setMediaElementSource(audio);
+audioSource.setVolume(0.1); // Initial volume
 
 init();
 animate();
@@ -118,46 +131,6 @@ function mazeTemplate() {
   );
 }
 
-function outerWall() {
-  const height = 15;
-  const length = 100;
-  const thickness = 1;
-
-  const geometry = new THREE.BoxGeometry(length, height, thickness);
-  const material = new THREE.MeshNormalMaterial();
-
-  let pos = [
-    new THREE.Vector3(0, height / 2, length / 2),
-    new THREE.Vector3(length / 2, height / 2, 0),
-    new THREE.Vector3(0, height / 2, -length / 2),
-    new THREE.Vector3(-length / 2, height / 2, 0),
-  ];
-
-  const wall0 = new THREE.Mesh(geometry, material);
-  wall0.rotation.y = (0 * Math.PI) / 2;
-  wall0.position.set(0, height / 2, length / 2);
-  scene.add(wall0);
-
-  const wall1 = new THREE.Mesh(geometry, material);
-  wall1.rotateY((1 * Math.PI) / 2);
-  wall1.position.set(0, height / 2, length / 2);
-  scene.add(wall1);
-
-  const wall2 = new THREE.Mesh(geometry, material);
-  wall2.rotateY((2 * Math.PI) / 2);
-  wall2.position.set(0, height / 2, length / 2);
-  scene.add(wall2);
-
-  const wall3 = new THREE.Mesh(geometry, material);
-  wall3.position.set(0, height / 2, length / 2);
-  wall3.rotateY((3 * Math.PI) / 2);
-  scene.add(wall3);
-}
-
-function maze() {
-  outerWall();
-}
-
 function loadgun() {
   modelLoader.load("/assets/weapons/gun.glb", function (gltf) {
     gun = gltf.scene;
@@ -181,15 +154,10 @@ function loadgun() {
 function loadSword() {
   modelLoader.load("/assets/sword/scene.gltf", function (gltf) {
     sword = gltf.scene;
-    // sword.traverse((node) =>{
-
-    //   if(node.isMesh){
-    //     sceneMeshes.push(node);
-    //     // node.material.wireframe = true;
-    //   }
-    // })
-    sword.scale.set(0.0004, 0.0004, 0.0004);
-    camera.add(sword);
+    //sword.scale.set(0.0004, 0.0004, 0.0004);
+    sword.scale.set(0.001, 0.001, 0.001);
+    // camera.add(sword);
+    scene.add(sword);
     sword.position.y = sword.position.y + 0.3;
     sword.position.z = sword.position.z - 0.9;
     sword.position.x = sword.position.x - 1;
@@ -202,37 +170,27 @@ function loadSword() {
 function loadKey() {
   modelLoader.load("/assets/tokens/key.glb", function (gltf) {
     key = gltf.scene;
-    // sword.traverse((node) =>{
-
-    //   if(node.isMesh){
-    //     sceneMeshes.push(node);
-    //     // node.material.wireframe = true;
-    //   }
-    // })
     key.scale.set(20, 20, 20);
     camera.add(key);
     key.position.y = key.position.y + 0.3;
     key.position.z = key.position.z - 0.9;
     key.position.x = key.position.x - 0.5;
-   // key.rotation.x = Math.PI / 15;
+    // key.rotation.x = Math.PI / 15;
     //body.add(sword)
   });
 }
 function loadMap() {
   modelLoader.load("/assets/tokens/map.glb", function (gltf) {
     map = gltf.scene;
-    // sword.traverse((node) =>{
-
-    //   if(node.isMesh){
-    //     sceneMeshes.push(node);
-    //     // node.material.wireframe = true;
-    //   }
-    // })
-    map.scale.set(0.4, 0.4, 0.4);
-    camera.add(map);
+    //map.scale.set(0.4, 0.4, 0.4);
+    //camera.add(map);
+    scene.add(map);
+    // map.position.y = map.position.y + 0.5;
+    // map.position.z = map.position.z - 0.9;
+    // map.position.x = map.position.x - 1.1;
     map.position.y = map.position.y + 0.5;
-    map.position.z = map.position.z - 0.9;
-    map.position.x = map.position.x - 1.1;
+    map.position.z = map.position.z - 5;
+    map.position.x = map.position.x - 5;
     map.rotation.y = Math.PI * 0.5;
     //body.add(sword)
   });
@@ -304,6 +262,7 @@ function worldPlane() {
     displacementMap: dmap,
     displacementScale: 0.1,
     map: map,
+    depthTest: true,
   });
 
   // Finished loading in textures
@@ -360,7 +319,7 @@ function init() {
   // scene.background = new THREE.Color(0x88ccee);
   scene.background = new THREE.Color(0x000000);
   // scene.fog = new THREE.Fog(0x88ccee, 0, 50);
-  // scene.fog = new THREE.Fog(0x000000, 0, 50); // Commented for dev purposes
+  scene.fog = new THREE.Fog(0x000000, 0, 10); // Commented for dev purposes
 
   camera = new THREE.PerspectiveCamera(
     75,
@@ -427,7 +386,14 @@ function init() {
   helpers(); // ! Temporary -- Remove at the end
 
   // mazeTemplate();
-  maze();
+  // maze();s
+
+  let maze = new THREE.Scene();
+  Maze(maze, world);
+  scene.add(maze);
+
+  audio.play();
+  camera.add(audioListener);
 }
 
 function initCannon() {
@@ -544,6 +510,38 @@ function initCannon() {
     ballMesh.position.copy(ballBody.position);
   });
 
+  // Trigger body
+  const triggerGeometry = new THREE.BoxGeometry(4, 4, 10);
+  const triggerMaterial = new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+    wireframe: true,
+  });
+  const trigger = new THREE.Mesh(triggerGeometry, triggerMaterial);
+  scene.add(trigger);
+  const boxShape = new CANNON.Box(new CANNON.Vec3(2, 2, 5));
+  triggerBody = new CANNON.Body({ isTrigger: true });
+  triggerBody.addShape(boxShape);
+  triggerBody.position.set(5, radius, 0);
+  trigger.position.set(5, radius, 0);
+  world.addBody(triggerBody);
+
+  // It is possible to run code on the exit/enter
+  // of the trigger.
+  triggerBody.addEventListener("collide", (event) => {
+    if (event.body === sphereBody) {
+      console.log("The sphere entered the trigger!", event);
+      console.log("You are in possestion of " + numberOfKeys + " keys!");
+    }
+  });
+  world.addEventListener("endContact", (event) => {
+    if (
+      (event.bodyA === sphereBody && event.bodyB === triggerBody) ||
+      (event.bodyB === sphereBody && event.bodyA === triggerBody)
+    ) {
+      console.log("The sphere exited the trigger!", event);
+    }
+  });
+
   // Create the user collision sphere
 
   // const mirrorRenderTarget = new THREE.WebGLCubeRenderTarget(128, {
@@ -584,6 +582,21 @@ function initPointerLock() {
 
 function animate() {
   requestAnimationFrame(animate);
+
+  // Calculate the distance between the player cube and the goal cube
+  const playerPosition = sphereBody.position.clone();
+  const goalPosition = triggerBody.position.clone();
+  playerPosition.y = 0; // Ignore vertical position
+  goalPosition.y = 0; // Ignore vertical position
+  const distance = playerPosition.distanceTo(goalPosition);
+
+  // Adjust the audio volume based on the distance
+  const maxDistance = 5; // Adjust this value as needed
+  const minVolume = 0.1; // Adjust this value as needed
+  const maxVolume = 1.0; // Adjust this value as needed
+  const volume = Math.max(minVolume, maxVolume - distance / maxDistance);
+
+  audioSource.setVolume(volume);
 
   // skybox.rotation.x += 0.0005;
   // skybox.rotation.y += 0.0005;
@@ -665,5 +678,55 @@ function VoxelsWorld() {
     voxelMesh.receiveShadow = true;
     boxMeshes.push(voxelMesh);
     scene.add(voxelMesh);
+  }
+}
+
+// CONTROL KEYS
+const keysPressed = {};
+document.addEventListener(
+  "keydown",
+  (event) => {
+    if (event.key.toLowerCase() === "e") {
+      performInteraction();
+    } else {
+      keysPressed[event.key.toLowerCase()] = true;
+    }
+  },
+  false
+);
+document.addEventListener(
+  "keyup",
+  (event) => {
+    keysPressed[event.key.toLowerCase()] = false;
+  },
+  false
+);
+
+function performInteraction() {
+  event.preventDefault();
+  // Calculate the distance between the character and sphereTwo
+  const characterPosition = sphereBody.position;
+  const swordPos = sword.position;
+  const mapPos = map.position;
+
+  let sword_distance = characterPosition.distanceTo(swordPos);
+  let map_distance = characterPosition.distanceTo(mapPos);
+
+  // Define a threshold distance for character proximity
+  const proximityThreshold = 3; // Adjust this threshold as needed
+
+  if (sword_distance < proximityThreshold && swordToggled == false) {
+    swordToggled = true;
+    numberOfKeys++;
+    sword.scale.set(0.0004, 0.0004, 0.0004);
+    camera.add(sword);
+  } else if (map_distance < proximityThreshold && mapToggled == false) {
+    mapToggled = true;
+    numberOfKeys++;
+    camera.add(map);
+    map.scale.set(2, 2, 2);
+    map.position.y = map.position.y + 2.3;
+    map.position.z = map.position.z;
+    map.position.x = map.position.x - 1.1;
   }
 }
