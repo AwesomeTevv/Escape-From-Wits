@@ -72,6 +72,7 @@ let gun;
 let sword;
 let swordToggled = false;
 let mapToggled = false;
+let gunToggled = false;
 let map;
 let key;
 let voxels;
@@ -141,11 +142,11 @@ function loadgun() {
     //   }
     // })
     gun.scale.set(3, 3, 3);
-    camera.add(gun);
-    gun.position.y = gun.position.y - 0.7;
-    gun.position.z = gun.position.z - 0.9;
-    gun.position.x = gun.position.x + 0.3;
-    gun.rotation.x = Math.PI / 15;
+    scene.add(gun);
+    // gun.position.y = gun.position.y - 0.7;
+    // gun.position.z = gun.position.z - 0.9;
+    // gun.position.x = gun.position.x + 0.3;
+    // gun.rotation.x = Math.PI / 15;
     //body.add(gun)
   });
 }
@@ -203,16 +204,16 @@ function generateCharacterEquipment() {
   torch.castShadow = true;
 
   torchTarget = new THREE.Object3D();
-  gunTarget = new THREE.Object3D();
+  // gunTarget = new THREE.Object3D();
   //important, set the intitial position of the target in front of the character so that when it moves, it always remains in front of it
   torchTarget.position.set(0, 1, -2);
-  gunTarget.position.set(
-    camera.position.x,
-    camera.position.y,
-    camera.position.z
-  );
+  // gunTarget.position.set(
+  //   camera.position.x,
+  //   camera.position.y,
+  //   camera.position.z
+  // );
   camera.add(torchTarget);
-  camera.add(gunTarget);
+  //camera.add(gunTarget);
   torch.target = torchTarget;
   //gunlight.target = gunTarget;
   camera.add(torch);
@@ -317,6 +318,7 @@ function init() {
   // scene.background = new THREE.Color(0x88ccee);
   scene.background = new THREE.Color(0x000000);
   // scene.fog = new THREE.Fog(0x88ccee, 0, 50);
+
   scene.fog = new THREE.Fog(0x000000, 0, 50); // Commented for dev purposes
 
   camera = new THREE.PerspectiveCamera(
@@ -392,6 +394,8 @@ function init() {
 
   audio.play();
   camera.add(audioListener);
+
+  sphereBody.position.set(-4.6,sphereBody.position.y, 55.17);
 }
 
 function initCannon() {
@@ -580,7 +584,7 @@ function initPointerLock() {
 
 function animate() {
   requestAnimationFrame(animate);
-
+ 
   // Calculate the distance between the player cube and the goal cube
   const playerPosition = sphereBody.position.clone();
   const goalPosition = triggerBody.position.clone();
@@ -706,9 +710,11 @@ function performInteraction() {
   const characterPosition = sphereBody.position;
   const swordPos = sword.position;
   const mapPos = map.position;
+  const gunPos = gun.position;
 
   let sword_distance = characterPosition.distanceTo(swordPos);
   let map_distance = characterPosition.distanceTo(mapPos);
+  let gun_distance = characterPosition.distanceTo(gunPos);
 
   // Define a threshold distance for character proximity
   const proximityThreshold = 3; // Adjust this threshold as needed
@@ -726,5 +732,12 @@ function performInteraction() {
     map.position.y = map.position.y + 2.3;
     map.position.z = map.position.z;
     map.position.x = map.position.x - 1.1;
+  }else if (gun_distance < proximityThreshold && gunToggled == false){
+    gunToggled = true;
+    camera.add(gun);
+    gun.position.y = gun.position.y - 0.7;
+    gun.position.z = gun.position.z - 0.9;
+    gun.position.x = gun.position.x + 0.3;
+    gun.rotation.x = Math.PI / 15;
   }
 }
