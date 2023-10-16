@@ -56,6 +56,7 @@ let material = new THREE.MeshPhongMaterial({
   displacementMap: vdmap,
   displacementScale: 0.01,
   map: vmap,
+  depthTest: true,
 });
 
 // let mirrorSphereCamera;
@@ -261,6 +262,7 @@ function worldPlane() {
     displacementMap: dmap,
     displacementScale: 0.1,
     map: map,
+    depthTest: true,
   });
 
   // Finished loading in textures
