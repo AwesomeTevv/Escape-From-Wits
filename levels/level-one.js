@@ -70,6 +70,8 @@ let torchTarget;
 let togglegun = true;
 let gun;
 let sword;
+let swordToggled = false;
+let mapToggled = false;
 let map;
 let key;
 let voxels;
@@ -738,24 +740,31 @@ function performInteraction(){
 
   event.preventDefault();
   // Calculate the distance between the character and sphereTwo
-  const characterPosition = camera.position;
+  const characterPosition = sphereBody.position;
   const swordPos = sword.position;
   const mapPos = map.position;
  
   let sword_distance = characterPosition.distanceTo(swordPos);
   let map_distance = characterPosition.distanceTo(mapPos);
-
+  console.log(sword_distance);
   // Define a threshold distance for character proximity
   const proximityThreshold = 3; // Adjust this threshold as needed
 
   
 
-  if (sword_distance < proximityThreshold) {
-   
+  if (sword_distance < proximityThreshold  && swordToggled == false) {
+    swordToggled = true;
     
     sword.scale.set(0.0004, 0.0004, 0.0004);
     camera.add(sword);
 
+  } else if (map_distance < proximityThreshold && mapToggled == false) {
+    mapToggled = true;
+    camera.add(map);
+    map.scale.set(2, 2, 2);
+    map.position.y = map.position.y + 2.3;
+    map.position.z = map.position.z;
+    map.position.x = map.position.x - 1.1;
   }
 
 
