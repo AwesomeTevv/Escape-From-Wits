@@ -63,6 +63,10 @@ let world = new CANNON.World();
 let sphereShape = new CANNON.Sphere();
 let sphereBody = new CANNON.Body();
 let physicsMaterial = new CANNON.Material();
+let torch;
+let torchTarget;
+let toggleSword = true;
+let sword;
 let voxels;
 let controls;
 const timeStep = 1 / 60;
@@ -149,11 +153,61 @@ function maze() {
   outerWall();
 }
 
+function loadSword() {
+  modelLoader.load("/assets/weapons/gun.glb", function (gltf) {
+    sword = gltf.scene;
+    // sword.traverse((node) =>{
+
+    //   if(node.isMesh){
+    //     sceneMeshes.push(node);
+    //     // node.material.wireframe = true;
+    //   }
+    // })
+
+    sword.scale.set(3, 3, 3);
+    camera.add(sword);
+    sword.position.y = sword.position.y - 0.7;
+    sword.position.z = sword.position.z - 0.9;
+    sword.position.x = sword.position.x + 0.3;
+    sword.rotation.x = Math.PI / 15;
+    //body.add(sword)
+  });
+}
+
+function generateCharacterEquipment() {
+  let gunlight;
+  let gunTarget;
+  torch = new THREE.SpotLight(0xffffff, 200.0, 20, Math.PI * 0.08);
+  gunlight = new THREE.SpotLight(0xffffff, 10.0, 1);
+  torch.castShadow = true;
+
+  torchTarget = new THREE.Object3D();
+  gunTarget = new THREE.Object3D();
+  //important, set the intitial position of the target in front of the character so that when it moves, it always remains in front of it
+  torchTarget.position.set(0, 1, -2);
+  gunTarget.position.set(
+    camera.position.x,
+    camera.position.y,
+    camera.position.z
+  );
+  camera.add(torchTarget);
+  camera.add(gunTarget);
+  torch.target = torchTarget;
+  //gunlight.target = gunTarget;
+  camera.add(torch);
+  //camera.add(gunlight);
+  torch.position.z = torch.position.z + 5;
+  //gunlight.position.y = gunlight.position.y ;
+  // gunlight.target.position.z = camera.position.z;
+  // gunlight.target.position.y = camera.position.y;
+  //torch.position.y = torch.position.y
+}
+
 function worldLight() {
   const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
   scene.add(ambientLight);
 
-  const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 2); // set to 1
+  const hemisphereLight = new THREE.HemisphereLight(0x808080, 0x080820, 1);
   scene.add(hemisphereLight);
 
   // const helper = new THREE.HemisphereLightHelper(hemisphereLight, 5);
@@ -178,19 +232,19 @@ function worldPlane() {
 
   const geometry = new THREE.PlaneGeometry(1000, 1000);
 
-  // const material = new THREE.MeshPhongMaterial({
-  //   specular: 0x666666,
-  //   shininess: 25,
-  //   bumpMap: bmap,
-  //   bumpScale: 0.5,
-  //   displacementMap: dmap,
-  //   displacementScale: 0.1,
-  //   map: map,
-  // });
+  const material = new THREE.MeshPhongMaterial({
+    specular: 0x666666,
+    shininess: 25,
+    bumpMap: bmap,
+    bumpScale: 0.5,
+    displacementMap: dmap,
+    displacementScale: 0.1,
+    map: map,
+  });
 
   // Finished loading in textures
 
-  const material = new THREE.MeshPhongMaterial({ color: 0x606060 });
+  // const material = new THREE.MeshPhongMaterial({ color: 0x606060 });
 
   const plane = new THREE.Mesh(geometry, material);
   plane.rotateX(-Math.PI / 2);
@@ -252,14 +306,17 @@ function init() {
   );
   camera.position.set(0, 0, 0);
 
-  const light = new THREE.PointLight(0xffffff, 10, 10);
-  light.castShadow = true;
-  camera.add(light);
+  // var light = new THREE.SpotLight(0xffffff);
+  // light.castShadow = true;
 
-  light.shadow.mapSize.width = 512; // default
-  light.shadow.mapSize.height = 512; // default
-  light.shadow.camera.near = 0.5; // default
-  light.shadow.camera.far = 500; // default
+  // camera.add(light);
+  loadSword();
+  generateCharacterEquipment();
+
+  // light.shadow.mapSize.width = 512; // default
+  // light.shadow.mapSize.height = 512; // default
+  // light.shadow.camera.near = 0.5; // default
+  // light.shadow.camera.far = 500; // default
 
   // orthographic cameras
   mapCamera = new THREE.OrthographicCamera(
@@ -494,6 +551,10 @@ function animate() {
   stats.update();
   renderer.render(scene, camera);
   rendererMap.render(scene, mapCamera);
+  // if (torch === null || torch === undefined){
+  //   generateCharacterEquipment();
+  //  // sphereBody.add(torch);
+  // }
 }
 
 function VoxelsWorld() {
