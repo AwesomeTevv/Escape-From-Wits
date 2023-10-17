@@ -45,7 +45,7 @@ function add(
   meshes.push(mesh);
 
   const body = new CANNON.Body({
-    mass: 100000,
+    mass: 0,
     shape: new CANNON.Box(
       new CANNON.Vec3(length * 0.5, height * 0.5, thickness * 0.5)
     ),

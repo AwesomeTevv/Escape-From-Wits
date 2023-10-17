@@ -232,7 +232,7 @@ function worldLight() {
   const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
   scene.add(ambientLight);
 
-  const hemisphereLight = new THREE.HemisphereLight(0x808080, 0x080820, 10);
+  const hemisphereLight = new THREE.HemisphereLight(0x808080, 0x080820, 1);
   scene.add(hemisphereLight);
 
   // const helper = new THREE.HemisphereLightHelper(hemisphereLight, 5);
@@ -271,7 +271,7 @@ function worldPlane() {
     bumpMap: bmap,
     bumpScale: 1,
     displacementMap: dmap,
-    displacementScale: 0.1,
+    displacementScale: 0,
     normalMap: nmap,
     aoMap: amap,
     map: map,
@@ -332,7 +332,7 @@ function init() {
   // scene.background = new THREE.Color(0x88ccee);
   scene.background = new THREE.Color(0x000000);
   // scene.fog = new THREE.Fog(0x88ccee, 0, 50);
-  // scene.fog = new THREE.Fog(0x000000, 0, 17); // Commented for dev purposes
+  scene.fog = new THREE.Fog(0x000000, 0, 17); // Commented for dev purposes
 
   camera = new THREE.PerspectiveCamera(
     75,
@@ -441,7 +441,7 @@ function initCannon() {
     physicsMaterial,
     physicsMaterial,
     {
-      friction: 0.4,
+      friction: 10,
       restitution: 0.3,
       contactEquationStiffness: 1e8,
       contactEquationRelaxation: 3,
@@ -456,7 +456,7 @@ function initCannon() {
   // Create the user collision sphere
   const radius = 1.3;
   sphereShape = new CANNON.Sphere(radius);
-  sphereBody = new CANNON.Body({ mass: 5, material: physics_physics });
+  sphereBody = new CANNON.Body({ mass: 1000, material: physics_physics });
   sphereBody.addShape(sphereShape);
   sphereBody.position.set(nx * sx * 0.5, ny * sy + radius * 2, nz * sz * 0.5);
   sphereBody.linearDamping = 0.9;
@@ -548,8 +548,10 @@ function initCannon() {
     if (event.body === sphereBody) {
       console.log("The sphere entered the trigger!", event);
       console.log("You are in possestion of " + numberOfKeys + " keys!");
-      if(numberOfKeys == 2){
-        alert("Congratulations, you have completed the maze! :), Press Ok to go to next level!");
+      if (numberOfKeys == 2) {
+        alert(
+          "Congratulations, you have completed the maze! :), Press Ok to go to next level!"
+        );
         window.location = "/levels/level-two.html";
       }
     }
