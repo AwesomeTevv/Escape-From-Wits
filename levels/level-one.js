@@ -166,7 +166,7 @@ function loadSword() {
     sword.scale.set(0.001, 0.001, 0.001);
     // camera.add(sword);
     scene.add(sword);
-    sword.position.set(5.66, 1.3, 14.7);
+    sword.position.set(24.34, 1.35, 44.51);
     //sword.rotation.z = Math.PI;
     //body.add(sword)
   });
@@ -488,9 +488,7 @@ function initCannon() {
   }
 
   window.addEventListener("click", (event) => {
-    
     if (!controls.enabled || gunToggled == false) {
-      
       return;
     }
 
@@ -640,7 +638,7 @@ function initPointerLock() {
 
 function animate() {
   requestAnimationFrame(animate);
-  //console.log(sphereBody.position);
+  console.log(sphereBody.position);
   animationnum += 1;
   // Calculate the distance between the player cube and the goal cube
   const playerPosition = sphereBody.position.clone();
