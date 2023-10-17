@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>First Year</title>
+    <title>Escape From Wits - Level 1</title>
     <meta
       name="viewport"
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
@@ -99,72 +99,89 @@
           transform: translate(0, 0);
         }
       }
+      
 
       .vertical-section {
-        text-align: center;
-      }
+  text-align: center;
+}
 
-      body {
-        overflow: hidden;
-        margin: 0;
-      }
+body {
+  overflow: hidden;
+  margin: 0;
+}
 
-      #instructions {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
+#instructions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-      .row {
-        display: flex;
-        justify-content: center;
-      }
+.row {
+  display: flex;
+  justify-content: center;
+}
 
 .column {
-  text-align: center;
+  text-align: relative;
   margin: 0 20px;
 }
+
+.column img {
+  width: 225px; /* Adjust this value as needed to make the images the same size */
+  height: 125px; /* Adjust this value as needed to make the images the same size */
+}
+
+#objective-container {
+  position: absolute;
+  top: 20%; /* Position the text vertically in the middle */
+  left: 48%; /* Position the text horizontally in the center */
+  transform: translate(-50%, -50%); /* Adjust this to center the text properly */
+}
+
+#start-button {
+  position: absolute;
+  bottom: 200px; /* Adjust this value to position the text at the desired distance from the bottom */
+  left: 50%; /* Position the text horizontally in the center */
+  transform: translateX(-50%); /* Center the text horizontally */
+}
+
+
 
     </style>
   </head>
   <body>
     <div class="vertical-section">
       <div id="instructions">
-        <div class="column">
+        <div class="column" id="objective-container">
             <span class="glitch">Objective: Find all objects and escape the maze</span>
         </div>
         <div class="row">
+
           <div class="column">
-            <img
-              width="150"
-              src="tevkey.png"
-              alt="some_text"
-              class="transparent-image"
-            />
+            <img width="150" src="tevkey.png" alt="some_text" class="transparent-image" />
             <p>Move</p>
           </div>
 
           <div class="column">
-            <img
-              width="150"
-              src="spacebar.png"
-              alt="some_text"
-              class="transparent-image"
-            />
+            <img width="150" src="spacebar.png" alt="some_text" class="transparent-image" />
             <p>Jump</p>
+        </div>
+        
+          
+          <div class="column">
+            <img width="150" src="mouse.png" alt="som
+            e_text" class="transparent-image" />
+            <p>Look</p>
           </div>
           
           <div class="column">
-            <img width="150" src="mouse.png" alt="some_text" class="transparent-image" />
-            <p>Look</p>
-          </div>
-
-          <div class="column">
-            <img width="150" src="clicking.png" alt="some_text" class="transparent-image" />
+            <img width="150"  src="clicking.png" alt="some_text" class="transparent-image" />
             <p>Shoot</p>
           </div>
+          
+          
         </div>
-
+    
         <div class="row">
           <div class="instruction" id="start-button">
             <span>Click to start</span>
@@ -172,15 +189,18 @@
         </div>
       </div>
     </div>
-
+    
+    
+    
+    
     <canvas id="minimap" style="width: 100px; height: 100px"></canvas>
     <span class="dot"></span>
-
+    
     <script type="module" src="/levels/level-one.js"></script>
-
+    
     <script>
       // Function to show game mechanics when the user presses Enter
-      document.addEventListener("keydown", function (event) {
+      document.addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
           // Hide the instructions and show the game mechanics
           var instructions = document.getElementById("instructions");

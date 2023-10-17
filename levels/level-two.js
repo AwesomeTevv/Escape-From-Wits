@@ -293,10 +293,10 @@ function initCannon() {
   // Stabilization time in number of timesteps
   world.defaultContactMaterial.contactEquationRelaxation = 4;
 
-  // const solver = new CANNON.GSSolver();
-  // solver.iterations = 7;
-  // solver.tolerance = 0.1;
-  // world.solver = new CANNON.SplitSolver(solver);
+  const solver = new CANNON.GSSolver();
+  solver.iterations = 7;
+  solver.tolerance = 0.1;
+  world.solver = new CANNON.SplitSolver(solver);
   // use this to test non-split solver
   // world.solver = solver
 
@@ -338,7 +338,7 @@ function initCannon() {
   // VoxelsWorld();
 
   // The shooting balls
-  const shootVelocity = 15;
+  const shootVelocity = 10;
   const ballShape = new CANNON.Sphere(0.2);
   const ballGeometry = new THREE.SphereGeometry(ballShape.radius, 32, 32);
 
@@ -375,7 +375,7 @@ function initCannon() {
 
     ballBody.addEventListener('collide', (e)=>{
       if(e.body.userData){
-        if(e.body.userData.splitCount < 3){
+        if(e.body.userData.splitCount < 2){
           splitObject(e.body.userData, e.contact);
         }
       }
@@ -463,19 +463,8 @@ function initCannon() {
   // meshId++
 
   const convexObjectBreaker = new ConvexObjectBreaker()
-const materialBreak = new THREE.MeshStandardMaterial({
-    //color: 0xa2ffb8,
-    color: 0xffffff,
-    //reflectivity: 0.15,
-    roughness: 0.7,
-    transparent: true,
-    opacity: 0.75,
-    transmission: 1.0,
-    side: THREE.DoubleSide,
-    clearcoat: 1.0,
-    //clearcoatRoughness: 0.35,
-})
-for (let i = 0; i < 2; i++) {
+
+for (let i = 0; i < 20; i++) {
     const size = {
         x: Math.random() * 1 + 2,
         y: Math.random() * 1 + 5,
@@ -486,7 +475,7 @@ for (let i = 0; i < 2; i++) {
         size.y,
         size.z
     )
-    const cube = new THREE.Mesh(geo, materialBreak)
+    const cube = new THREE.Mesh(geo, material)
 
     cube.position.x = Math.random() * 50 - 25
     cube.position.y = size.y / 2 + 0.1
