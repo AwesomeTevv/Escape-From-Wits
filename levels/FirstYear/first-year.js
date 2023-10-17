@@ -1,48 +1,24 @@
-import * as THREE from "three";
-import * as CANNON from "cannon-es";
-
 import { Game } from "../../utilities/Game";
+import * as THREE from 'three';
 
-/**
- * ThreeJS variables
- */
-let scene;
-let camera;
-let renderer;
+let _App = null;
+window.addEventListener('DOMContentLoaded',() =>{
+  _App = new FirstLevel();
+});
 
-/**
- * Cannon-es variables
- */
-let world;
-
-/**
- * Game runtime
- */
-
-init();
-animate();
-
-/**
- * Game runtime functions
- */
-function init() {
-  scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
-  renderer = new THREE.WebGLRenderer();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.body.appendChild(renderer.domElement);
-
-  world = new CANNON.World();
-
-  let game = new Game(scene, world);
-}
-
-function animate() {
-  requestAnimationFrame(animate);
-  renderer.render(scene, camera);
+class FirstLevel extends Game{
+  constructor(){
+    super();
+    const geometry = new THREE.ConeGeometry( 10, 30, 4, 1 );
+    const material = new THREE.MeshPhongMaterial( { color: 0x000000, flatShading: true } );
+    for ( let i = 0; i < 500; i ++ ) {
+      const mesh = new THREE.Mesh( geometry, material );
+      mesh.position.x = Math.random() * 1600 - 800;
+      mesh.position.y = 0;
+      mesh.position.z = Math.random() * 1600 - 800;
+      mesh.updateMatrix();
+      mesh.matrixAutoUpdate = false;
+      this.scene.add(mesh);
+    }
+  }
 }
