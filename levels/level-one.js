@@ -489,7 +489,7 @@ function initCannon() {
   }
 
   window.addEventListener("click", (event) => {
-    if (!controls.enabled) {
+    if (!controls.enabled || gunToggled == false) {
       return;
     }
 
