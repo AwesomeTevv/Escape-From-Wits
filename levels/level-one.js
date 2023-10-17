@@ -18,6 +18,10 @@ let mapCamera;
 let mapCanvas;
 let rendererMap;
 
+let endGateMesh;
+let endGateBody;
+let liftWall = false;
+
 let skybox;
 const skyboxImage = "mayhem/mayhem8/flame";
 // const skyboxImage = "mayhem/mayhem3/scorched";
@@ -523,36 +527,36 @@ function initCannon() {
     ballBody.position.set(x, y, z);
     ballMesh.position.copy(ballBody.position);
   });
-
   
- // Trigger body End Game -> Destory Exit Wall
- const triggerGeometry = new THREE.BoxGeometry(4, 1, 1);
- const triggerMaterial = new THREE.MeshBasicMaterial({
-   color: 0x00ff00,
-   wireframe: true,
- });
- const trigger = new THREE.Mesh(triggerGeometry, triggerMaterial);
- scene.add(trigger);
- const boxShape = new CANNON.Box(new CANNON.Vec3(4, 1, 1));
- triggerBody = new CANNON.Body({ isTrigger: true });
- triggerBody.addShape(boxShape);
- triggerBody.position.set(5, radius,-42);
- trigger.position.set(5, radius,-42);
- world.addBody(triggerBody);
-
- // It is possible to run code on the exit/enter
- // of the trigger.
- triggerBody.addEventListener("collide", (event) => {
+  
+  // Trigger body End Game -> Destory Exit Wall
+  const triggerGeometry = new THREE.BoxGeometry(4, 1, 1);
+  const triggerMaterial = new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+    wireframe: true,
+  });
+  const trigger = new THREE.Mesh(triggerGeometry, triggerMaterial);
+  scene.add(trigger);
+  const boxShape = new CANNON.Box(new CANNON.Vec3(4, 1, 1));
+  triggerBody = new CANNON.Body({ isTrigger: true });
+  triggerBody.addShape(boxShape);
+  triggerBody.position.set(5, radius,-42);
+  trigger.position.set(5, radius,-42);
+  world.addBody(triggerBody);
+  
+  // It is possible to run code on the exit/enter
+  // of the trigger.
+  triggerBody.addEventListener("collide", (event) => {
    if (event.body === sphereBody) {
-     console.log("The sphere entered the trigger!", event);
-     console.log("You are in possestion of " + numberOfKeys + " keys!");
      console.log("Will destory wall!");
      if (numberOfKeys == 2) {
-       window.location = "/levels/level-two.html";
-     }
-   }
- });
-
+      liftWall = true;
+      }else{
+        alert("Please collect all keys to escape!");
+      }
+    }
+  });
+  
   // Trigger body End Game -> Navigate to next level!
   const triggerGeometryEnd = new THREE.BoxGeometry(8, 1, 4);
   const triggerMaterialEnd = new THREE.MeshBasicMaterial({
@@ -564,18 +568,37 @@ function initCannon() {
   const boxShapee = new CANNON.Box(new CANNON.Vec3(8, 1, 4));
   triggerBodyEnd = new CANNON.Body({ isTrigger: true });
   triggerBodyEnd.addShape(boxShapee);
-  triggerBodyEnd.position.set(6, radius,-54);
-  triggerEnd.position.set(6, radius,-54);
+  triggerBodyEnd.position.set(6, radius,-56);
+  triggerEnd.position.set(6, radius,-56);
   world.addBody(triggerBodyEnd);
-
-  // It is possible to run code on the exit/enter
-  // of the trigger.
   triggerBodyEnd.addEventListener("collide", (event) => {
     if (event.body === sphereBody) {
       console.log("The sphere entered the trigger!", event);
       console.log("You are in possestion of " + numberOfKeys + " keys!");
-    }
+      console.log("Will destory wall!");
+      if (numberOfKeys == 2) {
+        window.location = "/levels/level-two.html";
+       }
+     }
   });
+
+  // Create End Wall 1
+  endGateMesh = new THREE.Mesh(
+    new THREE.BoxGeometry(8, 15, 2),
+    material
+  );
+  endGateMesh.position.set(6,15/2,-53);
+  scene.add(endGateMesh);
+
+  endGateBody = new CANNON.Body({
+    type: CANNON.Body.KINEMATIC,
+    shape: new CANNON.Box(
+      new CANNON.Vec3(8 * 0.5, 15, 2 * 0.5)
+    ),
+  });
+  endGateBody.position.copy(endGateMesh.position);
+  endGateBody.quaternion.copy(endGateMesh.quaternion);
+  world.addBody(endGateBody);
 
   // Create the user collision sphere
 
@@ -655,6 +678,12 @@ function animate() {
     //   boxMeshes[i].position.copy(voxels.boxes[i].position);
     //   boxMeshes[i].quaternion.copy(voxels.boxes[i].quaternion);
     // }
+  }
+    
+  if(liftWall){
+    endGateBody.position.copy(endGateMesh.position);
+    endGateBody.quaternion.copy(endGateMesh.quaternion);
+    endGateMesh.translateY(animationnum + 15/2);
   }
 
   let pos = sphereBody.position.clone();
