@@ -197,7 +197,7 @@ class PointerLockControlsCannon extends THREE.EventDispatcher {
       return;
     }
 
-    delta *= 500; // Adjust walking speed
+    delta *= 5000; // Adjust walking speed
     delta *= 0.1;
 
     this.inputVelocity.set(0, 0, 0);
