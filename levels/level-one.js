@@ -17,10 +17,10 @@ let triggerBodyEnd;
 let mapCamera;
 let mapCanvas;
 let rendererMap;
-
 let endGateMesh;
 let endGateBody;
 let liftWall = false;
+let gateNum = 0;
 
 let skybox;
 const skyboxImage = "mayhem/mayhem8/flame";
@@ -38,12 +38,12 @@ const vmap = loader.load("/assets/gold/MetalGoldPaint002_COL_1K_METALNESS.png");
 
 const vbmap = loader.load(
   "/assets/gold/MetalGoldPaint002_BUMP_1K_METALNESS.png"
-);
-
-const vdmap = loader.load(
-  "/assets/gold/MetalGoldPaint002_DISP_1K_METALNESS.png"
-);
-
+  );
+  
+  const vdmap = loader.load(
+    "/assets/gold/MetalGoldPaint002_DISP_1K_METALNESS.png"
+    );
+    
 vmap.wrapS = vmap.wrapT = THREE.RepeatWrapping;
 vmap.repeat.set(50, 50);
 
@@ -111,6 +111,11 @@ const audioListener = new THREE.AudioListener();
 const audioSource = new THREE.Audio(audioListener);
 audioSource.setMediaElementSource(audio);
 audioSource.setVolume(0.1); // Initial volume
+
+const audioShots = new Audio("../assets/ping.mp3");
+const audioListenerShots = new THREE.AudioListener();
+const audioSourceShots = new THREE.Audio(audioListenerShots);
+audioSourceShots.setMediaElementSource(audioShots);
 
 init();
 animate();
@@ -401,6 +406,8 @@ function init() {
 
   audio.play();
   camera.add(audioListener);
+  
+  camera.add(audioShots);
 
   sphereBody.position.set(-4.6, sphereBody.position.y, 55.17);
   // sphereBody.position.set(-14.6, 1.2, -45.76);
@@ -491,6 +498,8 @@ function initCannon() {
     if (!controls.enabled || gunToggled == false) {
       return;
     }
+    // audio.currentTime = 0;
+    // audioShots.play();
 
     const ballBody = new CANNON.Body({ mass: 1 });
     ballBody.addShape(ballShape);
@@ -681,7 +690,8 @@ function animate() {
   if(liftWall){
     endGateBody.position.copy(endGateMesh.position);
     endGateBody.quaternion.copy(endGateMesh.quaternion);
-    endGateMesh.translateY(animationnum + 15/2);
+    endGateMesh.translateY((gateNum + 15/2) * 0.0001);
+    gateNum++;
   }
 
   let pos = sphereBody.position.clone();

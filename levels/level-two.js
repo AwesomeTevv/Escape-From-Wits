@@ -293,14 +293,14 @@ function initCannon() {
   // Stabilization time in number of timesteps
   world.defaultContactMaterial.contactEquationRelaxation = 4;
 
-  const solver = new CANNON.GSSolver();
-  solver.iterations = 7;
-  solver.tolerance = 0.1;
-  world.solver = new CANNON.SplitSolver(solver);
+  // const solver = new CANNON.GSSolver();
+  // solver.iterations = 7;
+  // solver.tolerance = 0.1;
+  // world.solver = new CANNON.SplitSolver(solver);
   // use this to test non-split solver
   // world.solver = solver
 
-  world.gravity.set(0, -20, 0);
+  world.gravity.set(0, -9.8, 0);
 
   world.broadphase.useBoundingBoxes = true;
 
@@ -375,7 +375,7 @@ function initCannon() {
 
     ballBody.addEventListener('collide', (e)=>{
       if(e.body.userData){
-        if(e.body.userData.splitCount < 2){
+        if(e.body.userData.splitCount < 3){
           splitObject(e.body.userData, e.contact);
         }
       }
@@ -464,7 +464,7 @@ function initCannon() {
 
   const convexObjectBreaker = new ConvexObjectBreaker()
 
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 3; i++) {
     const size = {
         x: Math.random() * 1 + 2,
         y: Math.random() * 1 + 5,
