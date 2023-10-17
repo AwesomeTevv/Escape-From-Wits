@@ -548,6 +548,10 @@ function initCannon() {
     if (event.body === sphereBody) {
       console.log("The sphere entered the trigger!", event);
       console.log("You are in possestion of " + numberOfKeys + " keys!");
+      if(numberOfKeys == 2){
+        alert("Congratulations, you have completed the maze! :), Press Ok to go to next level!");
+        window.location = "/levels/level-two.html";
+      }
     }
   });
   world.addEventListener("endContact", (event) => {
