@@ -145,7 +145,7 @@ function loadgun() {
     // })
     gun.scale.set(3, 3, 3);
     scene.add(gun);
-    gun.position.set(sphereBody.position.x, 0.5 , sphereBody.position.z - 2);
+    gun.position.set(sphereBody.position.x, 0.5, sphereBody.position.z - 2);
     // gun.position.y = gun.position.y - 0.7;
     // gun.position.z = gun.position.z - 0.9;
     // gun.position.x = gun.position.x + 0.3;
@@ -161,7 +161,7 @@ function loadSword() {
     sword.scale.set(0.001, 0.001, 0.001);
     // camera.add(sword);
     scene.add(sword);
-    sword.position.set(5.66,1.3,14.7);
+    sword.position.set(5.66, 1.3, 14.7);
     //sword.rotation.z = Math.PI;
     //body.add(sword)
   });
@@ -188,7 +188,7 @@ function loadMap() {
     // map.position.y = map.position.y + 0.5;
     // map.position.z = map.position.z - 0.9;
     // map.position.x = map.position.x - 1.1;
-    map.position.set(-14.6, 1.2, -45.76)
+    map.position.set(-14.6, 1.2, -45.76);
     //body.add(sword)
   });
 }
@@ -340,7 +340,6 @@ function init() {
   // light.castShadow = true;
 
   // camera.add(light);
-  
 
   // light.shadow.mapSize.width = 512; // default
   // light.shadow.mapSize.height = 512; // default
@@ -398,7 +397,7 @@ function init() {
   audio.play();
   camera.add(audioListener);
 
-  sphereBody.position.set(-4.6,sphereBody.position.y, 55.17); 
+  sphereBody.position.set(-4.6, sphereBody.position.y, 55.17);
   // sphereBody.position.set(-14.6, 1.2, -45.76);
 
   loadgun();
@@ -406,7 +405,6 @@ function init() {
   loadKey();
   loadSword();
   generateCharacterEquipment();
-  
 }
 
 function initCannon() {
@@ -657,46 +655,37 @@ function animate() {
   //  // sphereBody.add(torch);
   // }
   // console.log(gunToggled);
-  
-  if (gunToggled === false){
-    
+
+  if (gunToggled === false) {
     //gun.rotate(Math.PI)
     rotateObject(gun);
     bobObject(gun);
   }
 
-  if (mapToggled === false){
-    
+  if (mapToggled === false) {
     //gun.rotate(Math.PI)
     rotateObject(map);
     bobObject(map);
   }
 
-  if (swordToggled === false){
-    
+  if (swordToggled === false) {
     //gun.rotate(Math.PI)
     rotateObject(sword);
     bobObject(sword);
   }
-
-
-
 }
 
-function rotateObject(object){
-  if (object === undefined){
-
-  }else{
-  object.rotation.y += 0.01
-  
+function rotateObject(object) {
+  if (object === undefined) {
+  } else {
+    object.rotation.y += 0.01;
   }
 }
-function bobObject(object){
-  if (object === undefined){
-
-  }else{
-  
-  object.position.y = 0.4 + Math.abs(0.5 * Math.sin(Math.PI * animationnum * 0.001))
+function bobObject(object) {
+  if (object === undefined) {
+  } else {
+    object.position.y =
+      0.2 + Math.abs(0.5 * Math.sin(Math.PI * animationnum * 0.005));
   }
 }
 
@@ -778,8 +767,8 @@ function performInteraction() {
   if (sword_distance < proximityThreshold && swordToggled == false) {
     swordToggled = true;
     numberOfKeys++;
-    
-    sword.position.set(0,0,0);
+
+    sword.position.set(0, 0, 0);
     sword.rotation.y = 0;
     camera.add(sword);
     sword.scale.set(0.0002, 0.0002, 0.0002);
@@ -787,23 +776,21 @@ function performInteraction() {
     sword.position.z = sword.position.z - 0.9;
     sword.position.x = sword.position.x;
     sword.rotation.y = Math.PI * 1.5;
-
   } else if (map_distance < proximityThreshold && mapToggled == false) {
     mapToggled = true;
     numberOfKeys++;
-    map.position.set(0,0,0);
-    map.rotation.y = 0;
+    map.position.set(0, 0, 0);
     camera.add(map);
     map.scale.set(0.2, 0.2, 0.2);
     map.position.y = map.position.y - 0.53;
     map.position.z = map.position.z - 0.9;
     map.position.x = map.position.x - 0.4;
     map.rotation.y = Math.PI * 0.5;
-  }else if (gun_distance < proximityThreshold && gunToggled == false){
+  } else if (gun_distance < proximityThreshold && gunToggled == false) {
     gunToggled = true;
-    gun.position.set(0,0,0);
+    gun.position.set(0, 0, 0);
     gun.rotation.y = 0;
-    
+
     camera.add(gun);
     gun.position.y = gun.position.y - 0.7;
     gun.position.z = gun.position.z - 0.9;

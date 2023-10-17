@@ -2,20 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>First Year</title>
-    <style>
-      body {
-        margin: 0;
-      }
-    </style>
-  </head>
-  <body></body>
-</html>
-
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
     <title>cannon.js + three.js - voxel shooter</title>
     <meta
       name="viewport"
@@ -26,19 +12,15 @@
         position: fixed;
         left: 0;
         top: 0;
-
         width: 100%;
         height: 100%;
-
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-
         background-color: rgba(0, 0, 0, 0.5);
         color: #ffffff;
         text-align: center;
-
         cursor: pointer;
       }
       #instructions span {
@@ -65,19 +47,138 @@
         background-color: #000000;
         border-radius: 50%;
       }
+
+      .glitch {
+        display: inline-block;
+        position: relative;
+        font-size: 2rem;
+        font-weight: bold;
+        color: red; /* Text color */
+      }
+
+      .glitch::before,
+      .glitch::after {
+        content: "Objective: find the objects and escape the maze"; /* Your text */
+        position: absolute;
+        top: 0;
+        left: 0;
+        color: blue; /* Text color for the glitch effect */
+      }
+
+      .glitch::before {
+        animation: glitch 2s infinite linear alternate-reverse;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        background: none; /* Remove the background */
+        z-index: -1;
+      }
+
+      .glitch::after {
+        animation: glitch 2s infinite linear alternate;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        background: none; /* Remove the background */
+        z-index: -2;
+      }
+
+      @keyframes glitch {
+        0% {
+          transform: translate(-3px, -3px);
+        }
+        10% {
+          transform: translate(3px, -3px);
+        }
+        20% {
+          transform: translate(-3px, 3px);
+        }
+        30% {
+          transform: translate(3px, 3px);
+        }
+        40% {
+          transform: translate(0, 0);
+        }
+        100% {
+          transform: translate(0, 0);
+        }
+      }
+      
+
+      .vertical-section {
+  text-align: center;
+}
+
+#instructions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+.column {
+  text-align: center;
+  margin: 0 20px;
+}
+
     </style>
   </head>
   <body>
-    <div id="instructions">
-      <span>Click to play</span>
-      <br />
-      <p>W, A, S, D - Move</p>
-      <p>SPACE - Jump</p>
-      <p>MOUSE - Look</p>
-      <p>CLICK - Shoot</p>
+    <div class="vertical-section">
+      <div id="instructions">
+        <div class="column">
+            <span class="glitch">Objective: Find all objects and escape the maze</span>
+        </div>
+        <div class="row">
+
+          <div class="column">
+            <img width="150" src="tevkey.png" alt="some_text" class="transparent-image" />
+            <p>Move</p>
+          </div>
+
+          <div class="column">
+            <img width="150" src="spacebar.png" alt="some_text" class="transparent-image" />
+            <p>Jump</p>
+          </div>
+          
+          <div class="column">
+            <img width="150" src="mouse.png" alt="some_text" class="transparent-image" />
+            <p>Look</p>
+          </div>
+          
+          <div class="column">
+            <img width="150" src="clicking.png" alt="some_text" class="transparent-image" />
+            <p>Shoot</p>
+          </div>
+          
+          
+        </div>
+    
+        <div class="row">
+          <div class="instruction">
+            <span>Press Enter to start</span>
+          </div>
+        </div>
+      </div>
     </div>
+    
+    
+    
+    
     <canvas id="minimap" style="width: 100px; height: 100px"></canvas>
     <span class="dot"></span>
+    
     <script type="module" src="/levels/level-one.js"></script>
+    
+    <script>
+      // Function to show game mechanics when the user presses Enter
+      document.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+          // Hide the instructions and show the game mechanics
+          var instructions = document.getElementById("instructions");
+          instructions.style.display = "none";
+        }
+      });
+    </script>
   </body>
 </html>

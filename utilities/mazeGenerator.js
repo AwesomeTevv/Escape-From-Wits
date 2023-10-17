@@ -1,6 +1,4 @@
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-
 import * as CANNON from "cannon-es";
 
 const loader = new THREE.TextureLoader();
@@ -28,7 +26,9 @@ function add(
 
   const body = new CANNON.Body({
     type: CANNON.Body.STATIC,
-    shape: new CANNON.Box(new CANNON.Vec3(length, height, thickness)),
+    shape: new CANNON.Box(
+      new CANNON.Vec3(length * 0.5, height, thickness * 0.5)
+    ),
   });
   body.position.copy(mesh.position);
   body.quaternion.copy(mesh.quaternion);
