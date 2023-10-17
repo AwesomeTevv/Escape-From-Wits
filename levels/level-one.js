@@ -485,7 +485,9 @@ function initCannon() {
   }
 
   window.addEventListener("click", (event) => {
-    if (!controls.enabled) {
+    
+    if (!controls.enabled || gunToggled == false) {
+      
       return;
     }
 
@@ -595,7 +597,7 @@ function initPointerLock() {
 
 function animate() {
   requestAnimationFrame(animate);
-  console.log(sphereBody.position);
+  //console.log(sphereBody.position);
   animationnum += 1;
   // Calculate the distance between the player cube and the goal cube
   const playerPosition = sphereBody.position.clone();
