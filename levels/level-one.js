@@ -8,7 +8,7 @@ import { PointerLockControlsCannon } from "../utilities/PointerLockControlsCanno
 import { VoxelLandscape } from "../utilities/VoxelLandscape.js";
 import { Maze } from "../utilities/mazeGenerator";
 
-import CannonDebugger from "cannon-es-debugger";
+// import CannonDebugger from "cannon-es-debugger";
 
 let cannonDebugger;
 
@@ -393,7 +393,7 @@ function init() {
 
   helpers(); // ! Temporary -- Remove at the end
 
-  cannonDebugger = new CannonDebugger(scene, world, {});
+  // cannonDebugger = new CannonDebugger(scene, world, {});
 
   // mazeTemplate();
   // maze();s
@@ -601,7 +601,7 @@ function animate() {
   requestAnimationFrame(animate);
 
   maze.update();
-  cannonDebugger.update();
+  // cannonDebugger.update();
   // console.log(sphereBody.position);
   animationnum += 1;
   // Calculate the distance between the player cube and the goal cube
