@@ -49,7 +49,7 @@ function add(
     shape: new CANNON.Box(
       new CANNON.Vec3(length * 0.5, height * 0.5, thickness * 0.5)
     ),
-    type: CANNON.Body.KINEMATIC
+    type: CANNON.Body.KINEMATIC,
   });
   body.position.copy(mesh.position);
   body.quaternion.copy(mesh.quaternion);
@@ -97,7 +97,7 @@ function perimeter(scene, world) {
 
   const material = new THREE.MeshPhongMaterial({
     specular: 0x666666,
-    shininess: 10,
+    shininess: 30,
     bumpMap: bmap,
     bumpScale: 1,
     displacementMap: dmap,
@@ -213,7 +213,7 @@ export class Maze {
 
     const material = new THREE.MeshPhongMaterial({
       specular: 0x666666,
-      shininess: 10,
+      shininess: 30,
       bumpMap: bmap,
       bumpScale: 1,
       displacementMap: dmap,
