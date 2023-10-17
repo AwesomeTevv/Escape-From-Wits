@@ -29,10 +29,11 @@ function add(
   meshes.push(mesh);
 
   const body = new CANNON.Body({
-    mass: 1000,
+    mass: 1,
     shape: new CANNON.Box(
       new CANNON.Vec3(length * 0.5, height * 0.5, thickness * 0.5)
     ),
+    type: CANNON.Body.KINEMATIC
   });
   body.position.copy(mesh.position);
   body.quaternion.copy(mesh.quaternion);

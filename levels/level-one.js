@@ -431,7 +431,7 @@ function initCannon() {
   // use this to test non-split solver
   // world.solver = solver
 
-  world.gravity.set(0, -20, 0);
+  world.gravity.set(0, -9.8, 0);
 
   world.broadphase.useBoundingBoxes = true;
 
