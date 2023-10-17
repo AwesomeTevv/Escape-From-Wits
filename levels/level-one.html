@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>First Year</title>
+    <title>Escape From Wits - Level 1</title>
     <meta
       name="viewport"
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
@@ -53,16 +53,21 @@
         position: relative;
         font-size: 2rem;
         font-weight: bold;
-        color: red; /* Text color */
+        color: rgb(255, 255, 255); /* Text color */
       }
 
       .glitch::before,
       .glitch::after {
-        content: "Objective: find all objects and escape the maze"; /* Your text */
+        content: "Find all objects and escape the maze"; /* Your text */
         position: absolute;
         top: 0;
         left: 0;
-        color: blue; /* Text color for the glitch effect */
+        color: rgba(
+          243,
+          241,
+          234,
+          0.473
+        ); /* Text color for the glitch effect */
       }
 
       .glitch::before {
@@ -121,18 +126,38 @@
       }
 
       .column {
-        text-align: center;
+        text-align: relative;
         margin: 0 20px;
+      }
+
+      .column img {
+        width: 225px; /* Adjust this value as needed to make the images the same size */
+        height: 125px; /* Adjust this value as needed to make the images the same size */
+      }
+
+      #objective-container {
+        position: absolute;
+        top: 20%; /* Position the text vertically in the middle */
+        left: 48%; /* Position the text horizontally in the center */
+        transform: translate(
+          -50%,
+          -50%
+        ); /* Adjust this to center the text properly */
+      }
+
+      #start-button {
+        position: absolute;
+        bottom: 200px; /* Adjust this value to position the text at the desired distance from the bottom */
+        left: 50%; /* Position the text horizontally in the center */
+        transform: translateX(-50%); /* Center the text horizontally */
       }
     </style>
   </head>
   <body>
     <div class="vertical-section">
       <div id="instructions">
-        <div class="column">
-          <span class="glitch"
-            >Objective: Find all objects and escape the maze</span
-          >
+        <div class="column" id="objective-container">
+          <span class="glitch">Find all objects and escape the maze</span>
         </div>
         <div class="row">
           <div class="column">
@@ -159,7 +184,8 @@
             <img
               width="150"
               src="mouse.png"
-              alt="some_text"
+              alt="som
+            e_text"
               class="transparent-image"
             />
             <p>Look</p>
@@ -177,8 +203,8 @@
         </div>
 
         <div class="row">
-          <div class="instruction">
-            <span>Press Enter to start</span>
+          <div class="instruction" id="start-button">
+            <span>Click to start</span>
           </div>
         </div>
       </div>

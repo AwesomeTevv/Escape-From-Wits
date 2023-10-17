@@ -8,12 +8,6 @@ import { PointerLockControlsCannon } from "../utilities/PointerLockControlsCanno
 import { VoxelLandscape } from "../utilities/VoxelLandscape.js";
 import { Maze } from "../utilities/mazeGenerator";
 
-// import CannonDebugger from "cannon-es-debugger";
-
-let cannonDebugger;
-
-let maze;
-
 let scene;
 let camera;
 let renderer;
@@ -272,7 +266,7 @@ function worldPlane() {
     bumpMap: bmap,
     bumpScale: 1,
     displacementMap: dmap,
-    displacementScale: 0,
+    displacementScale: 0.1,
     normalMap: nmap,
     aoMap: amap,
     map: map,
@@ -394,12 +388,12 @@ function init() {
 
   helpers(); // ! Temporary -- Remove at the end
 
-  // cannonDebugger = new CannonDebugger(scene, world, {});
-
   // mazeTemplate();
   // maze();s
 
-  maze = new Maze(scene, world);
+  let maze = new THREE.Scene();
+  Maze(maze, world);
+  scene.add(maze);
 
   audio.play();
   camera.add(audioListener);
@@ -432,7 +426,7 @@ function initCannon() {
   // use this to test non-split solver
   // world.solver = solver
 
-  world.gravity.set(0, -9.8, 0);
+  world.gravity.set(0, -20, 0);
 
   world.broadphase.useBoundingBoxes = true;
 
@@ -442,7 +436,7 @@ function initCannon() {
     physicsMaterial,
     physicsMaterial,
     {
-      friction: 10,
+      friction: 0.4,
       restitution: 0.3,
       contactEquationStiffness: 1e8,
       contactEquationRelaxation: 3,
@@ -457,7 +451,7 @@ function initCannon() {
   // Create the user collision sphere
   const radius = 1.3;
   sphereShape = new CANNON.Sphere(radius);
-  sphereBody = new CANNON.Body({ mass: 1000, material: physics_physics });
+  sphereBody = new CANNON.Body({ mass: 5, material: physics_physics });
   sphereBody.addShape(sphereShape);
   sphereBody.position.set(nx * sx * 0.5, ny * sy + radius * 2, nz * sz * 0.5);
   sphereBody.linearDamping = 0.9;
@@ -490,7 +484,9 @@ function initCannon() {
   }
 
   window.addEventListener("click", (event) => {
+    
     if (!controls.enabled || gunToggled == false) {
+      
       return;
     }
 
@@ -578,12 +574,6 @@ function initCannon() {
     if (event.body === sphereBody) {
       console.log("The sphere entered the trigger!", event);
       console.log("You are in possestion of " + numberOfKeys + " keys!");
-      if (numberOfKeys == 2) {
-        alert(
-          "Congratulations, you have completed the maze! :), Press Ok to go to next level!"
-        );
-        window.location = "/levels/level-two.html";
-      }
     }
   });
 
@@ -627,10 +617,7 @@ function initPointerLock() {
 
 function animate() {
   requestAnimationFrame(animate);
-
-  maze.update();
-  // cannonDebugger.update();
-  // console.log(sphereBody.position);
+  //console.log(sphereBody.position);
   animationnum += 1;
   // Calculate the distance between the player cube and the goal cube
   const playerPosition = sphereBody.position.clone();
