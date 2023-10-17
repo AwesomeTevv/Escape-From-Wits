@@ -162,7 +162,7 @@ function loadSword() {
     sword.scale.set(0.001, 0.001, 0.001);
     // camera.add(sword);
     scene.add(sword);
-    sword.position.set(5.66, 1.3, 14.7);
+    sword.position.set(24.34, 1.35, 44.51);
     //sword.rotation.z = Math.PI;
     //body.add(sword)
   });
@@ -484,9 +484,7 @@ function initCannon() {
   }
 
   window.addEventListener("click", (event) => {
-    
     if (!controls.enabled || gunToggled == false) {
-      
       return;
     }
 
@@ -524,34 +522,33 @@ function initCannon() {
     ballMesh.position.copy(ballBody.position);
   });
 
-  
- // Trigger body End Game -> Destory Exit Wall
- const triggerGeometry = new THREE.BoxGeometry(4, 1, 1);
- const triggerMaterial = new THREE.MeshBasicMaterial({
-   color: 0x00ff00,
-   wireframe: true,
- });
- const trigger = new THREE.Mesh(triggerGeometry, triggerMaterial);
- scene.add(trigger);
- const boxShape = new CANNON.Box(new CANNON.Vec3(4, 1, 1));
- triggerBody = new CANNON.Body({ isTrigger: true });
- triggerBody.addShape(boxShape);
- triggerBody.position.set(5, radius,-42);
- trigger.position.set(5, radius,-42);
- world.addBody(triggerBody);
+  // Trigger body End Game -> Destory Exit Wall
+  const triggerGeometry = new THREE.BoxGeometry(4, 1, 1);
+  const triggerMaterial = new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+    wireframe: true,
+  });
+  const trigger = new THREE.Mesh(triggerGeometry, triggerMaterial);
+  scene.add(trigger);
+  const boxShape = new CANNON.Box(new CANNON.Vec3(4, 1, 1));
+  triggerBody = new CANNON.Body({ isTrigger: true });
+  triggerBody.addShape(boxShape);
+  triggerBody.position.set(5, radius, -42);
+  trigger.position.set(5, radius, -42);
+  world.addBody(triggerBody);
 
- // It is possible to run code on the exit/enter
- // of the trigger.
- triggerBody.addEventListener("collide", (event) => {
-   if (event.body === sphereBody) {
-     console.log("The sphere entered the trigger!", event);
-     console.log("You are in possestion of " + numberOfKeys + " keys!");
-     console.log("Will destory wall!");
-     if (numberOfKeys == 2) {
-       window.location = "/levels/level-two.html";
-     }
-   }
- });
+  // It is possible to run code on the exit/enter
+  // of the trigger.
+  triggerBody.addEventListener("collide", (event) => {
+    if (event.body === sphereBody) {
+      console.log("The sphere entered the trigger!", event);
+      console.log("You are in possestion of " + numberOfKeys + " keys!");
+      console.log("Will destory wall!");
+      if (numberOfKeys == 2) {
+        window.location = "/levels/level-two.html";
+      }
+    }
+  });
 
   // Trigger body End Game -> Navigate to next level!
   const triggerGeometryEnd = new THREE.BoxGeometry(8, 1, 4);
@@ -564,8 +561,8 @@ function initCannon() {
   const boxShapee = new CANNON.Box(new CANNON.Vec3(8, 1, 4));
   triggerBodyEnd = new CANNON.Body({ isTrigger: true });
   triggerBodyEnd.addShape(boxShapee);
-  triggerBodyEnd.position.set(6, radius,-54);
-  triggerEnd.position.set(6, radius,-54);
+  triggerBodyEnd.position.set(6, radius, -54);
+  triggerEnd.position.set(6, radius, -54);
   world.addBody(triggerBodyEnd);
 
   // It is possible to run code on the exit/enter
@@ -617,7 +614,7 @@ function initPointerLock() {
 
 function animate() {
   requestAnimationFrame(animate);
-  //console.log(sphereBody.position);
+  console.log(sphereBody.position);
   animationnum += 1;
   // Calculate the distance between the player cube and the goal cube
   const playerPosition = sphereBody.position.clone();
