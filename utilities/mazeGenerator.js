@@ -6,6 +6,22 @@ const loader = new THREE.TextureLoader();
 let meshes = [];
 let bodies = [];
 
+const ball = new CANNON.Material("physics");
+
+const wall = new CANNON.Material({
+  friction: 10,
+  restitution: 0.3,
+});
+
+const physics_physics = new CANNON.ContactMaterial(ball, wall, {
+  friction: 100.0,
+  restitution: 0,
+  contactEquationStiffness: 1e8,
+  contactEquationRelaxation: 3,
+  frictionEquationStiffness: 1e8,
+  frictionEquationRegularizationTime: 3,
+});
+
 function add(
   scene,
   world,
@@ -29,10 +45,11 @@ function add(
   meshes.push(mesh);
 
   const body = new CANNON.Body({
-    mass: 1000,
+    mass: 100000,
     shape: new CANNON.Box(
       new CANNON.Vec3(length * 0.5, height * 0.5, thickness * 0.5)
     ),
+    material: physics_physics,
   });
   body.position.copy(mesh.position);
   body.quaternion.copy(mesh.quaternion);
@@ -152,6 +169,9 @@ function perimeter(scene, world) {
 
 export class Maze {
   constructor(scene, world) {
+    // We must add the contact materials to the world
+    world.addContactMaterial(physics_physics);
+
     perimeter(scene, world);
 
     const length = 15;
