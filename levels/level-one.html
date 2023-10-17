@@ -62,7 +62,7 @@
         position: absolute;
         top: 0;
         left: 0;
-        color: blue; /* Text color for the glitch effect */
+        color: rgb(228, 228, 232); /* Text color for the glitch effect */
       }
 
       .glitch::before {
@@ -122,16 +122,37 @@ body {
 }
 
 .column {
-  text-align: center;
+  text-align: relative;
   margin: 0 20px;
 }
+
+.column img {
+  width: 225px; /* Adjust this value as needed to make the images the same size */
+  height: 125px; /* Adjust this value as needed to make the images the same size */
+}
+
+#objective-container {
+  position: absolute;
+  top: 20%; /* Position the text vertically in the middle */
+  left: 48%; /* Position the text horizontally in the center */
+  transform: translate(-50%, -50%); /* Adjust this to center the text properly */
+}
+
+#start-button {
+  position: absolute;
+  bottom: 200px; /* Adjust this value to position the text at the desired distance from the bottom */
+  left: 50%; /* Position the text horizontally in the center */
+  transform: translateX(-50%); /* Center the text horizontally */
+}
+
+
 
     </style>
   </head>
   <body>
     <div class="vertical-section">
       <div id="instructions">
-        <div class="column">
+        <div class="column" id="objective-container">
             <span class="glitch">Objective: Find all objects and escape the maze</span>
         </div>
         <div class="row">
@@ -144,15 +165,17 @@ body {
           <div class="column">
             <img width="150" src="spacebar.png" alt="some_text" class="transparent-image" />
             <p>Jump</p>
-          </div>
+        </div>
+        
           
           <div class="column">
-            <img width="150" src="mouse.png" alt="some_text" class="transparent-image" />
+            <img width="150" src="mouse.png" alt="som
+            e_text" class="transparent-image" />
             <p>Look</p>
           </div>
           
           <div class="column">
-            <img width="150" src="clicking.png" alt="some_text" class="transparent-image" />
+            <img width="150"  src="clicking.png" alt="some_text" class="transparent-image" />
             <p>Shoot</p>
           </div>
           
@@ -160,8 +183,8 @@ body {
         </div>
     
         <div class="row">
-          <div class="instruction">
-            <span>Press Enter to start</span>
+          <div class="instruction" id="start-button">
+            <span>Click to start</span>
           </div>
         </div>
       </div>
