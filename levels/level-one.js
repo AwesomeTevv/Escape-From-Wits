@@ -7,6 +7,7 @@ import * as CANNON from "cannon-es";
 import { PointerLockControlsCannon } from "../utilities/PointerLockControlsCannon";
 import { VoxelLandscape } from "../utilities/VoxelLandscape.js";
 import { Maze } from "../utilities/mazeGenerator";
+import Token from "../utilities/tokens";
 
 let scene;
 let camera;
@@ -88,6 +89,10 @@ const timeStep = 1 / 60;
 let lastCallTime = performance.now() / 1000;
 let numberOfKeys = 0;
 
+let TestGun = new Token();
+
+
+
 const balls = [];
 1;
 const ballMeshes = [];
@@ -143,7 +148,7 @@ function mazeTemplate() {
   );
 }
 
-function loadgun() {
+function loadgunf() {
   modelLoader.load("/assets/weapons/gun.glb", function (gltf) {
     gun = gltf.scene;
     // gun.traverse((node) =>{
@@ -163,6 +168,18 @@ function loadgun() {
     //body.add(gun)
   });
 }
+
+function loadgun() {
+  modelLoader.load("/assets/weapons/gun.glb", function (gltf) {
+    TestGun.object = gltf.scene;
+   
+    TestGun.object.scale.set(3, 3, 3);
+    scene.add(TestGun.object);
+    TestGun.object.position.set(sphereBody.position.x, 0.5, sphereBody.position.z - 2);
+    
+  });
+}
+
 
 function loadSword() {
   modelLoader.load("/assets/sword/scene.gltf", function (gltf) {
@@ -224,12 +241,9 @@ function generateCharacterEquipment() {
   torch.target = torchTarget;
   //gunlight.target = gunTarget;
   camera.add(torch);
-  //camera.add(gunlight);
+  
   torch.position.z = torch.position.z + 5;
-  //gunlight.position.y = gunlight.position.y ;
-  // gunlight.target.position.z = camera.position.z;
-  // gunlight.target.position.y = camera.position.y;
-  //torch.position.y = torch.position.y
+ 
 }
 
 function worldLight() {
@@ -412,7 +426,14 @@ function init() {
   sphereBody.position.set(-4.6, sphereBody.position.y, 55.17);
   // sphereBody.position.set(-14.6, 1.2, -45.76);
 
+  //
+  
+  //TestGun.loadObject("/assets/weapons/gun.glb" , scene);
   loadgun();
+  TestGun.object.position.set(sphereBody.position.x, 0.5, sphereBody.position.z - 2);
+  TestGun.loaded = true;
+  console.log("Gun pos " + TestGun.object.position.x);
+
   loadMap();
   loadKey();
   loadSword();
@@ -647,7 +668,8 @@ function initPointerLock() {
 
 function animate() {
   requestAnimationFrame(animate);
-  console.log(sphereBody.position);
+  //console.log(sphereBody.position);
+  //console.log("Gun pos " + TestGun.object.position.x);
   animationnum += 1;
   // Calculate the distance between the player cube and the goal cube
   const playerPosition = sphereBody.position.clone();
@@ -816,7 +838,9 @@ function performInteraction() {
   const characterPosition = sphereBody.position;
   const swordPos = sword.position;
   const mapPos = map.position;
-  const gunPos = gun.position;
+  const gunPos = TestGun.getPosition();
+  // console.log(mapPos);
+  // console.log(gunPos);
 
   let sword_distance = characterPosition.distanceTo(swordPos);
   let map_distance = characterPosition.distanceTo(mapPos);
@@ -848,14 +872,14 @@ function performInteraction() {
     map.position.x = map.position.x - 0.4;
     map.rotation.y = Math.PI * 0.5;
   } else if (gun_distance < proximityThreshold && gunToggled == false) {
-    gunToggled = true;
-    gun.position.set(0, 0, 0);
-    gun.rotation.y = 0;
+     gunToggled = true;
+     TestGun.object.position.set(0, 0, 0);
+     TestGun.object.rotation.y = 0;
 
-    camera.add(gun);
-    gun.position.y = gun.position.y - 0.7;
-    gun.position.z = gun.position.z - 0.9;
-    gun.position.x = gun.position.x + 0.3;
-    gun.rotation.x = Math.PI / 15;
+    camera.add(TestGun.object);
+     TestGun.object.position.y = TestGun.object.position.y - 0.7;
+     TestGun.object.position.z = TestGun.object.position.z - 0.9;
+     TestGun.object.position.x = TestGun.object.position.x + 0.3;
+     TestGun.object.rotation.x = Math.PI / 15;
   }
 }
