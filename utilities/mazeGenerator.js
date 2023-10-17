@@ -25,7 +25,7 @@ function add(
   scene.add(mesh);
 
   const body = new CANNON.Body({
-    type: CANNON.Body.STATIC,
+    type: CANNON.Body.KINEMATIC,
     shape: new CANNON.Box(
       new CANNON.Vec3(length * 0.5, height, thickness * 0.5)
     ),
