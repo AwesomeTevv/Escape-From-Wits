@@ -8,6 +8,12 @@ import { PointerLockControlsCannon } from "../utilities/PointerLockControlsCanno
 import { VoxelLandscape } from "../utilities/VoxelLandscape.js";
 import { Maze } from "../utilities/mazeGenerator";
 
+// import CannonDebugger from "cannon-es-debugger";
+
+let cannonDebugger;
+
+let maze;
+
 let scene;
 let camera;
 let renderer;
@@ -226,7 +232,7 @@ function worldLight() {
   const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
   scene.add(ambientLight);
 
-  const hemisphereLight = new THREE.HemisphereLight(0x808080, 0x080820, 1);
+  const hemisphereLight = new THREE.HemisphereLight(0x808080, 0x080820, 10);
   scene.add(hemisphereLight);
 
   // const helper = new THREE.HemisphereLightHelper(hemisphereLight, 5);
@@ -326,7 +332,7 @@ function init() {
   // scene.background = new THREE.Color(0x88ccee);
   scene.background = new THREE.Color(0x000000);
   // scene.fog = new THREE.Fog(0x88ccee, 0, 50);
-  scene.fog = new THREE.Fog(0x000000, 0, 17); // Commented for dev purposes
+  // scene.fog = new THREE.Fog(0x000000, 0, 17); // Commented for dev purposes
 
   camera = new THREE.PerspectiveCamera(
     75,
@@ -387,12 +393,12 @@ function init() {
 
   helpers(); // ! Temporary -- Remove at the end
 
+  // cannonDebugger = new CannonDebugger(scene, world, {});
+
   // mazeTemplate();
   // maze();s
 
-  let maze = new THREE.Scene();
-  Maze(maze, world);
-  scene.add(maze);
+  maze = new Maze(scene, world);
 
   audio.play();
   camera.add(audioListener);
@@ -483,9 +489,7 @@ function initCannon() {
   }
 
   window.addEventListener("click", (event) => {
-    
     if (!controls.enabled || gunToggled == false) {
-      
       return;
     }
 
@@ -599,7 +603,10 @@ function initPointerLock() {
 
 function animate() {
   requestAnimationFrame(animate);
-  //console.log(sphereBody.position);
+
+  maze.update();
+  // cannonDebugger.update();
+  // console.log(sphereBody.position);
   animationnum += 1;
   // Calculate the distance between the player cube and the goal cube
   const playerPosition = sphereBody.position.clone();
