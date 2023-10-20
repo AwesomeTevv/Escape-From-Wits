@@ -251,6 +251,8 @@ class Game {
       this.controls.enabled = false;
       instructions.style.display = null;
     });
+
+    characterBody.position.set(10, radius / 2, 55);
   }
 
   _BindShooting() {
@@ -489,6 +491,29 @@ class Game {
   _AddMaze() {
     const maze = this.generateMaze(20, 20);
     this.visualise(maze);
+
+    /**
+     * ! Temporary
+     * REMOVE AT END
+     * This is just to show us where the exit is
+     */
+    const height = 5;
+
+    const shape = new CANNON.Box(
+      new CANNON.Vec3(5 * 0.5, height * 0.5, 5 * 0.5)
+    );
+    const body = new CANNON.Body({
+      type: CANNON.Body.KINEMATIC,
+      shape,
+    });
+    body.position.set(0, height / 2, -50);
+    this.world.addBody(body);
+
+    const geometry = new THREE.BoxGeometry(5, height, 5);
+    const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+    const cube = new THREE.Mesh(geometry, material);
+    cube.position.set(0, height / 2, -50);
+    this.scene.add(cube);
   }
 }
 
