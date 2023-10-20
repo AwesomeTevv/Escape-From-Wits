@@ -109,11 +109,11 @@ class Game {
     // Loading in textures
     const loader = new THREE.TextureLoader();
     const base = "../../assets/" + this.wallTexture;
-    const map = loader.load(base + "COL_2K_METALNESS.png");
-    const bmap = loader.load(base + "BUMP_2K_METALNESS.png");
-    const dmap = loader.load(base + "DISP_2K_METALNESS.png");
-    const nmap = loader.load(base + "NRM_2K_METALNESS.png");
-    const amap = loader.load(base + "AO_2K_METALNESS.png");
+    const map = loader.load(base + "COL_2K.png");
+    const bmap = loader.load(base + "BUMP_2K.png");
+    const dmap = loader.load(base + "DISP_2K.png");
+    const nmap = loader.load(base + "NRM_2K.png");
+    const amap = loader.load(base + "AO_2K.png");
 
     const scale = 1;
     map.wrapS = map.wrapT = THREE.RepeatWrapping;
