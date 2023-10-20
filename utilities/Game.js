@@ -5,7 +5,7 @@ import { PointerLockControlsCannon } from "./PointerLockControlsCannon";
 import Stats from "three/examples/jsm/libs/stats.module";
 
 class Game {
-  constructor(skyboxImage) {
+  constructor(skyboxImage, wallTexture) {
     this.scene = null;
     this.renderer = null;
     this.camera = null;
@@ -17,6 +17,9 @@ class Game {
 
     this.skybox = null;
     this.skyboxImage = skyboxImage;
+
+    this.wallMaterial = null;
+    this.wallTexture = wallTexture;
 
     this.ballBodies = [];
     this.ballMeshes = [];
@@ -102,6 +105,44 @@ class Game {
     const skyboxGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
     this.skybox = new THREE.Mesh(skyboxGeometry, materialArray);
     this.scene.add(this.skybox);
+
+    // Loading in textures
+    const loader = new THREE.TextureLoader();
+    const base = "../../assets/" + this.wallTexture;
+    const map = loader.load(base + "COL_2K_METALNESS.png");
+    const bmap = loader.load(base + "BUMP_2K_METALNESS.png");
+    const dmap = loader.load(base + "DISP_2K_METALNESS.png");
+    const nmap = loader.load(base + "NRM_2K_METALNESS.png");
+    const amap = loader.load(base + "AO_2K_METALNESS.png");
+
+    const scale = 1;
+    map.wrapS = map.wrapT = THREE.RepeatWrapping;
+    map.repeat.set(scale, scale);
+
+    bmap.wrapS = bmap.wrapT = THREE.RepeatWrapping;
+    bmap.repeat.set(scale, scale);
+
+    dmap.wrapS = dmap.wrapT = THREE.RepeatWrapping;
+    dmap.repeat.set(scale, scale);
+
+    nmap.wrapS = nmap.wrapT = THREE.RepeatWrapping;
+    nmap.repeat.set(scale, scale);
+
+    amap.wrapS = amap.wrapT = THREE.RepeatWrapping;
+    amap.repeat.set(scale, scale);
+
+    this.wallMaterial = new THREE.MeshPhongMaterial({
+      specular: 0x666666,
+      shininess: 10,
+      bumpMap: bmap,
+      bumpScale: 1,
+      displacementMap: dmap,
+      displacementScale: 0,
+      normalMap: nmap,
+      aoMap: amap,
+      map: map,
+      depthTest: true,
+    });
   }
 
   _BuildWorld() {
@@ -417,8 +458,8 @@ class Game {
     this.world.addBody(body);
 
     const geometry = new THREE.BoxGeometry(5, height, 5);
-    const material = new THREE.MeshPhongMaterial({ color: 0x0088ff });
-    const cube = new THREE.Mesh(geometry, material);
+    // const material = new THREE.MeshPhongMaterial({ color: 0x0088ff });
+    const cube = new THREE.Mesh(geometry, this.wallMaterial);
     cube.position.set(x, height / 2, z);
     this.scene.add(cube);
   }
