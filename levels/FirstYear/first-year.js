@@ -8,7 +8,7 @@ window.addEventListener('DOMContentLoaded',() =>{
 
 class FirstLevel extends Game{
   constructor(){
-    super();
+    super("mayhem/mayhem8/flame");
     // const geometry = new THREE.ConeGeometry( 10, 30, 4, 1 );
     // const material = new THREE.MeshPhongMaterial( { color: 0x000000, flatShading: true } );
     // for ( let i = 0; i < 500; i ++ ) {

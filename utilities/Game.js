@@ -5,7 +5,7 @@ import { PointerLockControlsCannon } from "./PointerLockControlsCannon";
 import Stats from "three/examples/jsm/libs/stats.module";
 
 class Game{
-  constructor(){
+  constructor(skyboxImage){
     this.scene = null;
     this.renderer = null;
     this.camera = null;
@@ -14,6 +14,9 @@ class Game{
     this.controls = null;
     this.world = null;
     this.stats = null;
+
+    this.skybox = null;
+    this.skyboxImage = skyboxImage;
 
     this.ballBodies = [];
     this.ballMeshes = [];
@@ -93,6 +96,11 @@ class Game{
     this.world = new CANNON.World({
       gravity: new CANNON.Vec3(0,-9.8,0)
     });
+
+    const materialArray = this.createMaterialArray(this.skyboxImage);
+    const skyboxGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
+    this.skybox = new THREE.Mesh(skyboxGeometry, materialArray);
+    this.scene.add(this.skybox);
   }
 
   _BuildWorld(){
@@ -230,7 +238,35 @@ class Game{
     const shootVelocity = 10;
     const ballShape = new CANNON.Sphere(0.2);
     const ballGeometry = new THREE.SphereGeometry(ballShape.radius, 32, 32);
-  
+    let loader = new THREE.TextureLoader();
+    const vmap = loader.load("/assets/gold/MetalGoldPaint002_COL_1K_METALNESS.png");
+    const vbmap = loader.load(
+      "/assets/gold/MetalGoldPaint002_BUMP_1K_METALNESS.png"
+      );
+      
+      const vdmap = loader.load(
+        "/assets/gold/MetalGoldPaint002_DISP_1K_METALNESS.png"
+        );
+        
+    vmap.wrapS = vmap.wrapT = THREE.RepeatWrapping;
+    vmap.repeat.set(50, 50);
+
+    vbmap.wrapS = vbmap.wrapT = THREE.RepeatWrapping;
+    vbmap.repeat.set(50, 50);
+
+    vdmap.wrapS = vdmap.wrapT = THREE.RepeatWrapping;
+    vdmap.repeat.set(50, 50);
+
+    let ballMaterial = new THREE.MeshPhongMaterial({
+      specular: 0x666666,
+      shininess: 10,
+      bumpMap: vbmap,
+      bumpScale: 0.5,
+      displacementMap: vdmap,
+      displacementScale: 0.01,
+      map: vmap,
+      depthTest: true,
+    });
     window.addEventListener("click", (event) => {
       if (!this.controls.enabled) {
         return;
@@ -239,7 +275,7 @@ class Game{
       const material = new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } );
       const ballBody = new CANNON.Body({ mass: 1 });
       ballBody.addShape(ballShape);
-      const ballMesh = new THREE.Mesh(ballGeometry, material);
+      const ballMesh = new THREE.Mesh(ballGeometry, ballMaterial);
       ballBody.angularDamping = 0.31;
       ballBody.linearDamping = 0.31;
       ballMesh.castShadow = true;
@@ -312,6 +348,33 @@ class Game{
   _Render(){
     this.renderer.render(this.scene, this.camera);
     this.rendererMap.render(this.scene, this.mapCamera);
+  }
+
+  createPathStrings(filename) {
+    const basePath = "/assets/skybox/";
+    const baseFilename = basePath + filename;
+    const fileType = ".jpg";
+    const sides = ["ft", "bk", "up", "dn", "rt", "lf"];
+    const pathStings = sides.map((side) => {
+      return baseFilename + "_" + side + fileType;
+    });
+  
+    return pathStings;
+  }
+
+  createMaterialArray(filename) {
+    const skyboxImagepaths = this.createPathStrings(filename);
+    const materialArray = skyboxImagepaths.map((image) => {
+      let texture = new THREE.TextureLoader().load(image);
+      return new THREE.MeshBasicMaterial({
+        map: texture,
+        side: THREE.BackSide,
+        fog: false,
+        transparent: true,
+        opacity: 0.5,
+      });
+    });
+    return materialArray;
   }
 }
 
