@@ -6,24 +6,24 @@ import Stats from "three/examples/jsm/libs/stats.module";
 
 class Game {
   constructor(skyboxImage, wallTexture) {
-    this.scene = null;
-    this.renderer = null;
-    this.camera = null;
-    this.mapCamera = null;
-    this.rendererMap = null;
-    this.controls = null;
-    this.world = null;
-    this.stats = null;
+    this.scene = null; // ThreeJS Scene
+    this.renderer = null; // ThreeJS Renderer
+    this.camera = null; // ThreeJS Perspective Camera for First Person View
+    this.mapCamera = null; // ThreeJS Orthographic Camera for the Minimap
+    this.rendererMap = null; // The Minimap at the top right of the screen
+    this.controls = null; // Character/FPS controls
+    this.world = null; // CannonJS Physics World
+    this.stats = null; // ThreeJS Addon: Stats -- Appears at the top left of the screen
 
-    this.skybox = null;
-    this.skyboxImage = skyboxImage;
+    this.skybox = null; // The skybox for the game
+    this.skyboxImage = skyboxImage; // Skybox image path
 
-    this.wallMaterial = null;
-    this.wallTexture = wallTexture;
-    this.wallHeight = 50;
+    this.wallMaterial = null; // ThreeJS material for the walls
+    this.wallTexture = wallTexture; // Path to the wall texture assets
+    this.wallHeight = 50; // Height of the maze walls -- Adjust accordingly to the feel of the game
 
-    this.ballBodies = [];
-    this.ballMeshes = [];
+    this.ballBodies = []; // List storing the physics bodies of the projectile balls
+    this.ballMeshes = []; // List storing the meshes of the projectile balls
     this.lastCallTime = 0;
 
     this.player = null;
@@ -46,6 +46,11 @@ class Game {
     this._Animate();
   }
 
+  /**
+   * Initialisation function.
+   *
+   * Sets up and defines the basic components of the game world/scene.
+   */
   _Init() {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x88ccee);
@@ -147,6 +152,13 @@ class Game {
     });
   }
 
+  /**
+   * Defines the physical world of the game.
+   *
+   * Sets and defines the friction that the world obeys.
+   * Adds the default contact material to the game's physics world.
+   * Sets up the ground plane as well as the textures for the ground plane.
+   */
   _BuildWorld() {
     // Contact stiffness - use to make softer/harder contacts
     this.world.defaultContactMaterial.contactEquationStiffness = 1e9;
@@ -181,7 +193,7 @@ class Game {
     groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
     this.world.addBody(groundBody);
 
-    // Loading in textures
+    // Loading in textures for the ground plane
     const loader = new THREE.TextureLoader();
     const map = loader.load(
       "../../assets/ground/GroundDirtRocky020_COL_1K.jpg"
@@ -230,8 +242,8 @@ class Game {
       map: map,
       depthTest: true,
     });
-
     // Finished loading in textures
+
     const plane = new THREE.Mesh(geometry, materialPlane);
     plane.rotateX(-Math.PI / 2);
     plane.castShadow = true;
@@ -239,6 +251,12 @@ class Game {
     this.scene.add(plane);
   }
 
+  /**
+   * Initial lighting for the game world.
+   *
+   * Sets up the default lighting for the game scene.
+   * Initial lights comprise of a single hemisphere light and the ambient lighting for the game.
+   */
   _BuildLights() {
     const dirLight1 = new THREE.DirectionalLight(0xffffff, 3);
     dirLight1.position.set(1, 1, 1);
@@ -253,10 +271,17 @@ class Game {
     const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
     this.scene.add(hemisphereLight);
 
-    const ambientLight = new THREE.AmbientLight(0x555555);
+    const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
     this.scene.add(ambientLight);
   }
 
+  /**
+   * Adds the necessary features to our character.
+   *
+   * Sets up the collision body of our first-person character.
+   * Initialises the player controls.
+   * Defines the spawn point of the character.
+   */
   _AddCharacter() {
     // Create the user collision sphere
     let physicsMaterial = new CANNON.Material("physics");
@@ -302,6 +327,15 @@ class Game {
     characterBody.position.set(10, radius / 2, 55);
   }
 
+  /**
+   * Sets up the shooting functionality.
+   *
+   * Defines the physics of the projectiles.
+   * Defines the shape of the projectiles.
+   * Defines the texture of the projectiles.
+   * Sets the velocity of the projectiles.
+   * Gets the direction that the projectile needs to be shot at.
+   */
   _BindShooting() {
     const shootVelocity = 20;
     const ballShape = new CANNON.Sphere(0.1);
@@ -388,6 +422,15 @@ class Game {
     });
   }
 
+  /**
+   * Animates our game world.
+   *
+   * Handles all the animation of our game.
+   * Updates position of all the moving pieces.
+   * Updates the controls.
+   * Updates the camera.
+   * Updates the Stats.
+   */
   _Animate() {
     requestAnimationFrame(this._Animate);
     const timeStep = 1 / 60;
@@ -418,11 +461,25 @@ class Game {
     this._Render();
   }
 
+  /**
+   * Renders our game.
+   *
+   * Renders the first-person view of the game.
+   * Renders the orthograpic, minimap view of the game.
+   */
   _Render() {
     this.renderer.render(this.scene, this.camera);
     this.rendererMap.render(this.scene, this.mapCamera);
   }
 
+  /**
+   * Creates an array of path strings.
+   *
+   * Creates an array of paths strings that correspond to the correct face of the skybox.
+   *
+   * @param {string} filename Filename of the skybox image assets.
+   * @returns {string[]} An array of string containing the filename for each of the corresponding side of the skybox.
+   */
   createPathStrings(filename) {
     const basePath = "/assets/skybox/";
     const baseFilename = basePath + filename;
@@ -435,6 +492,14 @@ class Game {
     return pathStings;
   }
 
+  /**
+   * Creates an array of materials.
+   *
+   * Creates an array of materials for each of the faces of the skybox.
+   *
+   * @param {string} filename Path to the skybox image assets
+   * @returns {THREE.MeshBasicMaterial[]} Array of materials for each of the skybox faces
+   */
   createMaterialArray(filename) {
     const skyboxImagepaths = this.createPathStrings(filename);
     const materialArray = skyboxImagepaths.map((image) => {
@@ -450,6 +515,14 @@ class Game {
     return materialArray;
   }
 
+  /**
+   * Creates a basic block.
+   *
+   * Creates a block mesh with the correct physics and places the block at the specified coordinates.
+   *
+   * @param {number} x The x-coordinate of the position of the block.
+   * @param {number} z The z-coordinate of the position of the block.
+   */
   block(x, z) {
     const shape = new CANNON.Box(
       new CANNON.Vec3(5 * 0.5, this.wallHeight * 0.5, 5 * 0.5)
@@ -468,6 +541,15 @@ class Game {
     this.scene.add(cube);
   }
 
+  /**
+   * Generates a solvable maze.
+   *
+   * Generates a solvable maze with an entrance and an exit that is in the same position each time.
+   *
+   * @param {number} rows The numbers of rows in the maze.
+   * @param {number} cols The number of collumns in the maze.
+   * @returns {number[][]} A solvable with the specified number of rows and collumns.
+   */
   generateMaze(rows, cols) {
     const maze = new Array(rows).fill(null).map(() => new Array(cols).fill(1));
 
@@ -510,6 +592,13 @@ class Game {
     return maze;
   }
 
+  /**
+   * Visualises the maze.
+   *
+   * Converts the maze from a primitive array to a 3D representation.
+   *
+   * @param {number[][]} maze The 2D array containing the maze details.
+   */
   visualise(maze) {
     const w = maze.length;
     const h = maze[0].length;
@@ -533,6 +622,13 @@ class Game {
     }
   }
 
+  /**
+   * Adds the maze to the game scene.
+   *
+   * Generates the maze to be used in the game.
+   * Visualises the maze.
+   * Adds the visual representation to the game world.
+   */
   _AddMaze() {
     const maze = this.generateMaze(20, 20);
     this.visualise(maze);
