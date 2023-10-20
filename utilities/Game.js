@@ -20,7 +20,7 @@ class Game {
 
     this.wallMaterial = null; // ThreeJS material for the walls
     this.wallTexture = wallTexture; // Path to the wall texture assets
-    this.wallHeight = 50; // Height of the maze walls -- Adjust accordingly to the feel of the game
+    this.wallHeight = 1000; // Height of the maze walls -- Adjust accordingly to the feel of the game
 
     this.ballBodies = []; // List storing the physics bodies of the projectile balls
     this.ballMeshes = []; // List storing the meshes of the projectile balls
