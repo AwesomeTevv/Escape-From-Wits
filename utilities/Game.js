@@ -29,6 +29,7 @@ class Game {
     this._BuildLights();
     this._AddCharacter();
     this._BindShooting();
+    this._AddMaze();
 
     window.addEventListener("resize", () => {
       this.camera.aspect = window.innerWidth / window.innerHeight;
@@ -398,6 +399,96 @@ class Game {
       });
     });
     return materialArray;
+  }
+
+  block(x, z) {
+    const height = 5;
+
+    const shape = new CANNON.Box(
+      new CANNON.Vec3(5 * 0.5, height * 0.5, 5 * 0.5)
+    );
+    const body = new CANNON.Body({
+      type: CANNON.Body.KINEMATIC,
+      shape,
+    });
+    body.position.set(x, height / 2, z);
+    this.world.addBody(body);
+
+    const geometry = new THREE.BoxGeometry(5, height, 5);
+    const material = new THREE.MeshPhongMaterial({ color: 0x0088ff });
+    const cube = new THREE.Mesh(geometry, material);
+    cube.position.set(x, height / 2, z);
+    this.scene.add(cube);
+  }
+
+  generateMaze(rows, cols) {
+    const maze = new Array(rows).fill(null).map(() => new Array(cols).fill(1));
+
+    // Set the entrance and exit
+    const entranceRow = rows - 1;
+    const exitRow = 0;
+    const entranceCol = Math.floor(cols / 2);
+    const exitCol = Math.floor(cols / 2);
+
+    maze[entranceRow][entranceCol] = 0;
+    maze[exitRow][exitCol] = 0;
+
+    function createMaze(row, col) {
+      maze[row][col] = 0;
+
+      const directions = [
+        [-2, 0],
+        [2, 0],
+        [0, -2],
+        [0, 2],
+      ];
+
+      directions.sort(() => Math.random() - 0.5);
+
+      for (const [dx, dy] of directions) {
+        const newRow = row + dx;
+        const newCol = col + dy;
+
+        if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
+          if (maze[newRow][newCol] === 1) {
+            maze[row + dx / 2][col + dy / 2] = 0;
+            createMaze(newRow, newCol);
+          }
+        }
+      }
+    }
+
+    createMaze(entranceRow, entranceCol);
+
+    return maze;
+  }
+
+  visualise(maze) {
+    const w = maze.length;
+    const h = maze[0].length;
+
+    for (let row = 0; row < w; row++) {
+      for (let col = 0; col < h; col++) {
+        if (maze[col][row] == 1) {
+          this.block(5 * (row - w / 2), 5 * (col - h / 2));
+        }
+      }
+    }
+
+    for (let i = -50; i < 50; i += 5) {
+      if (i != Math.floor(20 / 2)) {
+        this.block(i, 50);
+      }
+    }
+
+    for (let i = -50; i <= 50; i += 5) {
+      this.block(-55, i);
+    }
+  }
+
+  _AddMaze() {
+    const maze = this.generateMaze(20, 20);
+    this.visualise(maze);
   }
 }
 
