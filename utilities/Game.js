@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import * as CANNON from 'cannon-es';
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import * as CANNON from "cannon-es";
 import { PointerLockControlsCannon } from "./PointerLockControlsCannon";
 import Stats from "three/examples/jsm/libs/stats.module";
 
-class Game{
-  constructor(skyboxImage){
+class Game {
+  constructor(skyboxImage) {
     this.scene = null;
     this.renderer = null;
     this.camera = null;
@@ -30,18 +30,18 @@ class Game{
     this._AddCharacter();
     this._BindShooting();
 
-    window.addEventListener( 'resize', () =>{
+    window.addEventListener("resize", () => {
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
-    
-      this.renderer.setSize( window.innerWidth, window.innerHeight );  
+
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
     this._Animate = this._Animate.bind(this);
     this._Animate();
   }
 
-  _Init(){
+  _Init() {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x88ccee);
     this.scene.fog = new THREE.FogExp2(0xcccccc, 0.002);
@@ -50,9 +50,9 @@ class Game{
       antialias: true,
     });
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;  
-    this.renderer.setPixelRatio( window.devicePixelRatio );
-    this.renderer.setSize( window.innerWidth, window.innerHeight );
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.append(this.renderer.domElement);
 
     this.camera = new THREE.PerspectiveCamera(
@@ -63,10 +63,10 @@ class Game{
     );
     this.camera.position.set(0, 0, 0);
 
-    this.controls = new OrbitControls( this.camera, this.renderer.domElement );
-    this.controls.listenToKeyEvents( window ); // optional
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.listenToKeyEvents(window); // optional
     this.controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-    this.controls.dampingFactor = 0.05;  
+    this.controls.dampingFactor = 0.05;
     this.controls.screenSpacePanning = false;
     this.controls.minDistance = 100;
     this.controls.maxDistance = 500;
@@ -94,7 +94,7 @@ class Game{
     document.body.appendChild(this.stats.domElement);
 
     this.world = new CANNON.World({
-      gravity: new CANNON.Vec3(0,-9.8,0)
+      gravity: new CANNON.Vec3(0, -9.8, 0),
     });
 
     const materialArray = this.createMaterialArray(this.skyboxImage);
@@ -103,10 +103,10 @@ class Game{
     this.scene.add(this.skybox);
   }
 
-  _BuildWorld(){
+  _BuildWorld() {
     // Contact stiffness - use to make softer/harder contacts
     this.world.defaultContactMaterial.contactEquationStiffness = 1e9;
-    
+
     // Stabilization time in number of timesteps
     this.world.defaultContactMaterial.contactEquationRelaxation = 4;
     this.world.broadphase.useBoundingBoxes = true;
@@ -129,18 +129,31 @@ class Game{
 
     // Create the ground plane
     const groundShape = new CANNON.Plane();
-    const groundBody = new CANNON.Body({ mass: 0, material: physicsContactMat });
+    const groundBody = new CANNON.Body({
+      mass: 0,
+      material: physicsContactMat,
+    });
     groundBody.addShape(groundShape);
     groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
     this.world.addBody(groundBody);
 
     // Loading in textures
     const loader = new THREE.TextureLoader();
-    const map = loader.load("../../assets/ground/GroundDirtRocky020_COL_1K.jpg");
-    const bmap = loader.load("../../assets/ground/GroundDirtRocky020_BUMP_1K.jpg");
-    const dmap = loader.load("../../assets/ground/GroundDirtRocky020_DISP_1K.jpg");
-    const nmap = loader.load("../../assets/ground/GroundDirtRocky020_NRM_1K.jpg");
-    const amap = loader.load("../../assets/ground/GroundDirtRocky020_AO_1K.jpg");
+    const map = loader.load(
+      "../../assets/ground/GroundDirtRocky020_COL_1K.jpg"
+    );
+    const bmap = loader.load(
+      "../../assets/ground/GroundDirtRocky020_BUMP_1K.jpg"
+    );
+    const dmap = loader.load(
+      "../../assets/ground/GroundDirtRocky020_DISP_1K.jpg"
+    );
+    const nmap = loader.load(
+      "../../assets/ground/GroundDirtRocky020_NRM_1K.jpg"
+    );
+    const amap = loader.load(
+      "../../assets/ground/GroundDirtRocky020_AO_1K.jpg"
+    );
 
     const scale = 500;
     map.wrapS = map.wrapT = THREE.RepeatWrapping;
@@ -166,7 +179,7 @@ class Game{
       bumpMap: bmap,
       bumpScale: 1,
       displacementMap: dmap,
-      displacementScale: 0.1,
+      displacementScale: 0,
       normalMap: nmap,
       aoMap: amap,
       map: map,
@@ -181,20 +194,22 @@ class Game{
     this.scene.add(plane);
   }
 
-  _BuildLights(){
-    const dirLight1 = new THREE.DirectionalLight( 0xffffff, 3 );
-    dirLight1.position.set( 1, 1, 1 );
-    this.scene.add( dirLight1 );
-  
-    const dirLight2 = new THREE.DirectionalLight( 0x002288, 3 );
-    dirLight2.position.set( - 1, - 1, - 1 );
-    this.scene.add( dirLight2 );
-  
-    const ambientLight = new THREE.AmbientLight( 0x555555 );
-    this.scene.add( ambientLight );
+  _BuildLights() {
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 3);
+    dirLight1.position.set(1, 1, 1);
+    dirLight1.castShadow = true;
+    this.scene.add(dirLight1);
+
+    const dirLight2 = new THREE.DirectionalLight(0x002288, 3);
+    dirLight2.position.set(-1, -1, -1);
+    dirLight2.castShadow = true;
+    this.scene.add(dirLight2);
+
+    const ambientLight = new THREE.AmbientLight(0x555555);
+    this.scene.add(ambientLight);
   }
 
-  _AddCharacter(){
+  _AddCharacter() {
     // Create the user collision sphere
     let physicsMaterial = new CANNON.Material("physics");
     const physicsContactMat = new CANNON.ContactMaterial(
@@ -211,43 +226,48 @@ class Game{
     );
     const radius = 1.3;
     let characterShape = new CANNON.Sphere(radius);
-    let characterBody = new CANNON.Body({ mass: 5, material: physicsContactMat });
+    let characterBody = new CANNON.Body({
+      mass: 5,
+      material: physicsContactMat,
+    });
     characterBody.addShape(characterShape);
     characterBody.linearDamping = 0.9;
     this.player = characterBody;
     this.world.addBody(this.player);
-    this.controls = new PointerLockControlsCannon(this.camera,this.player);
+    this.controls = new PointerLockControlsCannon(this.camera, this.player);
     this.scene.add(this.controls.getObject());
-  
+
     instructions.addEventListener("click", () => {
       this.controls.lock();
     });
-  
+
     this.controls.addEventListener("lock", () => {
       this.controls.enabled = true;
       instructions.style.display = "none";
     });
-  
+
     this.controls.addEventListener("unlock", () => {
       this.controls.enabled = false;
       instructions.style.display = null;
     });
   }
 
-  _BindShooting(){
-    const shootVelocity = 10;
-    const ballShape = new CANNON.Sphere(0.2);
+  _BindShooting() {
+    const shootVelocity = 20;
+    const ballShape = new CANNON.Sphere(0.1);
     const ballGeometry = new THREE.SphereGeometry(ballShape.radius, 32, 32);
     let loader = new THREE.TextureLoader();
-    const vmap = loader.load("/assets/gold/MetalGoldPaint002_COL_1K_METALNESS.png");
+    const vmap = loader.load(
+      "/assets/gold/MetalGoldPaint002_COL_1K_METALNESS.png"
+    );
     const vbmap = loader.load(
       "/assets/gold/MetalGoldPaint002_BUMP_1K_METALNESS.png"
-      );
-      
-      const vdmap = loader.load(
-        "/assets/gold/MetalGoldPaint002_DISP_1K_METALNESS.png"
-        );
-        
+    );
+
+    const vdmap = loader.load(
+      "/assets/gold/MetalGoldPaint002_DISP_1K_METALNESS.png"
+    );
+
     vmap.wrapS = vmap.wrapT = THREE.RepeatWrapping;
     vmap.repeat.set(50, 50);
 
@@ -263,7 +283,7 @@ class Game{
       bumpMap: vbmap,
       bumpScale: 0.5,
       displacementMap: vdmap,
-      displacementScale: 0.01,
+      displacementScale: 0,
       map: vmap,
       depthTest: true,
     });
@@ -271,8 +291,11 @@ class Game{
       if (!this.controls.enabled) {
         return;
       }
-      
-      const material = new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } );
+
+      const material = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+        flatShading: true,
+      });
       const ballBody = new CANNON.Body({ mass: 1 });
       ballBody.addShape(ballShape);
       const ballMesh = new THREE.Mesh(ballGeometry, ballMaterial);
@@ -280,26 +303,26 @@ class Game{
       ballBody.linearDamping = 0.31;
       ballMesh.castShadow = true;
       ballMesh.receiveShadow = true;
-  
+
       this.world.addBody(ballBody);
       this.scene.add(ballMesh);
       this.ballBodies.push(ballBody);
       this.ballMeshes.push(ballMesh);
-  
+
       // Returns a vector pointing the the diretion the camera is at
       const vector = new THREE.Vector3(0, 0, 1);
       vector.unproject(this.camera);
       const ray = new THREE.Ray(
         this.player.position,
         vector.sub(this.player.position).normalize()
-        );
+      );
       const shootDirection = ray.direction;
       ballBody.velocity.set(
         shootDirection.x * shootVelocity,
         shootDirection.y * shootVelocity,
         shootDirection.z * shootVelocity
       );
-  
+
       // Move the ball outside the player sphere
       const x =
         this.player.position.x +
@@ -315,22 +338,22 @@ class Game{
     });
   }
 
-  _Animate(){
+  _Animate() {
     requestAnimationFrame(this._Animate);
-    const timeStep = 1/60;
+    const timeStep = 1 / 60;
     const time = performance.now() / 1000;
     const dt = time - this.lastCallTime;
     this.lastCallTime = time;
-    
-    this.world.step(timeStep,dt);
-    while(this.ballBodies.length > 10){
+
+    this.world.step(timeStep, dt);
+    while (this.ballBodies.length > 10) {
       let body = this.ballBodies.shift();
       let mesh = this.ballMeshes.shift();
       this.world.removeBody(body);
       this.scene.remove(mesh);
     }
 
-    for(let i = 0; i < this.ballBodies.length; i++){
+    for (let i = 0; i < this.ballBodies.length; i++) {
       this.ballMeshes[i].position.copy(this.ballBodies[i].position);
       this.ballMeshes[i].quaternion.copy(this.ballBodies[i].quaternion);
     }
@@ -345,7 +368,7 @@ class Game{
     this._Render();
   }
 
-  _Render(){
+  _Render() {
     this.renderer.render(this.scene, this.camera);
     this.rendererMap.render(this.scene, this.mapCamera);
   }
@@ -358,7 +381,7 @@ class Game{
     const pathStings = sides.map((side) => {
       return baseFilename + "_" + side + fileType;
     });
-  
+
     return pathStings;
   }
 
@@ -378,4 +401,4 @@ class Game{
   }
 }
 
-export { Game }
+export { Game };
