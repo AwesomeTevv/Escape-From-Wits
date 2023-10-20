@@ -20,6 +20,7 @@ class Game {
 
     this.wallMaterial = null;
     this.wallTexture = wallTexture;
+    this.wallHeight = 5;
 
     this.ballBodies = [];
     this.ballMeshes = [];
@@ -117,19 +118,19 @@ class Game {
 
     const scale = 1;
     map.wrapS = map.wrapT = THREE.RepeatWrapping;
-    map.repeat.set(scale, scale);
+    map.repeat.set(scale, (this.wallHeight / 5) * scale);
 
     bmap.wrapS = bmap.wrapT = THREE.RepeatWrapping;
-    bmap.repeat.set(scale, scale);
+    bmap.repeat.set(scale, (this.wallHeight / 5) * scale);
 
     dmap.wrapS = dmap.wrapT = THREE.RepeatWrapping;
-    dmap.repeat.set(scale, scale);
+    dmap.repeat.set(scale, (this.wallHeight / 5) * scale);
 
     nmap.wrapS = nmap.wrapT = THREE.RepeatWrapping;
-    nmap.repeat.set(scale, scale);
+    nmap.repeat.set(scale, (this.wallHeight / 5) * scale);
 
     amap.wrapS = amap.wrapT = THREE.RepeatWrapping;
-    amap.repeat.set(scale, scale);
+    amap.repeat.set(scale, (this.wallHeight / 5) * scale);
 
     this.wallMaterial = new THREE.MeshPhongMaterial({
       specular: 0x666666,
@@ -448,22 +449,20 @@ class Game {
   }
 
   block(x, z) {
-    const height = 5;
-
     const shape = new CANNON.Box(
-      new CANNON.Vec3(5 * 0.5, height * 0.5, 5 * 0.5)
+      new CANNON.Vec3(5 * 0.5, this.wallHeight * 0.5, 5 * 0.5)
     );
     const body = new CANNON.Body({
       type: CANNON.Body.KINEMATIC,
       shape,
     });
-    body.position.set(x, height / 2, z);
+    body.position.set(x, this.wallHeight / 2, z);
     this.world.addBody(body);
 
-    const geometry = new THREE.BoxGeometry(5, height, 5);
+    const geometry = new THREE.BoxGeometry(5, this.wallHeight, 5);
     // const material = new THREE.MeshPhongMaterial({ color: 0x0088ff });
     const cube = new THREE.Mesh(geometry, this.wallMaterial);
-    cube.position.set(x, height / 2, z);
+    cube.position.set(x, this.wallHeight / 2, z);
     this.scene.add(cube);
   }
 
