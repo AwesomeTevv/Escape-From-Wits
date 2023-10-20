@@ -20,7 +20,7 @@ class Game {
 
     this.wallMaterial = null;
     this.wallTexture = wallTexture;
-    this.wallHeight = 5;
+    this.wallHeight = 50;
 
     this.ballBodies = [];
     this.ballMeshes = [];
@@ -134,13 +134,14 @@ class Game {
 
     this.wallMaterial = new THREE.MeshPhongMaterial({
       specular: 0x666666,
-      shininess: 10,
+      shininess: 15,
       bumpMap: bmap,
-      bumpScale: 1,
+      bumpScale: 1.5,
       displacementMap: dmap,
       displacementScale: 0,
       normalMap: nmap,
       aoMap: amap,
+      aoMapIntensity: 5,
       map: map,
       depthTest: true,
     });
@@ -218,13 +219,14 @@ class Game {
 
     const materialPlane = new THREE.MeshPhongMaterial({
       specular: 0x666666,
-      shininess: 10,
+      shininess: 5,
       bumpMap: bmap,
-      bumpScale: 1,
+      bumpScale: 5,
       displacementMap: dmap,
       displacementScale: 0,
       normalMap: nmap,
       aoMap: amap,
+      aoMapIntensity: 5,
       map: map,
       depthTest: true,
     });
