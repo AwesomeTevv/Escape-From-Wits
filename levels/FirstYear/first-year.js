@@ -1,13 +1,13 @@
 import { Game } from "../../utilities/Game";
-import * as THREE from 'three';
+import * as THREE from "three";
 
 let _App = null;
-window.addEventListener('DOMContentLoaded',() =>{
+window.addEventListener("DOMContentLoaded", () => {
   _App = new FirstLevel();
 });
 
-class FirstLevel extends Game{
-  constructor(){
+class FirstLevel extends Game {
+  constructor() {
     super("mayhem/mayhem8/flame");
     // const geometry = new THREE.ConeGeometry( 10, 30, 4, 1 );
     // const material = new THREE.MeshPhongMaterial( { color: 0x000000, flatShading: true } );
