@@ -3,6 +3,8 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import * as CANNON from "cannon-es";
 import { PointerLockControlsCannon } from "./PointerLockControlsCannon";
 import Stats from "three/examples/jsm/libs/stats.module";
+import Token from "./tokens";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 /**
  * Base game class.
@@ -27,27 +29,33 @@ class Game {
     this.controls = null; // Character/FPS controls
     this.world = null; // CannonJS Physics World
     this.stats = null; // ThreeJS Addon: Stats -- Appears at the top left of the screen
-
     this.skybox = null; // The skybox for the game
     this.skyboxImage = skyboxImage; // Skybox image path
-
+    
     this.wallMaterial = null; // ThreeJS material for the walls
     this.wallTexture = wallTexture; // Path to the wall texture assets
     this.wallHeight = 1000; // Height of the maze walls -- Adjust accordingly to the feel of the game
-
+    
     this.maze = null; // The generated maze of the game
-
+    
     this.exitDoor = {
       mesh: null, // The mesh of the exit door
       body: null, // The body of the exit door
     };
     this.gateNumber = 0;
-    
+    this.frameNumber = 0;
+
     this.ballBodies = []; // List storing the physics bodies of the projectile balls
     this.ballMeshes = []; // List storing the meshes of the projectile balls
     this.lastCallTime = 0;
-
+    
     this.player = null;
+    this.gun = null;
+    this.torch = null;
+    this.torchTarget = null;
+
+    this.tokens = [];
+
     this.mainAudio = null;
     this.mainAudioSrc = null;
     this.mainAudioListener = null;
@@ -62,6 +70,8 @@ class Game {
     this._BindShooting();
     this._AddMaze();
     this._AddTriggerBoxes();
+    this._AddCharacterEquipment();
+    this._AddTokens();
 
     this.mainAudio.play();
     window.addEventListener("resize", () => {
@@ -81,8 +91,8 @@ class Game {
    */
   _Init() {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x88ccee);
-    this.scene.fog = new THREE.FogExp2(0xcccccc, 0.002);
+    this.scene.background = new THREE.Color(0x000000);
+    this.scene.fog = new THREE.Fog(0x000000, 0, 17);
 
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -295,17 +305,17 @@ class Game {
    * Initial lights comprise of a single hemisphere light and the ambient lighting for the game.
    */
   _BuildLights() {
-    const dirLight1 = new THREE.DirectionalLight(0xffffff, 3);
-    dirLight1.position.set(1, 1, 1);
-    dirLight1.castShadow = true;
-    this.scene.add(dirLight1);
+    // const dirLight1 = new THREE.DirectionalLight(0xffffff, 3);
+    // dirLight1.position.set(1, 1, 1);
+    // dirLight1.castShadow = true;
+    // this.scene.add(dirLight1);
 
-    const dirLight2 = new THREE.DirectionalLight(0x002288, 3);
-    dirLight2.position.set(-1, -1, -1);
-    dirLight2.castShadow = true;
-    this.scene.add(dirLight2);
+    // const dirLight2 = new THREE.DirectionalLight(0x002288, 3);
+    // dirLight2.position.set(-1, -1, -1);
+    // dirLight2.castShadow = true;
+    // this.scene.add(dirLight2);
 
-    const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+    const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.5);
     this.scene.add(hemisphereLight);
 
     const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
@@ -364,6 +374,29 @@ class Game {
     characterBody.position.set(10, radius / 2, 55);
   }
 
+  _AddCharacterEquipment(){
+    let gunlight;
+    this.torch = new THREE.SpotLight(0xffffff, 200.0, 20, Math.PI * 0.08);
+    gunlight = new THREE.SpotLight(0xffffff, 10.0, 1);
+    this.torch.castShadow = true;
+  
+    this.torchTarget = new THREE.Object3D();
+    this.torchTarget.position.set(0, 1, -2);
+    this.camera.add(this.torchTarget);
+    this.torch.target = this.torchTarget;
+    this.camera.add(this.torch);
+    this.torch.position.z = this.torch.position.z + 5;
+  }
+
+  onGunLoaded = (object) =>{
+    this.gun = new Token();
+    this.gun.object = object;
+    this.gun.object.scale.set(3,3,3);
+    this.gun.object.position.set(10, 0.2, 55);
+    this.scene.add(this.gun.object);
+    this.gun.loaded = true;
+  }
+
   /**
    * Sets up the shooting functionality.
    *
@@ -374,6 +407,12 @@ class Game {
    * Gets the direction that the projectile needs to be shot at.
    */
   _BindShooting() {
+    let loaderObj = new GLTFLoader();
+    loaderObj.load("../../assets/weapons/gun.glb", (gltf) => {
+      var gunobj = gltf.scene;
+      this.onGunLoaded(gunobj);
+    });
+
     const shootVelocity = 20;
     const ballShape = new CANNON.Sphere(0.1);
     const ballGeometry = new THREE.SphereGeometry(ballShape.radius, 32, 32);
@@ -409,7 +448,7 @@ class Game {
       depthTest: true,
     });
     window.addEventListener("click", (event) => {
-      if (!this.controls.enabled) {
+      if (!this.controls.enabled || this.gun.toggled == false) {
         return;
       }
 
@@ -456,6 +495,82 @@ class Game {
         shootDirection.z * (1.3 * 1.02 + ballShape.radius);
       ballBody.position.set(x, y, z);
       ballMesh.position.copy(ballBody.position);
+    });
+
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key.toLowerCase() === "e") {
+          event.preventDefault();
+          // Calculate the distance between the character and sphereTwo
+          const characterPosition = this.player.position;
+          // const swordPos = sword.position;
+          // const mapPos = map.position;
+          const gunPos = this.gun.getPosition();
+          // console.log(mapPos);
+          // console.log(gunPos);
+        
+          // let sword_distance = characterPosition.distanceTo(swordPos);
+          // let map_distance = characterPosition.distanceTo(mapPos);
+          let gun_distance = characterPosition.distanceTo(gunPos);
+        
+          // Define a threshold distance for character proximity
+          const proximityThreshold = 3; // Adjust this threshold as needed
+        
+          // if (sword_distance < proximityThreshold && swordToggled == false) {
+          //   swordToggled = true;
+          //   numberOfKeys++;
+        
+          //   sword.position.set(0, 0, 0);
+          //   sword.rotation.y = 0;
+          //   camera.add(sword);
+          //   sword.scale.set(0.0002, 0.0002, 0.0002);
+          //   sword.position.y = sword.position.y - 0.5;
+          //   sword.position.z = sword.position.z - 0.9;
+          //   sword.position.x = sword.position.x;
+          //   sword.rotation.y = Math.PI * 1.5;
+          // } else if (map_distance < proximityThreshold && mapToggled == false) {
+          //   mapToggled = true;
+          //   numberOfKeys++;
+          //   map.position.set(0, 0, 0);
+          //   camera.add(map);
+          //   map.scale.set(0.2, 0.2, 0.2);
+          //   map.position.y = map.position.y - 0.53;
+          //   map.position.z = map.position.z - 0.9;
+          //   map.position.x = map.position.x - 0.4;
+          //   map.rotation.y = Math.PI * 0.5;
+          // } else 
+          if (gun_distance < proximityThreshold && this.gun.toggled == false) {
+             this.gun.toggled = true;
+             this.gun.object.position.set(0, 0, 0);
+             this.gun.object.rotation.y = 0;
+        
+            this.camera.add(this.gun.object);
+             this.gun.object.position.y = this.gun.object.position.y - 0.7;
+             this.gun.object.position.z = this.gun.object.position.z - 0.9;
+             this.gun.object.position.x = this.gun.object.position.x + 0.3;
+             this.gun.object.rotation.x = Math.PI / 15;
+          }
+        }
+      },
+      false
+    );
+  }
+
+  onTokenLoaded = (token) =>{
+    this.tokens.push(token);
+    this.scene.add(token.object);
+  }
+  
+  _AddTokens(){
+    let loaderObj = new GLTFLoader();
+    loaderObj.load("../../assets/sword/scene.gltf", (gltf) => {
+      let token = new Token();
+      token.object = gltf.scene;
+      token.object.scale.set(0.001,0.001,0.001);
+      token.object.position.set(this.player.position.x, this.player.position.y, this.player.position.z - 2);
+      token.loaded = true;
+      this.onTokenLoaded(token);
     });
   }
 
@@ -505,6 +620,12 @@ class Game {
       }
     }
 
+    for(let i = 0; i < this.tokens.length; i++){
+      if(this.tokens[i].toggled === false && this.tokens[i].loaded){
+        this.tokens[i].animateObject(this.frameNumber);
+      }
+    }
+    this.frameNumber += 1;
     this._Render();
   }
 
@@ -556,7 +677,7 @@ class Game {
         side: THREE.BackSide,
         fog: false,
         transparent: true,
-        opacity: 0.5,
+        opacity: 0.2,
       });
     });
     return materialArray;

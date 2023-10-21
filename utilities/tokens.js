@@ -18,12 +18,12 @@ class Token {
         this.name = "dong";
     }
 
-    animateObject(object, animationnum) {
-        if (object === undefined) {
+    animateObject(animationnum) {
+        if (this.object === undefined) {
         } 
         else {
-          object.rotation.y += 0.01;
-          object.position.y = 0.2 + Math.abs(0.5 * Math.sin(Math.PI * animationnum * 0.005));
+          this.object.rotation.y += 0.01;
+          this.object.position.y = 0.2 + Math.abs(0.5 * Math.sin(Math.PI * animationnum * 0.005));
         }
       }
 
