@@ -22,6 +22,7 @@ class Game {
    */
   constructor(skyboxImage, wallTexture) {
     this.scene = null; // ThreeJS Scene
+    this.minimapScene = null;
     this.renderer = null; // ThreeJS Renderer
     this.camera = null; // ThreeJS Perspective Camera for First Person View
     this.mapCamera = null; // ThreeJS Orthographic Camera for the Minimap
@@ -91,8 +92,11 @@ class Game {
    */
   _Init() {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x000000);
-    this.scene.fog = new THREE.Fog(0x000000, 0, 17);
+    this.scene.background = new THREE.Color(0x88ccee);
+    this.scene.fog = new THREE.FogExp2(0xcccccc, 0.002);
+
+    this.minimapScene = new THREE.Scene();
+    this.minimapScene.background = new THREE.Color(0x000011);
 
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -611,11 +615,11 @@ class Game {
     this.controls.update(dt);
     this.stats.update();
 
-    if(this.liftWall){
-      if(this.gateNumber < 500){
+    if (this.liftWall) {
+      if (this.gateNumber < 500) {
         this.exitDoor.body.position.copy(this.exitDoor.mesh.position);
         this.exitDoor.body.quaternion.copy(this.exitDoor.mesh.quaternion);
-        this.exitDoor.mesh.translateY((this.gateNumber + 15/2) * 0.0001);
+        this.exitDoor.mesh.translateY((this.gateNumber + 15 / 2) * 0.0001);
         this.gateNumber++;
       }
     }
@@ -637,7 +641,7 @@ class Game {
    */
   _Render() {
     this.renderer.render(this.scene, this.camera);
-    this.rendererMap.render(this.scene, this.mapCamera);
+    this.rendererMap.render(this.minimapScene, this.mapCamera);
   }
 
   /**
@@ -683,15 +687,21 @@ class Game {
     return materialArray;
   }
 
-  /**
-   * Creates a basic block.
-   *
-   * Creates a block mesh with the correct physics and places the block at the specified coordinates.
-   *
-   * @param {number} x The x-coordinate of the position of the block.
-   * @param {number} z The z-coordinate of the position of the block.
-   */
-  block(x, z) {
+  mesh(x, z) {
+    const minimapMaterial = new THREE.MeshBasicMaterial({ color: 0x000088 });
+
+    const geometry = new THREE.BoxGeometry(5, this.wallHeight, 5);
+    // const material = new THREE.MeshPhongMaterial({ color: 0x000044 });
+    const cube = new THREE.Mesh(geometry, this.wallMaterial);
+    cube.position.set(x, this.wallHeight / 2, z);
+    this.scene.add(cube);
+
+    const mapCube = new THREE.Mesh(geometry, minimapMaterial);
+    mapCube.position.set(x, this.wallHeight / 2, z);
+    this.minimapScene.add(mapCube);
+  }
+
+  body(x, z) {
     const shape = new CANNON.Box(
       new CANNON.Vec3(5 * 0.5, this.wallHeight * 0.5, 5 * 0.5)
     );
@@ -701,12 +711,19 @@ class Game {
     });
     body.position.set(x, this.wallHeight / 2, z);
     this.world.addBody(body);
+  }
 
-    const geometry = new THREE.BoxGeometry(5, this.wallHeight, 5);
-    // const material = new THREE.MeshPhongMaterial({ color: 0x0088ff });
-    const cube = new THREE.Mesh(geometry, this.wallMaterial);
-    cube.position.set(x, this.wallHeight / 2, z);
-    this.scene.add(cube);
+  /**
+   * Creates a basic block.
+   *
+   * Creates a block mesh with the correct physics and places the block at the specified coordinates.
+   *
+   * @param {number} x The x-coordinate of the position of the block.
+   * @param {number} z The z-coordinate of the position of the block.
+   */
+  block(x, z) {
+    this.body(x, z);
+    this.mesh(x, z);
   }
 
   /**
@@ -758,6 +775,18 @@ class Game {
     createMaze(entranceRow, entranceCol);
 
     return maze;
+  }
+
+  bounds() {
+    this.body(20, 55);
+    this.body(0, 55);
+    this.body(20, 60);
+    this.body(0, 60);
+    this.body(20, 65);
+    this.body(0, 65);
+    this.body(15, 65);
+    this.body(5, 65);
+    this.body(10, 65);
   }
 
   /**
@@ -818,12 +847,13 @@ class Game {
    * Adds the visual representation to the game world.
    */
   _AddMaze() {
-    this.maze = this.generateMaze(20, 20);
-    this.visualise(this.maze);
-    this.exit();
+    this.maze = this.generateMaze(20, 20); // Generates the maze
+    this.visualise(this.maze); // Visualises the maze
+    this.exit(); // Adds the exit door
+    this.bounds(); // Adds invisible boundaries to the starting area
   }
 
-  _AddTriggerBoxes(){
+  _AddTriggerBoxes() {
     // Trigger body End Game -> Destory Exit Wall
     const triggerGeometry = new THREE.BoxGeometry(4, 1, 1);
     const triggerMaterial = new THREE.MeshBasicMaterial({
@@ -835,17 +865,17 @@ class Game {
     const boxShape = new CANNON.Box(new CANNON.Vec3(4, 1, 1));
     const triggerBody = new CANNON.Body({ isTrigger: true });
     triggerBody.addShape(boxShape);
-    triggerBody.position.set(0, 1.3,-45);
-    trigger.position.set(0, 1.3,-45);
+    triggerBody.position.set(0, 1.3, -45);
+    trigger.position.set(0, 1.3, -45);
     this.world.addBody(triggerBody);
-    
+
     // It is possible to run code on the exit/enter
     // of the trigger.
     triggerBody.addEventListener("collide", (event) => {
       if (event.body === this.player) {
         if (this.numberOfKeys == 0) {
           this.liftWall = true;
-        }else{
+        } else {
           // alert("Please collect all keys to escape!");
           console.log("Need to collect all Keys!");
         }
@@ -863,11 +893,11 @@ class Game {
     const boxShapee = new CANNON.Box(new CANNON.Vec3(4, 1, 1));
     const triggerBodyEnd = new CANNON.Body({ isTrigger: true });
     triggerBodyEnd.addShape(boxShapee);
-    triggerBodyEnd.position.set(0, 1.3,-55);
-    triggerEnd.position.set(0, 1.3,-55);
+    triggerBodyEnd.position.set(0, 1.3, -55);
+    triggerEnd.position.set(0, 1.3, -55);
     this.world.addBody(triggerBodyEnd);
     triggerBodyEnd.addEventListener("collide", (event) => {
-      if(this.numberOfKeys == 2){
+      if (this.numberOfKeys == 2) {
         if (event.body === this.player) {
           window.location = "/levels/level-two.html";
         }
