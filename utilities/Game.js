@@ -4,7 +4,20 @@ import * as CANNON from "cannon-es";
 import { PointerLockControlsCannon } from "./PointerLockControlsCannon";
 import Stats from "three/examples/jsm/libs/stats.module";
 
+/**
+ * Base game class.
+ *
+ * Game class that implements the base functionality for each game.
+ */
 class Game {
+  /**
+   * Constructor for the game.
+   *
+   * Sets up the base initialising for the game.
+   *
+   * @param {string} skyboxImage Path to the skybox image assets
+   * @param {string} wallTexture Path to the wall texture image assets
+   */
   constructor(skyboxImage, wallTexture) {
     this.scene = null; // ThreeJS Scene
     this.renderer = null; // ThreeJS Renderer
