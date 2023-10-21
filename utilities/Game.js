@@ -27,6 +27,9 @@ class Game {
     this.lastCallTime = 0;
 
     this.player = null;
+    this.mainAudio = null;
+    this.mainAudioSrc = null;
+    this.mainAudioListener = null;
 
     this._Init();
     this._BuildWorld();
@@ -150,6 +153,15 @@ class Game {
       map: map,
       depthTest: true,
     });
+
+    this.mainAudio = new Audio("../../assets/scary.mp3");
+    this.mainAudio.loop = true;
+    this.mainAudioListener = new THREE.AudioListener();
+    this.audioSource = new THREE.Audio(this.mainAudioListener);
+    this.audioSource.setMediaElementSource(this.mainAudio);
+    this.audioSource.setVolume(1);
+    this.mainAudio.play();
+    this.camera.add(this.mainAudioListener);
   }
 
   /**
