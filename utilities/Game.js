@@ -39,7 +39,8 @@ class Game {
       mesh: null,
       body: null,
     };
-
+    this.gateNumber = 0;
+    
     this.ballBodies = []; // List storing the physics bodies of the projectile balls
     this.ballMeshes = []; // List storing the meshes of the projectile balls
     this.lastCallTime = 0;
@@ -492,6 +493,16 @@ class Game {
 
     this.controls.update(dt);
     this.stats.update();
+
+    if(this.liftWall){
+      if(this.gateNumber < 500){
+        this.exitDoor.body.position.copy(this.exitDoor.mesh.position);
+        this.exitDoor.body.quaternion.copy(this.exitDoor.mesh.quaternion);
+        this.exitDoor.mesh.translateY((this.gateNumber + 15/2) * 0.0001);
+        this.gateNumber++;
+      }
+    }
+
     this._Render();
   }
 
@@ -709,11 +720,33 @@ class Game {
     // of the trigger.
     triggerBody.addEventListener("collide", (event) => {
       if (event.body === this.player) {
-        if (this.numberOfKeys == 2) {
+        if (this.numberOfKeys == 0) {
           this.liftWall = true;
         }else{
           // alert("Please collect all keys to escape!");
           console.log("Need to collect all Keys!");
+        }
+      }
+    });
+
+    // Trigger body End Game -> Navigate to next level!
+    const triggerGeometryEnd = new THREE.BoxGeometry(4, 1, 1);
+    const triggerMaterialEnd = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      wireframe: true,
+    });
+    const triggerEnd = new THREE.Mesh(triggerGeometryEnd, triggerMaterialEnd);
+    this.scene.add(triggerEnd);
+    const boxShapee = new CANNON.Box(new CANNON.Vec3(4, 1, 1));
+    const triggerBodyEnd = new CANNON.Body({ isTrigger: true });
+    triggerBodyEnd.addShape(boxShapee);
+    triggerBodyEnd.position.set(0, 1.3,-55);
+    triggerEnd.position.set(0, 1.3,-55);
+    this.world.addBody(triggerBodyEnd);
+    triggerBodyEnd.addEventListener("collide", (event) => {
+      if(this.numberOfKeys == 2){
+        if (event.body === this.player) {
+          window.location = "/levels/level-two.html";
         }
       }
     });
