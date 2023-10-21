@@ -4,7 +4,20 @@ import * as CANNON from "cannon-es";
 import { PointerLockControlsCannon } from "./PointerLockControlsCannon";
 import Stats from "three/examples/jsm/libs/stats.module";
 
+/**
+ * Base game class.
+ *
+ * Game class that implements the base functionality for each game.
+ */
 class Game {
+  /**
+   * Constructor for the game.
+   *
+   * Sets up the base initialising for the game.
+   *
+   * @param {string} skyboxImage Path to the skybox image assets
+   * @param {string} wallTexture Path to the wall texture image assets
+   */
   constructor(skyboxImage, wallTexture) {
     this.scene = null; // ThreeJS Scene
     this.renderer = null; // ThreeJS Renderer
@@ -21,6 +34,11 @@ class Game {
     this.wallMaterial = null; // ThreeJS material for the walls
     this.wallTexture = wallTexture; // Path to the wall texture assets
     this.wallHeight = 1000; // Height of the maze walls -- Adjust accordingly to the feel of the game
+
+    this.exitDoor = {
+      mesh: null,
+      body: null,
+    };
 
     this.ballBodies = []; // List storing the physics bodies of the projectile balls
     this.ballMeshes = []; // List storing the meshes of the projectile balls
@@ -98,6 +116,7 @@ class Game {
       10000 // Far
     );
     // mapCamera.up = new THREE.Vector3(0,0,-1);
+    this.mapCamera.zoom = 3;
     this.mapCamera.lookAt(new THREE.Vector3(0, -1, 0));
     this.mapCamera.position.set(0, 5, 0);
     this.scene.add(this.mapCamera);
@@ -637,6 +656,26 @@ class Game {
     }
   }
 
+  exit() {
+    const shape = new CANNON.Box(
+      new CANNON.Vec3(5 * 0.5, this.wallHeight * 0.5, 5 * 0.5)
+    );
+    const body = new CANNON.Body({
+      type: CANNON.Body.KINEMATIC,
+      shape,
+    });
+    body.position.set(0, this.wallHeight / 2, -50);
+    this.exitDoor.body = body;
+    this.world.addBody(body);
+
+    const geometry = new THREE.BoxGeometry(5, this.wallHeight, 5);
+    const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+    const cube = new THREE.Mesh(geometry, material);
+    cube.position.set(0, this.wallHeight / 2, -50);
+    this.exitDoor.mesh = cube;
+    this.scene.add(cube);
+  }
+
   /**
    * Adds the maze to the game scene.
    *
@@ -647,28 +686,7 @@ class Game {
   _AddMaze() {
     const maze = this.generateMaze(20, 20);
     this.visualise(maze);
-
-    /**
-     * ! Temporary
-     * REMOVE AT END
-     * This is just to show us where the exit is
-     */
-
-    const shape = new CANNON.Box(
-      new CANNON.Vec3(5 * 0.5, this.wallHeight * 0.5, 5 * 0.5)
-    );
-    const body = new CANNON.Body({
-      type: CANNON.Body.KINEMATIC,
-      shape,
-    });
-    body.position.set(0, this.wallHeight / 2, -50);
-    this.world.addBody(body);
-
-    const geometry = new THREE.BoxGeometry(5, this.wallHeight, 5);
-    const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
-    const cube = new THREE.Mesh(geometry, material);
-    cube.position.set(0, this.wallHeight / 2, -50);
-    this.scene.add(cube);
+    this.exit();
   }
 
   _AddTriggerBoxes(){
