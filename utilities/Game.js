@@ -30,6 +30,9 @@ class Game {
     this.mainAudio = null;
     this.mainAudioSrc = null;
     this.mainAudioListener = null;
+    this.numberOfKeys = 0;
+
+    this.liftWall = false;
 
     this._Init();
     this._BuildWorld();
@@ -37,14 +40,15 @@ class Game {
     this._AddCharacter();
     this._BindShooting();
     this._AddMaze();
+    this._AddTriggerBoxes();
 
+    this.mainAudio.play();
     window.addEventListener("resize", () => {
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
 
       this.renderer.setSize(window.innerWidth, window.innerHeight);
     });
-    this.mainAudio.play();
     this._Animate = this._Animate.bind(this);
     this._Animate();
   }
@@ -159,7 +163,7 @@ class Game {
     this.mainAudioListener = new THREE.AudioListener();
     this.audioSource = new THREE.Audio(this.mainAudioListener);
     this.audioSource.setMediaElementSource(this.mainAudio);
-    this.audioSource.setVolume(1);
+    this.audioSource.setVolume(0.5);
     this.camera.add(this.mainAudioListener);
   }
 
@@ -665,6 +669,36 @@ class Game {
     const cube = new THREE.Mesh(geometry, material);
     cube.position.set(0, this.wallHeight / 2, -50);
     this.scene.add(cube);
+  }
+
+  _AddTriggerBoxes(){
+    // Trigger body End Game -> Destory Exit Wall
+    const triggerGeometry = new THREE.BoxGeometry(4, 1, 1);
+    const triggerMaterial = new THREE.MeshBasicMaterial({
+      color: 0x00ff00,
+      wireframe: true,
+    });
+    const trigger = new THREE.Mesh(triggerGeometry, triggerMaterial);
+    this.scene.add(trigger);
+    const boxShape = new CANNON.Box(new CANNON.Vec3(4, 1, 1));
+    const triggerBody = new CANNON.Body({ isTrigger: true });
+    triggerBody.addShape(boxShape);
+    triggerBody.position.set(0, 1.3,-45);
+    trigger.position.set(0, 1.3,-45);
+    this.world.addBody(triggerBody);
+    
+    // It is possible to run code on the exit/enter
+    // of the trigger.
+    triggerBody.addEventListener("collide", (event) => {
+      if (event.body === this.player) {
+        if (this.numberOfKeys == 2) {
+          this.liftWall = true;
+        }else{
+          // alert("Please collect all keys to escape!");
+          console.log("Need to collect all Keys!");
+        }
+      }
+    });
   }
 }
 
