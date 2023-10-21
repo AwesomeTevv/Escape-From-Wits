@@ -152,6 +152,18 @@
         left: 50%; /* Position the text horizontally in the center */
         transform: translateX(-50%); /* Center the text horizontally */
       }
+
+      .subtitle {
+        bottom: 1rem;
+        display: flex;
+        width: 100%;
+        position: fixed;
+        justify-content: center;
+        align-items: center;
+        color: #ffffff;
+        font-size: 40px;
+        font-family: monospace;
+      }
     </style>
   </head>
   <body>
@@ -213,6 +225,10 @@
 
     <canvas id="minimap" style="width: 100px; height: 100px"></canvas>
     <span class="dot"></span>
+
+    <div class="subtitle">
+      <p>Press 'E' to pick up item</p>
+    </div>
 
     <script type="module" src="/levels/FirstYear/first-year.js"></script>
 
