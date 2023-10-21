@@ -35,9 +35,11 @@ class Game {
     this.wallTexture = wallTexture; // Path to the wall texture assets
     this.wallHeight = 1000; // Height of the maze walls -- Adjust accordingly to the feel of the game
 
+    this.maze = null; // The generated maze of the game
+
     this.exitDoor = {
-      mesh: null,
-      body: null,
+      mesh: null, // The mesh of the exit door
+      body: null, // The body of the exit door
     };
     this.gateNumber = 0;
     
@@ -695,8 +697,8 @@ class Game {
    * Adds the visual representation to the game world.
    */
   _AddMaze() {
-    const maze = this.generateMaze(20, 20);
-    this.visualise(maze);
+    this.maze = this.generateMaze(20, 20);
+    this.visualise(this.maze);
     this.exit();
   }
 
