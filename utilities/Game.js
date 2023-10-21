@@ -32,13 +32,13 @@ class Game {
     this.stats = null; // ThreeJS Addon: Stats -- Appears at the top left of the screen
     this.skybox = null; // The skybox for the game
     this.skyboxImage = skyboxImage; // Skybox image path
-    
+
     this.wallMaterial = null; // ThreeJS material for the walls
     this.wallTexture = wallTexture; // Path to the wall texture assets
     this.wallHeight = 1000; // Height of the maze walls -- Adjust accordingly to the feel of the game
-    
+
     this.maze = null; // The generated maze of the game
-    
+
     this.exitDoor = {
       mesh: null, // The mesh of the exit door
       body: null, // The body of the exit door
@@ -49,7 +49,7 @@ class Game {
     this.ballBodies = []; // List storing the physics bodies of the projectile balls
     this.ballMeshes = []; // List storing the meshes of the projectile balls
     this.lastCallTime = 0;
-    
+
     this.player = null;
     this.gun = null;
     this.torch = null;
@@ -93,7 +93,8 @@ class Game {
   _Init() {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x88ccee);
-    this.scene.fog = new THREE.FogExp2(0xcccccc, 0.002);
+    // this.scene.background = new THREE.Color(0x000000);
+    // this.scene.fog = new THREE.Fog(0x000000, 5, 15);
 
     this.minimapScene = new THREE.Scene();
     this.minimapScene.background = new THREE.Color(0x000011);
@@ -189,7 +190,7 @@ class Game {
       displacementScale: 0,
       normalMap: nmap,
       aoMap: amap,
-      aoMapIntensity: 5,
+      aoMapIntensity: 1,
       map: map,
       depthTest: true,
     });
@@ -289,7 +290,7 @@ class Game {
       displacementScale: 0,
       normalMap: nmap,
       aoMap: amap,
-      aoMapIntensity: 5,
+      aoMapIntensity: 1,
       map: map,
       depthTest: true,
     });
@@ -378,12 +379,12 @@ class Game {
     characterBody.position.set(10, radius / 2, 55);
   }
 
-  _AddCharacterEquipment(){
+  _AddCharacterEquipment() {
     let gunlight;
     this.torch = new THREE.SpotLight(0xffffff, 200.0, 20, Math.PI * 0.08);
     gunlight = new THREE.SpotLight(0xffffff, 10.0, 1);
     this.torch.castShadow = true;
-  
+
     this.torchTarget = new THREE.Object3D();
     this.torchTarget.position.set(0, 1, -2);
     this.camera.add(this.torchTarget);
@@ -392,14 +393,14 @@ class Game {
     this.torch.position.z = this.torch.position.z + 5;
   }
 
-  onGunLoaded = (object) =>{
+  onGunLoaded = (object) => {
     this.gun = new Token();
     this.gun.object = object;
-    this.gun.object.scale.set(3,3,3);
+    this.gun.object.scale.set(3, 3, 3);
     this.gun.object.position.set(10, 0.2, 55);
     this.scene.add(this.gun.object);
     this.gun.loaded = true;
-  }
+  };
 
   /**
    * Sets up the shooting functionality.
@@ -513,18 +514,18 @@ class Game {
           const gunPos = this.gun.getPosition();
           // console.log(mapPos);
           // console.log(gunPos);
-        
+
           // let sword_distance = characterPosition.distanceTo(swordPos);
           // let map_distance = characterPosition.distanceTo(mapPos);
           let gun_distance = characterPosition.distanceTo(gunPos);
-        
+
           // Define a threshold distance for character proximity
           const proximityThreshold = 3; // Adjust this threshold as needed
-        
+
           // if (sword_distance < proximityThreshold && swordToggled == false) {
           //   swordToggled = true;
           //   numberOfKeys++;
-        
+
           //   sword.position.set(0, 0, 0);
           //   sword.rotation.y = 0;
           //   camera.add(sword);
@@ -543,17 +544,17 @@ class Game {
           //   map.position.z = map.position.z - 0.9;
           //   map.position.x = map.position.x - 0.4;
           //   map.rotation.y = Math.PI * 0.5;
-          // } else 
+          // } else
           if (gun_distance < proximityThreshold && this.gun.toggled == false) {
-             this.gun.toggled = true;
-             this.gun.object.position.set(0, 0, 0);
-             this.gun.object.rotation.y = 0;
-        
+            this.gun.toggled = true;
+            this.gun.object.position.set(0, 0, 0);
+            this.gun.object.rotation.y = 0;
+
             this.camera.add(this.gun.object);
-             this.gun.object.position.y = this.gun.object.position.y - 0.7;
-             this.gun.object.position.z = this.gun.object.position.z - 0.9;
-             this.gun.object.position.x = this.gun.object.position.x + 0.3;
-             this.gun.object.rotation.x = Math.PI / 15;
+            this.gun.object.position.y = this.gun.object.position.y - 0.7;
+            this.gun.object.position.z = this.gun.object.position.z - 0.9;
+            this.gun.object.position.x = this.gun.object.position.x + 0.3;
+            this.gun.object.rotation.x = Math.PI / 15;
           }
         }
       },
@@ -561,18 +562,22 @@ class Game {
     );
   }
 
-  onTokenLoaded = (token) =>{
+  onTokenLoaded = (token) => {
     this.tokens.push(token);
     this.scene.add(token.object);
-  }
-  
-  _AddTokens(){
+  };
+
+  _AddTokens() {
     let loaderObj = new GLTFLoader();
     loaderObj.load("../../assets/sword/scene.gltf", (gltf) => {
       let token = new Token();
       token.object = gltf.scene;
-      token.object.scale.set(0.001,0.001,0.001);
-      token.object.position.set(this.player.position.x, this.player.position.y, this.player.position.z - 10);
+      token.object.scale.set(0.001, 0.001, 0.001);
+      token.object.position.set(
+        this.player.position.x,
+        this.player.position.y,
+        this.player.position.z - 10
+      );
       token.loaded = true;
       this.onTokenLoaded(token);
     });
@@ -624,8 +629,8 @@ class Game {
       }
     }
 
-    for(let i = 0; i < this.tokens.length; i++){
-      if(this.tokens[i].toggled === false && this.tokens[i].loaded){
+    for (let i = 0; i < this.tokens.length; i++) {
+      if (this.tokens[i].toggled === false && this.tokens[i].loaded) {
         this.tokens[i].animateObject(this.frameNumber);
       }
     }
@@ -681,7 +686,7 @@ class Game {
         side: THREE.BackSide,
         fog: false,
         transparent: true,
-        opacity: 0.2,
+        opacity: 0.75,
       });
     });
     return materialArray;
