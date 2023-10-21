@@ -20,6 +20,7 @@ class Game {
    */
   constructor(skyboxImage, wallTexture) {
     this.scene = null; // ThreeJS Scene
+    this.minimapScene = null;
     this.renderer = null; // ThreeJS Renderer
     this.camera = null; // ThreeJS Perspective Camera for First Person View
     this.mapCamera = null; // ThreeJS Orthographic Camera for the Minimap
@@ -78,6 +79,9 @@ class Game {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x88ccee);
     this.scene.fog = new THREE.FogExp2(0xcccccc, 0.002);
+
+    this.minimapScene = new THREE.Scene();
+    this.minimapScene.background = new THREE.Color(0x000011);
 
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -501,7 +505,7 @@ class Game {
    */
   _Render() {
     this.renderer.render(this.scene, this.camera);
-    this.rendererMap.render(this.scene, this.mapCamera);
+    this.rendererMap.render(this.minimapScene, this.mapCamera);
   }
 
   /**
@@ -566,11 +570,17 @@ class Game {
     body.position.set(x, this.wallHeight / 2, z);
     this.world.addBody(body);
 
+    const minimapMaterial = new THREE.MeshBasicMaterial({ color: 0x000088 });
+
     const geometry = new THREE.BoxGeometry(5, this.wallHeight, 5);
-    // const material = new THREE.MeshPhongMaterial({ color: 0x0088ff });
+    // const material = new THREE.MeshPhongMaterial({ color: 0x000044 });
     const cube = new THREE.Mesh(geometry, this.wallMaterial);
     cube.position.set(x, this.wallHeight / 2, z);
     this.scene.add(cube);
+
+    const mapCube = new THREE.Mesh(geometry, minimapMaterial);
+    mapCube.position.set(x, this.wallHeight / 2, z);
+    this.minimapScene.add(mapCube);
   }
 
   /**
