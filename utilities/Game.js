@@ -572,7 +572,7 @@ class Game {
       let token = new Token();
       token.object = gltf.scene;
       token.object.scale.set(0.001,0.001,0.001);
-      token.object.position.set(this.player.position.x, this.player.position.y, this.player.position.z - 2);
+      token.object.position.set(this.player.position.x, this.player.position.y, this.player.position.z - 10);
       token.loaded = true;
       this.onTokenLoaded(token);
     });
