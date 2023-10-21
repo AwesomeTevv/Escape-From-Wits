@@ -44,7 +44,7 @@ class Game {
 
       this.renderer.setSize(window.innerWidth, window.innerHeight);
     });
-
+    this.mainAudio.play();
     this._Animate = this._Animate.bind(this);
     this._Animate();
   }
@@ -160,7 +160,6 @@ class Game {
     this.audioSource = new THREE.Audio(this.mainAudioListener);
     this.audioSource.setMediaElementSource(this.mainAudio);
     this.audioSource.setVolume(1);
-    this.mainAudio.play();
     this.camera.add(this.mainAudioListener);
   }
 
