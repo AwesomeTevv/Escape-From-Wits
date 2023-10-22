@@ -168,6 +168,7 @@ class Game {
     const scale = 1;
     map.wrapS = map.wrapT = THREE.RepeatWrapping;
     map.repeat.set(scale, (this.wallHeight / 5) * scale);
+    map.mapping = THREE.CubeRefractionMapping;
 
     bmap.wrapS = bmap.wrapT = THREE.RepeatWrapping;
     bmap.repeat.set(scale, (this.wallHeight / 5) * scale);
@@ -193,6 +194,7 @@ class Game {
       aoMapIntensity: 1,
       map: map,
       depthTest: true,
+      refractionRatio: 0.1,
     });
 
     this.mainAudio = new Audio("../../assets/scary.mp3");
@@ -435,6 +437,7 @@ class Game {
 
     vmap.wrapS = vmap.wrapT = THREE.RepeatWrapping;
     vmap.repeat.set(50, 50);
+    vmap.mapping = THREE.CubeReflectionMapping;
 
     vbmap.wrapS = vbmap.wrapT = THREE.RepeatWrapping;
     vbmap.repeat.set(50, 50);
@@ -451,6 +454,8 @@ class Game {
       displacementScale: 0,
       map: vmap,
       depthTest: true,
+      reflectivity: 1,
+      refractionRatio: 0.1,
     });
     window.addEventListener("click", (event) => {
       if (!this.controls.enabled || this.gun.toggled == false) {
