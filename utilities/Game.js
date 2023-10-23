@@ -6,6 +6,24 @@ import Stats from "three/examples/jsm/libs/stats.module";
 import Token from "./tokens";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
+import { GlitchPass } from "three/examples/jsm/postprocessing/GlitchPass";
+import { BloomPass } from "three/examples/jsm/postprocessing/BloomPass";
+import { FilmPass } from "three/examples/jsm/postprocessing/FilmPass";
+import { DotScreenPass } from "three/examples/jsm/postprocessing/DotScreenPass";
+import {
+  MaskPass,
+  ClearMaskPass,
+} from "three/examples/jsm/postprocessing/MaskPass";
+import { RGBShiftShader } from "three/examples/jsm/shaders/RGBShiftShader";
+import { DotScreenShader } from "three/examples/jsm/shaders/DotScreenShader";
+import { DigitalGlitch } from "three/examples/jsm/shaders/DigitalGlitch";
+import { HorizontalBlurShader } from "three/examples/jsm/shaders/HorizontalBlurShader";
+import { VerticalBlurShader } from "three/examples/jsm/shaders/VerticalBlurShader";
+import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass";
+
 /**
  * Base game class.
  *
@@ -25,6 +43,7 @@ class Game {
     this.minimapScene = null;
     this.renderer = null; // ThreeJS Renderer
     this.camera = null; // ThreeJS Perspective Camera for First Person View
+    this.composer = null;
     this.mapCamera = null; // ThreeJS Orthographic Camera for the Minimap
     this.rendererMap = null; // The Minimap at the top right of the screen
     this.controls = null; // Character/FPS controls
@@ -80,6 +99,7 @@ class Game {
       this.camera.updateProjectionMatrix();
 
       this.renderer.setSize(window.innerWidth, window.innerHeight);
+      this.composer.setSize(window.innerWidth, window.innerHeight);
     });
     this._Animate = this._Animate.bind(this);
     this._Animate();
@@ -92,9 +112,9 @@ class Game {
    */
   _Init() {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x88ccee);
-    // this.scene.background = new THREE.Color(0x000000);
-    // this.scene.fog = new THREE.Fog(0x000000, 5, 15);
+    // this.scene.background = new THREE.Color(0x88ccee);
+    this.scene.background = new THREE.Color(0x000000);
+    this.scene.fog = new THREE.Fog(0x000000, 1, 7.5);
 
     this.minimapScene = new THREE.Scene();
     this.minimapScene.background = new THREE.Color(0x000011);
@@ -141,6 +161,54 @@ class Game {
     let mapCanvas = document.getElementById("minimap");
     this.rendererMap = new THREE.WebGLRenderer({ canvas: mapCanvas });
     this.rendererMap.setSize(200, 200);
+
+    /**
+     * Post-Processing
+     * ----------------------------------------------------
+     */
+
+    this.composer = new EffectComposer(this.renderer);
+    this.composer.addPass(new RenderPass(this.scene, this.camera));
+
+    const effectBloom = new BloomPass(0.5);
+    // this.composer.addPass(effectBloom);
+
+    const effectFilm = new FilmPass(5);
+    this.composer.addPass(effectFilm);
+
+    const effectDotScreen = new DotScreenPass(
+      new THREE.Vector2(0, 0),
+      0.5,
+      0.8
+    );
+    // this.composer.addPass(effectDotScreen);
+
+    const effectHBlur = new ShaderPass(HorizontalBlurShader);
+    const effectVBlur = new ShaderPass(VerticalBlurShader);
+    effectHBlur.uniforms["h"].value = 2 / (window.innerWidth / 2);
+    effectVBlur.uniforms["v"].value = 2 / (window.innerHeight / 2);
+    // this.composer.addPass(effectHBlur);
+    // this.composer.addPass(effectVBlur);
+
+    const clearMask = new ClearMaskPass();
+    // this.composer.addPass(clearMask);
+
+    // const effect1 = new ShaderPass(DotScreenShader);
+    // effect1.uniforms["scale"].value = 4;
+    // this.composer.addPass(effect1);
+
+    // const effect2 = new ShaderPass(RGBShiftShader);
+    // effect2.uniforms["amount"].value = 0.0015;
+    // this.composer.addPass(effect2);
+
+    // const effect3 = new ShaderPass(DigitalGlitch);
+    // effect3.uniforms["amount"].value = 0.0015;
+    // this.composer.addPass(effect3);
+
+    const effect4 = new OutputPass();
+    this.composer.addPass(effect4);
+
+    // ----------------------------------------------------
 
     this.stats = new Stats();
     this.stats.domElement.style.position = "absolute";
@@ -652,6 +720,7 @@ class Game {
   _Render() {
     this.renderer.render(this.scene, this.camera);
     this.rendererMap.render(this.minimapScene, this.mapCamera);
+    this.composer.render();
   }
 
   /**
