@@ -591,33 +591,46 @@ class Game {
           // let sword_distance = characterPosition.distanceTo(swordPos);
           // let map_distance = characterPosition.distanceTo(mapPos);
           let gun_distance = characterPosition.distanceTo(gunPos);
-
           // Define a threshold distance for character proximity
           const proximityThreshold = 3; // Adjust this threshold as needed
 
-          // if (sword_distance < proximityThreshold && swordToggled == false) {
-          //   swordToggled = true;
-          //   numberOfKeys++;
+          if (this.tokens.length > 0){
 
-          //   sword.position.set(0, 0, 0);
-          //   sword.rotation.y = 0;
-          //   camera.add(sword);
-          //   sword.scale.set(0.0002, 0.0002, 0.0002);
-          //   sword.position.y = sword.position.y - 0.5;
-          //   sword.position.z = sword.position.z - 0.9;
-          //   sword.position.x = sword.position.x;
-          //   sword.rotation.y = Math.PI * 1.5;
-          // } else if (map_distance < proximityThreshold && mapToggled == false) {
-          //   mapToggled = true;
-          //   numberOfKeys++;
-          //   map.position.set(0, 0, 0);
-          //   camera.add(map);
-          //   map.scale.set(0.2, 0.2, 0.2);
-          //   map.position.y = map.position.y - 0.53;
-          //   map.position.z = map.position.z - 0.9;
-          //   map.position.x = map.position.x - 0.4;
-          //   map.rotation.y = Math.PI * 0.5;
-          // } else
+          let tokenpos = this.tokens[0].getPosition();
+          let smallest_dist = characterPosition.distanceTo(tokenpos);
+          let test_dist;
+          let tokenid = 0
+          
+
+          //get smallest distance among tokens
+          for (let i = 0; i < this.tokens.length; i++) {
+            tokenpos = this.tokens[i].getPosition();
+            test_dist  = characterPosition.distanceTo(tokenpos);
+            if (test_dist < smallest_dist){
+              tokenid = i;
+              smallest_dist = test_dist;
+            }
+          }
+
+          if (smallest_dist < proximityThreshold && this.tokens[tokenid].toggled == false){
+            this.tokens[tokenid].toggled = true;
+            this.tokens[tokenid].object.position.set(0,0,0);
+            this.tokens[tokenid].object.rotation.y = 0;
+            this.camera.add(this.tokens[tokenid].object);
+            this.tokens[tokenid].object.position.x = this.tokens[tokenid].object.position.x + this.tokens[tokenid].toggledOffsetX;
+            this.tokens[tokenid].object.position.y = this.tokens[tokenid].object.position.y + this.tokens[tokenid].toggledOffsetY;
+            this.tokens[tokenid].object.position.z = this.tokens[tokenid].object.position.z + this.tokens[tokenid].toggledOffsetZ;
+            this.tokens[tokenid].object.rotation.y = this.tokens[tokenid].toggledRotation;
+            this.tokens[tokenid].object.scale.x = this.tokens[tokenid].toggledScale.x;
+            this.tokens[tokenid].object.scale.y = this.tokens[tokenid].toggledScale.y;
+            this.tokens[tokenid].object.scale.z = this.tokens[tokenid].toggledScale.z;
+          }
+
+        }
+          
+          
+
+          
           if (gun_distance < proximityThreshold && this.gun.toggled == false) {
             this.gun.toggled = true;
             this.gun.object.position.set(0, 0, 0);
@@ -646,6 +659,9 @@ class Game {
       let token = new Token();
       token.object = gltf.scene;
       token.object.scale.set(0.001, 0.001, 0.001);
+      token.setToggledScale(0.0002, 0.0002, 0.0002);
+      token.setToggledRotation(Math.PI * 1.5);
+      token.setToggledOffsets(0,-0.5,-0.9);
       token.object.position.set(
         this.player.position.x,
         this.player.position.y,
