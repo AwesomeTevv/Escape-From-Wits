@@ -38,7 +38,7 @@ class Game {
    * @param {string} skyboxImage Path to the skybox image assets
    * @param {string} wallTexture Path to the wall texture image assets
    */
-  constructor(skyboxImage, wallTexture) {
+  constructor(skyboxImage, wallTexture, groundTexture) {
     this.scene = null; // ThreeJS Scene
     this.minimapScene = null;
     this.renderer = null; // ThreeJS Renderer
@@ -55,6 +55,8 @@ class Game {
     this.wallMaterial = null; // ThreeJS material for the walls
     this.wallTexture = wallTexture; // Path to the wall texture assets
     this.wallHeight = 1000; // Height of the maze walls -- Adjust accordingly to the feel of the game
+
+    this.groundTexture = groundTexture;
 
     this.maze = null; // The generated maze of the game
 
@@ -112,9 +114,9 @@ class Game {
    */
   _Init() {
     this.scene = new THREE.Scene();
-    // this.scene.background = new THREE.Color(0x88ccee);
-    this.scene.background = new THREE.Color(0x000000);
-    this.scene.fog = new THREE.Fog(0x000000, 1, 7.5);
+    this.scene.background = new THREE.Color(0x88ccee);
+    // this.scene.background = new THREE.Color(0x000000);
+    // this.scene.fog = new THREE.Fog(0x000000, 1, 7.5);
 
     this.minimapScene = new THREE.Scene();
     this.minimapScene.background = new THREE.Color(0x000011);
@@ -174,7 +176,7 @@ class Game {
     // this.composer.addPass(effectBloom);
 
     const effectFilm = new FilmPass(5);
-    this.composer.addPass(effectFilm);
+    // this.composer.addPass(effectFilm);
 
     const effectDotScreen = new DotScreenPass(
       new THREE.Vector2(0, 0),
@@ -226,12 +228,12 @@ class Game {
 
     // Loading in textures
     const loader = new THREE.TextureLoader();
-    const base = "../../assets/" + this.wallTexture;
-    const map = loader.load(base + "COL_2K.png");
-    const bmap = loader.load(base + "BUMP_2K.png");
-    const dmap = loader.load(base + "DISP_2K.png");
-    const nmap = loader.load(base + "NRM_2K.png");
-    const amap = loader.load(base + "AO_2K.png");
+    const base = "../../assets/wallTextures/" + this.wallTexture;
+    const map = loader.load(base + "_COL_2K.png");
+    const bmap = loader.load(base + "_BUMP_2K.png");
+    const dmap = loader.load(base + "_DISP_2K.png");
+    const nmap = loader.load(base + "_NRM_2K.png");
+    const amap = loader.load(base + "_AO_2K.png");
 
     const scale = 1;
     map.wrapS = map.wrapT = THREE.RepeatWrapping;
@@ -254,7 +256,7 @@ class Game {
       specular: 0x666666,
       shininess: 15,
       bumpMap: bmap,
-      bumpScale: 1.5,
+      bumpScale: 15,
       displacementMap: dmap,
       displacementScale: 0,
       normalMap: nmap,
@@ -317,23 +319,16 @@ class Game {
 
     // Loading in textures for the ground plane
     const loader = new THREE.TextureLoader();
-    const map = loader.load(
-      "../../assets/ground/GroundDirtRocky020_COL_1K.jpg"
-    );
-    const bmap = loader.load(
-      "../../assets/ground/GroundDirtRocky020_BUMP_1K.jpg"
-    );
-    const dmap = loader.load(
-      "../../assets/ground/GroundDirtRocky020_DISP_1K.jpg"
-    );
-    const nmap = loader.load(
-      "../../assets/ground/GroundDirtRocky020_NRM_1K.jpg"
-    );
-    const amap = loader.load(
-      "../../assets/ground/GroundDirtRocky020_AO_1K.jpg"
-    );
 
-    const scale = 500;
+    const base = "../../assets/groundTextures/" + this.groundTexture;
+
+    const map = loader.load(base + "_COL_2K.jpg");
+    const bmap = loader.load(base + "_BUMP_2K.jpg");
+    const dmap = loader.load(base + "_DISP_2K.jpg");
+    const nmap = loader.load(base + "_NRM_2K.jpg");
+    const amap = loader.load(base + "_AO_2K.jpg");
+
+    const scale = 1000 / 3;
     map.wrapS = map.wrapT = THREE.RepeatWrapping;
     map.repeat.set(scale, scale);
 
@@ -355,9 +350,10 @@ class Game {
       specular: 0x666666,
       shininess: 5,
       bumpMap: bmap,
-      bumpScale: 5,
+      bumpScale: 20,
       displacementMap: dmap,
-      displacementScale: 0,
+      displacementScale: 0.1,
+      displacementBias: 0.01,
       normalMap: nmap,
       aoMap: amap,
       aoMapIntensity: 1,
@@ -978,7 +974,7 @@ class Game {
     triggerBodyEnd.addEventListener("collide", (event) => {
       if (this.numberOfKeys == 2) {
         if (event.body === this.player) {
-          window.location = "/levels/level-two.html";
+          window.location = "/levels/Second-Year/Second-Year.html";
         }
       }
     });
