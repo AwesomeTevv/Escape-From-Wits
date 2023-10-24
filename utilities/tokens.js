@@ -21,6 +21,7 @@ class Token {
         this.toggledOffsetX = null;
         this.toggledOffsetY = null;
         this.toggledOffsetZ = null;
+        this.name = null;
     }
     setMapScale(x, y, z) {
       this.mapScale = new THREE.Vector3(x, y, z);

@@ -94,6 +94,7 @@ class Game {
     this._AddTriggerBoxes();
     this._AddCharacterEquipment();
     this._AddTokens();
+    // this.checkProximity();
 
     this.mainAudio.play();
     window.addEventListener("resize", () => {
@@ -175,8 +176,8 @@ class Game {
     const effectBloom = new BloomPass(0.5);
     // this.composer.addPass(effectBloom);
 
-    const effectFilm = new FilmPass(5);
-    // this.composer.addPass(effectFilm);
+    const effectFilm = new FilmPass(4);
+    this.composer.addPass(effectFilm);
 
     const effectDotScreen = new DotScreenPass(
       new THREE.Vector2(0, 0),
@@ -620,6 +621,7 @@ class Game {
             this.tokens[tokenid].object.scale.x = this.tokens[tokenid].toggledScale.x;
             this.tokens[tokenid].object.scale.y = this.tokens[tokenid].toggledScale.y;
             this.tokens[tokenid].object.scale.z = this.tokens[tokenid].toggledScale.z;
+            
           }
 
         }
@@ -633,16 +635,78 @@ class Game {
             this.gun.object.rotation.y = 0;
 
             this.camera.add(this.gun.object);
+            
             this.gun.object.position.y = this.gun.object.position.y - 0.7;
-            this.gun.object.position.z = this.gun.object.position.z - 0.9;
-            this.gun.object.position.x = this.gun.object.position.x + 0.3;
+            this.gun.object.position.z = this.gun.object.position.z - 0.8;
+            this.gun.object.position.x = this.gun.object.position.x + 0.2;
             this.gun.object.rotation.x = Math.PI / 15;
+            this.gun.object.rotation.y = Math.PI /40;
+            // this.gun.object.scale.x = 0.9999;
+            // this.gun.object.scale.y = 0.9999;
+            this.gun.object.scale.z = 2;
           }
         }
       },
       false
     );
   }
+
+  checkProximity(){
+    
+    const characterPosition = this.player.position;
+          // const swordPos = sword.position;
+          // const mapPos = map.position;
+
+
+        if (this.gun.loaded == true){
+          const gunPos = this.gun.getPosition();
+          
+          let gun_distance = characterPosition.distanceTo(gunPos);
+
+          // Define a threshold distance for character proximity
+          const proximityThreshold = 3; // Adjust this threshold as needed
+
+          if (this.tokens.length > 0){
+
+          let tokenpos = this.tokens[0].getPosition();
+          let smallest_dist = characterPosition.distanceTo(tokenpos);
+          let test_dist;
+          let tokenid = 0
+          
+
+          //get smallest distance among tokens
+          for (let i = 0; i < this.tokens.length; i++) {
+            tokenpos = this.tokens[i].getPosition();
+            test_dist  = characterPosition.distanceTo(tokenpos);
+            if (test_dist < smallest_dist){
+              tokenid = i;
+              smallest_dist = test_dist;
+            }
+          }
+
+          if (smallest_dist < proximityThreshold && this.tokens[tokenid].toggled == false){
+            const newText = "Press 'E' to pick up the " + this.tokens[tokenid].name;
+            document.getElementById("tokenText").textContent = newText;
+          }
+            else{
+              document.getElementById("tokenText").textContent ='';
+            }
+          
+
+        }
+          
+          
+
+          
+          if (gun_distance < proximityThreshold && this.gun.toggled == false) {
+            const newText = "Press 'E' to pick up the gun";
+            document.getElementById("tokenText").textContent = newText;
+          }
+
+        }
+        
+
+  };
 
   onTokenLoaded = (token) => {
     this.tokens.push(token);
@@ -658,6 +722,7 @@ class Game {
       token.setToggledScale(0.0002, 0.0002, 0.0002);
       token.setToggledRotation(Math.PI * 1.5);
       token.setToggledOffsets(0,-0.5,-0.9);
+      token.name = "sword";
       token.object.position.set(
         this.player.position.x,
         this.player.position.y,
@@ -667,6 +732,7 @@ class Game {
       this.onTokenLoaded(token);
     });
   }
+
 
   /**
    * Animates our game world.
@@ -721,6 +787,10 @@ class Game {
     }
     this.frameNumber += 1;
     this._Render();
+
+    if (this.tokens.length > 0) {
+      this.checkProximity();
+    }
   }
 
   /**
