@@ -730,6 +730,9 @@ class Game {
       );
       token.loaded = true;
       this.onTokenLoaded(token);
+      this.setKeyPos(token);
+      
+
     });
   }
 
@@ -749,7 +752,7 @@ class Game {
     const time = performance.now() / 1000;
     const dt = time - this.lastCallTime;
     this.lastCallTime = time;
-
+    
     this.world.step(timeStep, dt);
     while (this.ballBodies.length > 10) {
       let body = this.ballBodies.shift();
@@ -790,6 +793,8 @@ class Game {
 
     if (this.tokens.length > 0) {
       this.checkProximity();
+      console.log(this.player.position);
+      console.log("Token pos: " + this.tokens[0].getPosition().x + "," + this.tokens[0].getPosition().z);
     }
   }
 
@@ -937,6 +942,40 @@ class Game {
 
     return maze;
   }
+
+ setKeyPos = (token) =>{
+    let wallcounter = 0
+    for (let r = 1; r < this.maze.length - 1; r++){
+      for (let c = 1; c < this.maze[r].length - 1; c++){
+        if (this.maze[r][c] == 0 || this.maze[r][c] == 2 || this.maze[r][c] == 3){
+          if (this.maze[r][c + 1] == 1){
+            wallcounter += 1;
+          }
+          if (this.maze[r][c - 1] == 1){
+            wallcounter += 1;
+          }
+          if (this.maze[r + 1][c] == 1){
+            wallcounter += 1;
+          }
+          if (this.maze[r - 1][c] == 1){
+            wallcounter += 1;
+          }
+
+          if (wallcounter == 3){
+            this.maze[r][c] = 5;
+            token.object.position.set( 5*(c - 10), 1.1 ,  5*(r - 10));
+          }
+
+          wallcounter = 0;
+
+        }
+
+
+
+      }
+    }
+
+  };
 
   bounds() {
     this.body(20, 55);
