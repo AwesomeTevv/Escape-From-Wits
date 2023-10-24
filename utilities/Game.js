@@ -554,6 +554,7 @@ class Game {
               this.tokens[tokenid].object.scale.x = this.tokens[tokenid].toggledScale.x;
               this.tokens[tokenid].object.scale.y = this.tokens[tokenid].toggledScale.y;
               this.tokens[tokenid].object.scale.z = this.tokens[tokenid].toggledScale.z;
+              this.numberOfKeys += 1;
             }
           }
 
@@ -991,7 +992,7 @@ class Game {
     // of the trigger.
     triggerBody.addEventListener("collide", (event) => {
       if (event.body === this.player) {
-        if (this.numberOfKeys == 0) {
+        if (this.numberOfKeys == 1) {
           this.liftWall = true;
         } else {
           // alert("Please collect all keys to escape!");
