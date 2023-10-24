@@ -175,8 +175,8 @@ class Game {
     const effectBloom = new BloomPass(0.5);
     // this.composer.addPass(effectBloom);
 
-    const effectFilm = new FilmPass(5);
-    // this.composer.addPass(effectFilm);
+    const effectFilm = new FilmPass(4);
+    this.composer.addPass(effectFilm);
 
     const effectDotScreen = new DotScreenPass(
       new THREE.Vector2(0, 0),
@@ -633,10 +633,15 @@ class Game {
             this.gun.object.rotation.y = 0;
 
             this.camera.add(this.gun.object);
+            
             this.gun.object.position.y = this.gun.object.position.y - 0.7;
-            this.gun.object.position.z = this.gun.object.position.z - 0.9;
-            this.gun.object.position.x = this.gun.object.position.x + 0.3;
+            this.gun.object.position.z = this.gun.object.position.z - 0.8;
+            this.gun.object.position.x = this.gun.object.position.x + 0.2;
             this.gun.object.rotation.x = Math.PI / 15;
+            this.gun.object.rotation.y = Math.PI /40;
+            // this.gun.object.scale.x = 0.9999;
+            // this.gun.object.scale.y = 0.9999;
+            this.gun.object.scale.z = 2;
           }
         }
       },
