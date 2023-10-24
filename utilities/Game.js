@@ -517,14 +517,8 @@ class Game {
           event.preventDefault();
           // Calculate the distance between the character and sphereTwo
           const characterPosition = this.player.position;
-          // const swordPos = sword.position;
-          // const mapPos = map.position;
           const gunPos = this.gun.getPosition();
-          // console.log(mapPos);
-          // console.log(gunPos);
-
-          // let sword_distance = characterPosition.distanceTo(swordPos);
-          // let map_distance = characterPosition.distanceTo(mapPos);
+          
           let gun_distance = characterPosition.distanceTo(gunPos);
           // Define a threshold distance for character proximity
           const proximityThreshold = 3; // Adjust this threshold as needed
@@ -553,23 +547,13 @@ class Game {
               this.tokens[tokenid].object.position.set(0, 0, 0);
               this.tokens[tokenid].object.rotation.y = 0;
               this.camera.add(this.tokens[tokenid].object);
-              this.tokens[tokenid].object.position.x =
-                this.tokens[tokenid].object.position.x +
-                this.tokens[tokenid].toggledOffsetX;
-              this.tokens[tokenid].object.position.y =
-                this.tokens[tokenid].object.position.y +
-                this.tokens[tokenid].toggledOffsetY;
-              this.tokens[tokenid].object.position.z =
-                this.tokens[tokenid].object.position.z +
-                this.tokens[tokenid].toggledOffsetZ;
-              this.tokens[tokenid].object.rotation.y =
-                this.tokens[tokenid].toggledRotation;
-              this.tokens[tokenid].object.scale.x =
-                this.tokens[tokenid].toggledScale.x;
-              this.tokens[tokenid].object.scale.y =
-                this.tokens[tokenid].toggledScale.y;
-              this.tokens[tokenid].object.scale.z =
-                this.tokens[tokenid].toggledScale.z;
+              this.tokens[tokenid].object.position.x = this.tokens[tokenid].object.position.x + this.tokens[tokenid].toggledOffsetX;
+              this.tokens[tokenid].object.position.y = this.tokens[tokenid].object.position.y + this.tokens[tokenid].toggledOffsetY;
+              this.tokens[tokenid].object.position.z = this.tokens[tokenid].object.position.z + this.tokens[tokenid].toggledOffsetZ;
+              this.tokens[tokenid].object.rotation.y = this.tokens[tokenid].toggledRotation;
+              this.tokens[tokenid].object.scale.x = this.tokens[tokenid].toggledScale.x;
+              this.tokens[tokenid].object.scale.y = this.tokens[tokenid].toggledScale.y;
+              this.tokens[tokenid].object.scale.z = this.tokens[tokenid].toggledScale.z;
             }
           }
 
