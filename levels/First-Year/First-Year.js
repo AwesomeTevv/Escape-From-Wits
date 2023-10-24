@@ -11,7 +11,7 @@ class FirstLevel extends Game {
     super(
       "mayhem/mayhem8/flame",
       "Bricks/BricksReclaimedWhitewashedOffset001",
-      "groundTextures/Sand/GroundSand005"
+      "Sand/GroundSand005"
       // "desertWall/StuccoRoughCast001_"
     );
     // const geometry = new THREE.ConeGeometry( 10, 30, 4, 1 );
