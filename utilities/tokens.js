@@ -15,7 +15,27 @@ class Token {
         this.loaded = false;
         this.object = new THREE.Object3D();
         this.toggled = false;
-        this.name = "dong";
+        this.mapScale = null;
+        this.toggledScale = null;
+        this.toggledRotation = null;
+        this.toggledOffsetX = null;
+        this.toggledOffsetY = null;
+        this.toggledOffsetZ = null;
+    }
+    setMapScale(x, y, z) {
+      this.mapScale = new THREE.Vector3(x, y, z);
+    }
+
+    setToggledScale(x, y, z) {
+      this.toggledScale = new THREE.Vector3(x, y, z);
+    }
+    setToggledRotation(angle){
+      this.toggledRotation = angle;
+    }
+    setToggledOffsets(x,y,z){
+      this.toggledOffsetX = x;
+      this.toggledOffsetY = y;
+      this.toggledOffsetZ = z;
     }
 
     animateObject(animationnum) {
@@ -40,18 +60,7 @@ class Token {
         }
       }
     
-    // loadObject(path, scene){
-
-    //     modelLoader.load(path,  (gltf) => {
-    //         this.object = gltf.scene;
-    //         scene.add(this.object);
-    //         this.object.scale.set(100,100,100);
-    //       });
-
-          
-    //       this.loaded = true;
-    // }
-
+   
 
 }
 
