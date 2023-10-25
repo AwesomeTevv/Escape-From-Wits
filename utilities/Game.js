@@ -732,8 +732,7 @@ class Game {
     const dt = time - this.lastCallTime;
     this.lastCallTime = time;
 
-    this.entityManager.update(dt);
-
+    
     this.world.step(timeStep, dt);
     while (this.ballBodies.length > 10) {
       let body = this.ballBodies.shift();
@@ -741,33 +740,35 @@ class Game {
       this.world.removeBody(body);
       this.scene.remove(mesh);
     }
-
+    
     for (let i = 0; i < this.ballBodies.length; i++) {
       this.ballMeshes[i].position.copy(this.ballBodies[i].position);
       this.ballMeshes[i].quaternion.copy(this.ballBodies[i].quaternion);
     }
-
+    
     let pos = this.player.position.clone();
     this.mapCamera.position.x = pos.x;
     this.mapCamera.position.z = pos.z;
     this.mapCamera.lookAt(new THREE.Vector3(pos.x, -1, pos.z));
-
-    if (this.frameNumber > 100) {
-      this.frameNumber = 0;
-      this.npc.regeneratePath(
-        this.maze,
-        this.player,
-        this.enemy,
-        this.enemyPath,
-        this.vehicle
-      );
+    
+    this.entityManager.update(dt);
+    if (pos.z <= 5 * (19 - 10)) {
+      if(this.frameNumber > 1000){
+        this.npc.regeneratePath(
+          this.maze,
+          this.player,
+          this.enemy,
+          this.enemyPath,
+          this.vehicle
+          );
+          this.frameNumber = 0;
+      }
     }
-    if (pos.z >= 5 * (19 - 10) && pos.x >= 5 * (19 - 10)) {
-    }
+    
     console.log(
       `NPC Position : (${this.enemy.position.x}, ${this.enemy.position.z})`
-    );
-
+      );
+      
     this.controls.update(dt);
     this.stats.update();
 
