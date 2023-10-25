@@ -752,17 +752,17 @@ class Game {
     this.mapCamera.position.z = pos.z;
     this.mapCamera.lookAt(new THREE.Vector3(pos.x, -1, pos.z));
 
-    if (this.frameNumber > 100) {
+    if (pos.z <= 45) {
+      if (this.frameNumber >= 10) {
+        this.npc.regeneratePath(
+          this.maze,
+          this.player,
+          this.enemy,
+          this.enemyPath,
+          this.vehicle
+        );
+      }
       this.frameNumber = 0;
-      this.npc.regeneratePath(
-        this.maze,
-        this.player,
-        this.enemy,
-        this.enemyPath,
-        this.vehicle
-      );
-    }
-    if (pos.z >= 5 * (19 - 10) && pos.x >= 5 * (19 - 10)) {
     }
     console.log(
       `NPC Position : (${this.enemy.position.x}, ${this.enemy.position.z})`

@@ -54,21 +54,25 @@ class NPC {
     let enemyZ = 0;
 
     if (
-      Math.abs(Math.floor(enemyPos.x) - enemyPos.x) <
+      Math.abs(Math.floor(enemyPos.x) - enemyPos.x) <=
       Math.abs(Math.ceil(enemyPos.x) - enemyPos.x)
     ) {
       enemyX = Math.floor(enemyPos.x);
     } else {
       enemyX = Math.ceil(enemyPos.x);
     }
+    enemyX = Math.floor(enemyX / 5) * 5;
+
     if (
-      Math.abs(Math.floor(enemyPos.z) - enemyPos.z) <
+      Math.abs(Math.floor(enemyPos.z) - enemyPos.z) <=
       Math.abs(Math.ceil(enemyPos.z) - enemyPos.z)
     ) {
       enemyZ = Math.floor(enemyPos.z);
     } else {
       enemyZ = Math.ceil(enemyPos.z);
     }
+    enemyZ = Math.floor(enemyZ / 5) * 5;
+
     maze[Math.floor(enemyZ / 5 + 10)][Math.floor(enemyX / 5 + 10)] = 2;
 
     /*
@@ -80,21 +84,25 @@ class NPC {
     let playerZ = 0;
 
     if (
-      Math.abs(Math.floor(playerPos.x) - playerPos.x) <
+      Math.abs(Math.floor(playerPos.x) - playerPos.x) <=
       Math.abs(Math.ceil(playerPos.x) - playerPos.x)
     ) {
       playerX = Math.floor(playerPos.x);
     } else {
       playerX = Math.ceil(playerPos.x);
     }
+    playerX = Math.floor(playerX / 5) * 5;
+
     if (
-      Math.abs(Math.floor(playerPos.z) - playerPos.z) <
+      Math.abs(Math.floor(playerPos.z) - playerPos.z) <=
       Math.abs(Math.ceil(playerPos.z) - playerPos.z)
     ) {
       playerZ = Math.floor(playerPos.z);
     } else {
       playerZ = Math.ceil(playerPos.z);
     }
+
+    playerZ = Math.floor(playerZ / 5) * 5;
 
     maze[Math.floor(playerZ / 5 + 10)][Math.floor(playerX / 5 + 10)] = 3;
 
