@@ -15,6 +15,9 @@ import * as YUKA from "yuka";
 // Custom Classes
 import Token from "./tokens";
 import { NPC } from "./NPC";
+import { ConvexObjectBreaker } from "three/examples/jsm/misc/ConvexObjectBreaker";
+import CannonUtils from "./cannonUtils";
+import { ConvexGeometry } from "three/examples/jsm/geometries/ConvexGeometry";
 
 /**
  * Base game class.
@@ -75,6 +78,11 @@ class Game {
     this.mainAudioListener = null;
     this.numberOfKeys = 0;
 
+    this.convexObjectBreaker = null;
+    this.breakableMeshes = [];
+    this.breakableBodies = [];
+    this.breakableMeshID = 0;
+
     /*
      * YUKA Variables
      */
@@ -106,6 +114,8 @@ class Game {
     this._AddTriggerBoxes();
     this._AddCharacterEquipment();
     this._AddTokens();
+
+    this._CreateBreakableObject(2,2,2,this.player.position.x,this.player.position.y,this.player.position.z + 5);
     // this.checkProximity();
 
     this.mainAudio.play();
@@ -271,6 +281,8 @@ class Game {
     this.audioSource.setMediaElementSource(this.mainAudio);
     this.audioSource.setVolume(0.5);
     this.camera.add(this.mainAudioListener);
+
+    this.convexObjectBreaker = new ConvexObjectBreaker();
   }
 
   /**
@@ -569,19 +581,25 @@ class Game {
 
       ballBody.addEventListener('collide', (e)=>{
         if(e.body.userData){
-          if(e.body.userData.numberLives > 1){
-            e.body.userData.numberLives -= 1;
-            console.log("lives left: " + e.body.userData.numberLives)
+          if(e.body.userData.numberLives){
+            if(e.body.userData.numberLives > 1){
+              e.body.userData.numberLives -= 1;
+            }else{
+              if(this.enemyBody != null){
+                this.world.removeBody(this.enemyBody);
+                this.enemyBody = null;
+                this.npcAnimateDeath = true;
+              }
+            }
           }else{
-            if(this.enemyBody != null){
-              this.world.removeBody(this.enemyBody);
-              this.enemyBody = null;
-              this.npcAnimateDeath = true;
+            if(e.body.userData.splitCount < 3){
+              this.splitObject(e.body.userData, e.contact);
             }
           }
         }
       });
     });
+
     document.addEventListener(
       "keydown",
       (event) => {
@@ -751,9 +769,22 @@ class Game {
     const time = performance.now() / 1000;
     const dt = time - this.lastCallTime;
     this.lastCallTime = time;
-
-    
     this.world.step(timeStep, dt);
+
+    Object.keys(this.breakableMeshes).forEach((m) =>{
+      this.breakableMeshes[m].position.set(
+        this.breakableBodies[m].position.x,
+        this.breakableBodies[m].position.y,
+        this.breakableBodies[m].position.z,
+      );
+      this.breakableMeshes[m].quaternion.set(
+        this.breakableBodies[m].quaternion.x,
+        this.breakableBodies[m].quaternion.y,
+        this.breakableBodies[m].quaternion.z,
+        this.breakableBodies[m].quaternion.w,
+      );
+    });
+    
     while (this.ballBodies.length > 10) {
       let body = this.ballBodies.shift();
       let mesh = this.ballMeshes.shift();
@@ -1146,6 +1177,114 @@ class Game {
 
   sync(entity, renderComponent) {
     renderComponent.matrix.copy(entity.worldMatrix);
+  }
+
+  geometryToShape(geometry) {
+    const position = (geometry.attributes.position).array
+    const points = []
+    for (let i = 0; i < position.length; i += 3) {
+        points.push(
+            new THREE.Vector3(position[i], position[i + 1], position[i + 2])
+        )
+    }
+    const convexHull = new ConvexGeometry(points)
+    const shape = CannonUtils.CreateConvexPolyhedron(convexHull)
+    return shape
+}
+
+  splitObject(userData, contact) {
+    const contactId = userData.id;
+    if (this.breakableMeshes[contactId]) {
+        const poi = this.breakableBodies[contactId].pointToLocalFrame(
+            contact.bj.position.vadd(contact.rj)
+        )
+        const n = new THREE.Vector3(
+            contact.ni.x,
+            contact.ni.y,
+            contact.ni.z
+        ).negate()
+        const shards = this.convexObjectBreaker.subdivideByImpact(
+            this.breakableMeshes[contactId],
+            new THREE.Vector3(poi.x, poi.y, poi.z),
+            n,
+            1,
+            0
+        )
+        
+        if(this.breakableMeshes[contactId] && this.breakableBodies[contactId]){
+          this.scene.remove(this.breakableMeshes[contactId]);
+          delete this.breakableMeshes[contactId];
+          this.world.removeBody(this.breakableBodies[contactId]);
+          delete this.breakableBodies[contactId];
+        }
+  
+        shards.forEach((d) => {
+          // console.log("Add shard!");
+            const nextId = this.breakableMeshID++
+  
+            this.scene.add(d)
+            this.breakableMeshes[nextId] = d;
+            d.geometry.scale(0.99, 0.99, 0.99)
+            const shape = this.geometryToShape(d.geometry)
+  
+            const body = new CANNON.Body({ mass: 1 })
+            body.addShape(shape);
+            body.userData = {
+                splitCount: userData.splitCount + 1,
+                id: nextId,
+            }
+            body.position.x = d.position.x
+            body.position.y = d.position.y
+            body.position.z = d.position.z
+            body.quaternion.x = d.quaternion.x
+            body.quaternion.y = d.quaternion.y
+            body.quaternion.z = d.quaternion.z
+            body.quaternion.w = d.quaternion.w
+            this.world.addBody(body)
+            this.breakableBodies[nextId] = body
+          });
+      }
+  }
+
+  _CreateBreakableObject(sx,sy,sz,px,py,pz){
+    const size = {
+        x: sx,
+        y: sy,
+        z: sz,
+    }
+    const geo = new THREE.BoxGeometry(
+        size.x,
+        size.y,
+        size.z
+    )
+    const cube = new THREE.Mesh(geo);
+    cube.position.set(px,py,pz);
+    cube.setRotationFromAxisAngle(new CANNON.Vec3(0,1,0));
+
+    this.scene.add(cube)
+    this.breakableMeshes[this.breakableMeshID] = cube
+    this.convexObjectBreaker.prepareBreakableObject(
+        this.breakableMeshes[this.breakableMeshID],
+        1,
+        new THREE.Vector3(),
+        new THREE.Vector3(),
+        true
+    )
+
+    const cubeShape = new CANNON.Box(
+        new CANNON.Vec3(size.x / 2, size.y / 2, size.z / 2)
+    )
+    const cubeBody = new CANNON.Body({ mass: 1 });
+    (cubeBody).userData = { splitCount: 0, id: this.breakableMeshID }
+    cubeBody.addShape(cubeShape)
+    cubeBody.position.x = cube.position.x
+    cubeBody.position.y = cube.position.y
+    cubeBody.position.z = cube.position.z
+
+    this.world.addBody(cubeBody)
+    this.breakableBodies[this.breakableMeshID] = cubeBody
+
+    this.breakableMeshID++
   }
 }
 

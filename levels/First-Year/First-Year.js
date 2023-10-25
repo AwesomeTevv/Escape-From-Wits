@@ -25,7 +25,7 @@ class FirstLevel extends Game {
     );
 
     // Add Post-Processing Effects
-    this._PostProcessing();
+    // this._PostProcessing();
   }
   _PostProcessing() {
     this.composer.addPass(new RenderPass(this.scene, this.camera));
