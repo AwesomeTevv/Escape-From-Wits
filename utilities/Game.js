@@ -127,7 +127,7 @@ class Game {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x88ccee);
     // this.scene.background = new THREE.Color(0x000000);
-    // this.scene.fog = new THREE.Fog(0x000000, 1, 7.5);
+    this.scene.fog = new THREE.Fog(0x000000, 1, 7.5);
 
     this.minimapScene = new THREE.Scene();
     this.minimapScene.background = new THREE.Color(0x000011);
@@ -258,7 +258,7 @@ class Game {
      * Audio Initialisation
      */
 
-    this.mainAudio = new Audio("../../assets/scary.mp3");
+    this.mainAudio = new Audio("../../assets/scary_chime-17193.mp3");
     this.mainAudio.loop = true;
     this.mainAudioListener = new THREE.AudioListener();
     this.audioSource = new THREE.Audio(this.mainAudioListener);
