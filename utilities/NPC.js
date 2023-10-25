@@ -2,11 +2,29 @@ import * as THREE from "three";
 import * as CANNON from "cannon-es";
 import * as YUKA from "yuka";
 
+// Custom Classes
 import { AStar } from "./PathFinder";
 
+/**
+ * NPC class.
+ *
+ * Custom class that handles all the logic and creation of the NPC.
+ */
 class NPC {
+  /**
+   * Constructor class for the NPC.
+   *
+   * Initialises the object.
+   */
   constructor() {}
 
+  /**
+   * Builds the NPC.
+   *
+   * Builds and returns the mesh for the NPC.
+   *
+   * @returns THREE.Mesh
+   */
   getNPC() {
     const geometry = new THREE.BoxGeometry(2, 10, 2);
     const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
@@ -16,6 +34,9 @@ class NPC {
   }
 
   /**
+   * Regenerates the path.
+   *
+   * Function that regenerates the path to the player.
    *
    * @param {number[][]} maze The 2D array representing the game's maze
    * @param {CANNON.Body} player The mesh of the player
@@ -102,7 +123,7 @@ class NPC {
         vehicle.maxSpeed = 5;
 
         maze[Math.floor(enemyZ / 5 + 10)][Math.floor(enemyX / 5 + 10)] = 0;
-        enemy.position.copy(enemyPath.current()); 
+        enemy.position.copy(enemyPath.current());
         const followPathBehavior = new YUKA.FollowPathBehavior(enemyPath, 1);
         vehicle.steering.clear();
         vehicle.steering.add(followPathBehavior);
