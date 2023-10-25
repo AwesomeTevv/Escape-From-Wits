@@ -1,12 +1,20 @@
+// ThreeJS Imports
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import Stats from "three/examples/jsm/libs/stats.module";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
+
+// Cannon-ES Imports
 import * as CANNON from "cannon-es";
 import { PointerLockControlsCannon } from "./PointerLockControlsCannon";
-import Stats from "three/examples/jsm/libs/stats.module";
-import Token from "./tokens";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
-import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
+// YUKA Imports
+import * as YUKA from "yuka";
+
+// Custom Classes
+import Token from "./tokens";
+import { NPC } from "./NPC";
 
 /**
  * Base game class.
@@ -67,7 +75,25 @@ class Game {
     this.mainAudioListener = null;
     this.numberOfKeys = 0;
 
-    this.liftWall = false;
+    /*
+     * YUKA Variables
+     */
+
+    /** @type THREE.Mesh */
+    this.enemy = null;
+    /** @type YUKA.Vehicle */
+    this.vehicle = null;
+    /** @type YUKA.EntityManager */
+    this.entityManager = null;
+    /** @type  YUKA.Time*/
+    this.time = null;
+    /** @type YUKA.Path */
+    this.enemyPath = null;
+
+    /** @type NPC */
+    this.npc = null;
+
+    this.liftWall = false; // Whether or not to lift the exit wall
 
     this._Init();
     this._BuildWorld();
@@ -205,6 +231,32 @@ class Game {
       depthTest: true,
       refractionRatio: 0.1,
     });
+
+    /*
+     *   Enemy Mesh Setup
+     */
+    this.npc = new NPC();
+    this.enemy = this.npc.getNPC();
+    this.enemy.position.set(5 * (10 - 10), 5, 5 * (1 - 10));
+    this.enemy.matrixAutoUpdate = false;
+    this.scene.add(this.enemy);
+    this.minimapScene.add(this.enemy);
+
+    /*
+     *   YUKA Initialisation
+     */
+
+    this.time = new YUKA.Time();
+    this.enemyPath = new YUKA.Path();
+    this.vehicle = new YUKA.Vehicle();
+    this.entityManager = new YUKA.EntityManager();
+
+    this.vehicle.setRenderComponent(this.enemy, this.sync);
+    this.entityManager.add(this.vehicle);
+
+    /*
+     * Audio Initialisation
+     */
 
     this.mainAudio = new Audio("../../assets/scary.mp3");
     this.mainAudio.loop = true;
@@ -680,6 +732,8 @@ class Game {
     const dt = time - this.lastCallTime;
     this.lastCallTime = time;
 
+    this.entityManager.update(dt);
+
     this.world.step(timeStep, dt);
     while (this.ballBodies.length > 10) {
       let body = this.ballBodies.shift();
@@ -697,6 +751,22 @@ class Game {
     this.mapCamera.position.x = pos.x;
     this.mapCamera.position.z = pos.z;
     this.mapCamera.lookAt(new THREE.Vector3(pos.x, -1, pos.z));
+
+    if (pos.z >= 5 * (19 - 10) && pos.x >= 5 * (19 - 10)) {
+      if (this.frameNumber > 100) {
+        this.frameNumber = 0;
+        this.npc.regeneratePath(
+          this.maze,
+          this.player,
+          this.enemy,
+          this.enemyPath,
+          this.vehicle
+        );
+      }
+    }
+    console.log(
+      `NPC Position : (${this.enemy.position.x}, ${this.enemy.position.z})`
+    );
 
     this.controls.update(dt);
     this.stats.update();
@@ -720,13 +790,13 @@ class Game {
 
     if (this.tokens.length > 0) {
       this.checkProximity();
-      console.log(this.player.position);
-      console.log(
-        "Token pos: " +
-          this.tokens[0].getPosition().x +
-          "," +
-          this.tokens[0].getPosition().z
-      );
+      // console.log(this.player.position);
+      // console.log(
+      //   "Token pos: " +
+      //     this.tokens[0].getPosition().x +
+      //     "," +
+      //     this.tokens[0].getPosition().z
+      // );
     }
   }
 
@@ -1034,6 +1104,10 @@ class Game {
         }
       }
     });
+  }
+
+  sync(entity, renderComponent) {
+    renderComponent.matrix.copy(entity.worldMatrix);
   }
 }
 
