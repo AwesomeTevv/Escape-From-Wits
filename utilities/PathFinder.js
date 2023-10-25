@@ -1,4 +1,16 @@
+/**
+ * Custom node class.
+ *
+ * Node class for storing all the node's necessary information
+ * for the A* algorithm to operate.
+ */
 class Node {
+  /**
+   *
+   * @param {number} row The row of the maze
+   * @param {number} col The column of the maze
+   * @param {Node} parent The parent node of this node
+   */
   constructor(row, col, parent = null) {
     this.row = row;
     this.col = col;
@@ -7,16 +19,36 @@ class Node {
     this.h = 0;
   }
 
+  /**
+   * Cost function
+   *
+   * @returns {number} The cost of the node
+   */
   get f() {
     return this.g + this.h;
   }
 }
 
+/**
+ * A* class.
+ *
+ * Custom A* class that performs the A* algorithm
+ * on a given maze to find the path between the enemy
+ * NPC and the player.
+ */
 class AStar {
+  /**
+   * Constructor class for the A* class
+   * @param {number[][]} maze A 2D array of numbers that stores the information about the maze
+   */
   constructor(maze) {
     this.maze = maze;
   }
 
+  /**
+   * Function that performs the A* algorithm on the given maze.
+   * @returns {number[][]} A* path
+   */
   findPathAStar() {
     const rows = this.maze.length;
     const cols = this.maze[0].length;
