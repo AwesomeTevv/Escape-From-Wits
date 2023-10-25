@@ -240,7 +240,7 @@ class Game {
     this.enemy.position.set(5 * (10 - 10), 5, 5 * (1 - 10));
     this.enemy.matrixAutoUpdate = false;
     this.scene.add(this.enemy);
-    this.minimapScene.add(this.enemy);
+    // this.minimapScene.add(this.enemy);
 
     /*
      *   YUKA Initialisation
@@ -752,17 +752,17 @@ class Game {
     this.mapCamera.position.z = pos.z;
     this.mapCamera.lookAt(new THREE.Vector3(pos.x, -1, pos.z));
 
+    if (this.frameNumber > 100) {
+      this.frameNumber = 0;
+      this.npc.regeneratePath(
+        this.maze,
+        this.player,
+        this.enemy,
+        this.enemyPath,
+        this.vehicle
+      );
+    }
     if (pos.z >= 5 * (19 - 10) && pos.x >= 5 * (19 - 10)) {
-      if (this.frameNumber > 100) {
-        this.frameNumber = 0;
-        this.npc.regeneratePath(
-          this.maze,
-          this.player,
-          this.enemy,
-          this.enemyPath,
-          this.vehicle
-        );
-      }
     }
     console.log(
       `NPC Position : (${this.enemy.position.x}, ${this.enemy.position.z})`

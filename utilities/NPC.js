@@ -28,7 +28,6 @@ class NPC {
      * Converting the enemy's world coordinates
      * to maze coordinates
      */
-
     const enemyPos = enemy.position.clone();
     let enemyX = 0;
     let enemyZ = 0;
@@ -103,7 +102,7 @@ class NPC {
         vehicle.maxSpeed = 5;
 
         maze[Math.floor(enemyZ / 5 + 10)][Math.floor(enemyX / 5 + 10)] = 0;
-
+        enemy.position.copy(enemyPath.current()); 
         const followPathBehavior = new YUKA.FollowPathBehavior(enemyPath, 1);
         vehicle.steering.clear();
         vehicle.steering.add(followPathBehavior);
