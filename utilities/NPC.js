@@ -142,9 +142,9 @@ class NPC {
             new YUKA.Vector3(5 * (path[i][1] - 10), 1, 5 * (path[i][0] - 10))
           );
         }
-        vehicle.position.copy(enemy.position);
+        // vehicle.position.copy(enemy.position);
   
-        vehicle.maxSpeed = 2;
+        vehicle.maxSpeed = 5;
   
         mazeCopy[Math.floor(enemyZ / 5 + 10)][Math.floor(enemyX / 5 + 10)] = 0;
         //enemy.position.copy(enemyPath.current());

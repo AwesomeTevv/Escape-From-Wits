@@ -753,7 +753,7 @@ class Game {
     
     this.entityManager.update(dt);
     if (pos.z <= 5 * (19 - 10)) {
-      if(this.frameNumber > 1000){
+      if(this.frameNumber > 10){
         this.npc.regeneratePath(
           this.maze,
           this.player,
@@ -762,12 +762,13 @@ class Game {
           this.vehicle
           );
           this.frameNumber = 0;
+        }
       }
-    }
+    this.enemy.position.copy(this.vehicle.position);
     
-    console.log(
-      `NPC Position : (${this.enemy.position.x}, ${this.enemy.position.z})`
-      );
+    // console.log(
+    //   `NPC Position : (${this.enemy.position.x}, ${this.enemy.position.z})`
+    //   );
       
     this.controls.update(dt);
     this.stats.update();
