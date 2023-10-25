@@ -92,7 +92,9 @@ class Game {
 
     /** @type NPC */
     this.npc = null;
-
+    this.npcDeathFrames = 0;
+    this.npcAnimateDeath = false;
+    
     this.liftWall = false; // Whether or not to lift the exit wall
 
     this._Init();
@@ -567,12 +569,15 @@ class Game {
 
       ballBody.addEventListener('collide', (e)=>{
         if(e.body.userData){
-          if(e.body.userData.numberLives > 0){
+          if(e.body.userData.numberLives > 1){
             e.body.userData.numberLives -= 1;
             console.log("lives left: " + e.body.userData.numberLives)
           }else{
-            this.scene.remove(this.enemy);
-            this.world.removeBody(this.enemyBody);
+            if(this.enemyBody != null){
+              this.world.removeBody(this.enemyBody);
+              this.enemyBody = null;
+              this.npcAnimateDeath = true;
+            }
           }
         }
       });
@@ -766,21 +771,25 @@ class Game {
     this.mapCamera.position.z = pos.z;
     this.mapCamera.lookAt(new THREE.Vector3(pos.x, -1, pos.z));
     
-    this.entityManager.update(dt);
-    if (pos.z <= 5 * (19 - 10)) {
-      if(this.frameNumber > 10){
-        this.npc.regeneratePath(
-          this.maze,
-          this.player,
-          this.enemy,
-          this.enemyPath,
-          this.vehicle
-          );
-          this.frameNumber = 0;
-        }
+    if(this.enemy != null){
+      if(this.enemyBody != null){
+        this.entityManager.update(dt);
+        if (pos.z <= 5 * (19 - 10)) {
+          if(this.frameNumber > 10){
+            this.npc.regeneratePath(
+              this.maze,
+              this.player,
+              this.enemy,
+              this.enemyPath,
+              this.vehicle
+              );
+              this.frameNumber = 0;
+            }
+          }
+          this.enemy.position.copy(this.vehicle.position);
+          this.enemyBody.position.copy(this.enemy.position);
       }
-    this.enemy.position.copy(this.vehicle.position);
-    this.enemyBody.position.copy(this.enemy.position);
+    }
     // console.log(
     //   `NPC Position : (${this.enemy.position.x}, ${this.enemy.position.z})`
     //   );
@@ -794,6 +803,18 @@ class Game {
         this.exitDoor.body.quaternion.copy(this.exitDoor.mesh.quaternion);
         this.exitDoor.mesh.translateY((this.gateNumber + 15 / 2) * 0.0001);
         this.gateNumber++;
+      }
+    }
+
+    if(this.npcAnimateDeath){
+      if (this.npcDeathFrames < 100) {
+        console.log(this.npcDeathFrames);
+        this.enemy.rotateZ(100*this.npcDeathFrames);
+        this.npcDeathFrames++;
+      }else{
+        this.scene.remove(this.enemy);
+        this.enemy = null;
+        this.npcAnimateDeath = false;
       }
     }
 
