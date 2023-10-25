@@ -1,0 +1,11 @@
+Model Information:
+* title:	Halloween Creature
+* source:	https://sketchfab.com/3d-models/halloween-creature-75586b62dbde450ea459d514750f8a16
+* author:	Polenta (https://sketchfab.com/kln)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Halloween Creature" (https://sketchfab.com/3d-models/halloween-creature-75586b62dbde450ea459d514750f8a16) by Polenta (https://sketchfab.com/kln) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

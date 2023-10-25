@@ -249,26 +249,42 @@ class Game {
      */
     this.npc = new NPC();
     let result = this.npc.getNPC();
-    this.enemy = result[0];
-    this.enemyBody = result[1];
-    this.enemy.position.set(5 * (10 - 10), 5, 5 * (1 - 10));
-    this.enemyBody.position.copy(this.enemy.position);
-    this.world.addBody(this.enemyBody);
-    this.enemy.matrixAutoUpdate = false;
-    this.scene.add(this.enemy);
-    // this.minimapScene.add(this.enemy);
+
+
+    
+
+    let loaderObj = new GLTFLoader();
+      loaderObj.load("../../assets/npc/scene.gltf", (gltf) => {
+       
+        this.npc.mesh = gltf.scene;
+        this.npc.loaded = true;
+        this.enemy = gltf.scene;
+        this.enemyBody = result[1];
+        this.enemy.position.set(5 * (10 - 10), 5, 5 * (1 - 10));
+        this.enemyBody.position.copy(this.enemy.position);
+        this.world.addBody(this.enemyBody);
+        this.enemy.matrixAutoUpdate = false;
+        this.scene.add(this.enemy);
+        this.time = new YUKA.Time();
+        this.enemyPath = new YUKA.Path();
+        this.vehicle = new YUKA.Vehicle();
+        this.entityManager = new YUKA.EntityManager();
+    
+        this.vehicle.setRenderComponent(this.enemy, this.sync);
+        this.entityManager.add(this.vehicle);
+      });
+
+
+   
+
+    
+    
 
     /*
      *   YUKA Initialisation
      */
 
-    this.time = new YUKA.Time();
-    this.enemyPath = new YUKA.Path();
-    this.vehicle = new YUKA.Vehicle();
-    this.entityManager = new YUKA.EntityManager();
-
-    this.vehicle.setRenderComponent(this.enemy, this.sync);
-    this.entityManager.add(this.vehicle);
+   
 
     /*
      * Audio Initialisation
@@ -822,7 +838,7 @@ class Game {
       }
     }
     // console.log(
-    //   `NPC Position : (${this.enemy.position.x}, ${this.enemy.position.z})`
+    //   `NPC Position : (${this.enemy.position.x},${this.enemy.position.y} , ${this.enemy.position.z})`
     //   );
       
     this.controls.update(dt);
