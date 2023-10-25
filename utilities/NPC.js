@@ -23,14 +23,17 @@ class NPC {
    *
    * Builds and returns the mesh for the NPC.
    *
-   * @returns THREE.Mesh
+   * @returns [THREE.Mesh, THREE.Body]
    */
   getNPC() {
     const geometry = new THREE.BoxGeometry(2, 10, 2);
     const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
     const mesh = new THREE.Mesh(geometry, material);
-
-    return mesh;
+    const body = new CANNON.Body({mass: 1, type: CANNON.Body.KINEMATIC});
+    (body).userData = { numberLives : 10 }
+    body.addShape(new CANNON.Box(new CANNON.Vec3(1,5,1)));
+    
+    return [mesh,body];
   }
 
   /**
@@ -121,14 +124,14 @@ class NPC {
   
       if (path.length > 1) {
         //path.shift();
-        console.log(
-          "Enemy Z: " + (enemyZ / 5 + 10) + " Enemy X: " + (enemyX / 5 + 10)
-        );
-        console.log(
-          "Player Z: " + (playerZ / 5 + 10) + " Player Z: " + (playerX / 5 + 10)
-        );
-        console.log("Current path place: " + path[0]);
-        console.log("Next path place: " + path[1]);
+        // console.log(
+        //   "Enemy Z: " + (enemyZ / 5 + 10) + " Enemy X: " + (enemyX / 5 + 10)
+        // );
+        // console.log(
+        //   "Player Z: " + (playerZ / 5 + 10) + " Player Z: " + (playerX / 5 + 10)
+        // );
+        // console.log("Current path place: " + path[0]);
+        // console.log("Next path place: " + path[1]);
         console.log(path.length);
   
         // if ((path[0][0] !=  (enemyZ / 5 + 10)) && ((path[0][1] !=  (enemyZ / 5 + 10)))){

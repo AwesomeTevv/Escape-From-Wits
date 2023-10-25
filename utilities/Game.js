@@ -78,7 +78,7 @@ class Game {
     /*
      * YUKA Variables
      */
-
+    this.enemyBody = null;
     /** @type THREE.Mesh */
     this.enemy = null;
     /** @type YUKA.Vehicle */
@@ -236,8 +236,12 @@ class Game {
      *   Enemy Mesh Setup
      */
     this.npc = new NPC();
-    this.enemy = this.npc.getNPC();
+    let result = this.npc.getNPC();
+    this.enemy = result[0];
+    this.enemyBody = result[1];
     this.enemy.position.set(5 * (10 - 10), 5, 5 * (1 - 10));
+    this.enemyBody.position.copy(this.enemy.position);
+    this.world.addBody(this.enemyBody);
     this.enemy.matrixAutoUpdate = false;
     this.scene.add(this.enemy);
     // this.minimapScene.add(this.enemy);
@@ -560,8 +564,19 @@ class Game {
         shootDirection.z * (1.3 * 1.02 + ballShape.radius);
       ballBody.position.set(x, y, z);
       ballMesh.position.copy(ballBody.position);
-    });
 
+      ballBody.addEventListener('collide', (e)=>{
+        if(e.body.userData){
+          if(e.body.userData.numberLives > 0){
+            e.body.userData.numberLives -= 1;
+            console.log("lives left: " + e.body.userData.numberLives)
+          }else{
+            this.scene.remove(this.enemy);
+            this.world.removeBody(this.enemyBody);
+          }
+        }
+      });
+    });
     document.addEventListener(
       "keydown",
       (event) => {
@@ -765,7 +780,7 @@ class Game {
         }
       }
     this.enemy.position.copy(this.vehicle.position);
-    
+    this.enemyBody.position.copy(this.enemy.position);
     // console.log(
     //   `NPC Position : (${this.enemy.position.x}, ${this.enemy.position.z})`
     //   );
