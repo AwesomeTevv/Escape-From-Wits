@@ -16,7 +16,12 @@ class NPC {
    *
    * Initialises the object.
    */
-  constructor() {}
+  constructor() {
+    this.mesh = null;
+    this.loaded = false;
+    this.addedToScene = false;
+    
+  }
 
   /**
    * Builds the NPC.
@@ -28,12 +33,12 @@ class NPC {
   getNPC() {
     const geometry = new THREE.BoxGeometry(2, 10, 2);
     const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    const mesh = new THREE.Mesh(geometry, material);
+    this.mesh = new THREE.Mesh(geometry, material);
     const body = new CANNON.Body({mass: 1, type: CANNON.Body.KINEMATIC});
     (body).userData = { numberLives : 10 }
     body.addShape(new CANNON.Box(new CANNON.Vec3(1,5,1)));
     
-    return [mesh,body];
+    return [this.mesh,body];
   }
 
   /**
@@ -147,7 +152,7 @@ class NPC {
         }
         // vehicle.position.copy(enemy.position);
   
-        vehicle.maxSpeed = 5;
+        vehicle.maxSpeed = 15;
   
         mazeCopy[Math.floor(enemyZ / 5 + 10)][Math.floor(enemyX / 5 + 10)] = 0;
         //enemy.position.copy(enemyPath.current());
