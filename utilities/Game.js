@@ -1078,8 +1078,7 @@ class Game {
     // console.log(
     //   `NPC Position : (${this.enemy.position.x},${this.enemy.position.y} , ${this.enemy.position.z})`
     //   );
-    console.log(this.player.position);
-
+    
     this.controls.update(dt);
     this.stats.update();
 
