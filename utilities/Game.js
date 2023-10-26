@@ -146,7 +146,7 @@ class Game {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x88ccee);
     // this.scene.background = new THREE.Color(0x000000);
-    this.scene.fog = new THREE.Fog(0x000000, 1, 7.5);
+    // this.scene.fog = new THREE.Fog(0x000000, 1, 7.5); // Commented out for development purposes
 
     this.minimapScene = new THREE.Scene();
     this.minimapScene.background = new THREE.Color(0x000011);
