@@ -536,25 +536,36 @@ class Game {
       reflectivity: 1,
       refractionRatio: 0.1,
     });
+    
     window.addEventListener("click", (event) => {
       if (!this.controls.enabled || this.gun.toggled == false) {
         return;
       }
       
       if (event.button === 2) {
-        console.log("clicked");
+        //console.log("clicked");
         event.preventDefault();
 
         if (this.isRightMouseDown) {
           //Zoom in when the right mouse button is held down
           this.zoomOut();
           this.isRightMouseDown = false;
-          console.log("zoom in");
+          //console.log("zoom in");
+
+          // Hide the image when zoomed out
+          const zoomedImage = document.getElementById("zoomedImage");
+          zoomedImage.style.display = "none";
         } else {
+          // Show the image when zoomed in
+          const zoomedImage = document.getElementById("zoomedImage");
+          zoomedImage.style.display = "block";
+          
           // Return to normal view when the right mouse button is released
           this.zoomIn();
           this.isRightMouseDown = true;
-          console.log("zoom out");
+          //console.log("zoom out");
+
+          
         }
       }
 

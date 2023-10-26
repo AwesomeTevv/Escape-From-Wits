@@ -135,6 +135,15 @@
         width: 225px; /* Adjust this value as needed to make the images the same size */
         height: 125px; /* Adjust this value as needed to make the images the same size */
       }
+      
+      .centered-image {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 999; /* Adjust the z-index as needed */
+      
+      }
 
       #objective-container {
         position: absolute;
@@ -231,8 +240,11 @@
     </div>
 
     <script type="module" src="/levels/First-Year/First-Year.js"></script>
-
-    <script>
+    <div class="image-container">
+      <img id="zoomedImage" src="../../assets/weapons/scope_red.png" class="centered-image" style="display: none;">
+  </div>    
+  
+  <script>
       // Function to show game mechanics when the user presses Enter
       document.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
@@ -241,6 +253,12 @@
           instructions.style.display = "none";
         }
       });
+      window.addEventListener("mousemove", function(event) {
+    // Mouse move event
+    // console.log("Mouse moved at X: " + event.clientX + " Y: " + event.clientY);
+});
+
+
     </script>
   </body>
 </html>
