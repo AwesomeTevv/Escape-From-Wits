@@ -808,11 +808,6 @@ class Game {
       token.setToggledRotation(Math.PI * 1.5);
       token.setToggledOffsets(0, -0.5, -0.9);
       token.name = "sword";
-      token.object.position.set(
-        this.player.position.x,
-        this.player.position.y,
-        this.player.position.z - 10
-      );
       token.loaded = true;
       this.onTokenLoaded(token);
       this.setKeyPos(token);
