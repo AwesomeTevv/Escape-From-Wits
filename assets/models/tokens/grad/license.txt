@@ -1,0 +1,11 @@
+Model Information:
+* title:	Graduation
+* source:	https://sketchfab.com/3d-models/graduation-86895e10baf54c46896823394766fb86
+* author:	Cyberluna (https://sketchfab.com/cyberluna)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Graduation" (https://sketchfab.com/3d-models/graduation-86895e10baf54c46896823394766fb86) by Cyberluna (https://sketchfab.com/cyberluna) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

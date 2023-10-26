@@ -24,17 +24,18 @@ class SecondYear extends Game {
   _AddSecondTokens() {
     console.log("Adding Second Token!");
     let loaderObj = new GLTFLoader();
-    loaderObj.load("../../../assets/models/tokens/sword/scene.gltf", (gltf) => {
+    loaderObj.load("../../../assets/models/tokens/batman/scene.gltf", (gltf) => {
       let token = new Token();
       token.object = gltf.scene;
-      token.object.scale.set(0.001, 0.001, 0.001);
-      token.setToggledScale(0.0002, 0.0002, 0.0002);
-      token.setToggledRotation(Math.PI * 1.5);
-      token.setToggledOffsets(0, -0.5, -0.9);
-      token.name = "sword";
+      token.object.scale.set(0.2, 0.2, 0.2);
+      token.setToggledScale(0.1, 0.1, 0.1);
+      token.setToggledRotation(Math.PI * 2);
+      token.setToggledOffsets(-0.2, -0.6, -0.9);
+      token.name = "doll";
       token.loaded = true;
       this.onTokenLoaded(token);
-      this.setKeyPos(token);
+      //this.setKeyPos(token);
+      token.object.position.set(this.player.position.x + 2, this.player.position.y, this.player.position.z );
       token.sound = new THREE.PositionalAudio(this.AudioListener);
       token.object.add(token.sound);
       new THREE.AudioLoader().load(
