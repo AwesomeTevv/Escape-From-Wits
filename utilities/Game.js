@@ -195,7 +195,10 @@ class Game {
     });
     // this.renderScope.setScissorTest(true);
     this.renderScope.setPixelRatio(window.devicePixelRatio);
-    this.renderScope.setSize(window.innerWidth - 100, window.innerHeight - 100);
+    this.renderScope.setSize(
+      window.innerHeight - 100,
+      window.innerHeight - 100
+    );
 
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
