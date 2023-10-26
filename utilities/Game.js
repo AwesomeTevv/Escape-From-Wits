@@ -189,7 +189,13 @@ class Game {
     this.scopeScene.background = new THREE.Color(0x000011);
 
     let scopeCanvas = document.getElementById("scope");
-    this.renderScope = new THREE.WebGLRenderer({ canvas: scopeCanvas });
+    this.renderScope = new THREE.WebGLRenderer({
+      canvas: scopeCanvas,
+      antialias: true,
+    });
+    // this.renderScope.setScissorTest(true);
+    this.renderScope.setPixelRatio(window.devicePixelRatio);
+    this.renderScope.setSize(window.innerWidth, window.innerHeight);
 
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -650,7 +656,11 @@ class Game {
     });
 
     window.addEventListener("click", (event) => {
-      if (!this.controls.enabled || this.gun.toggled == false || event.button == 2) {
+      if (
+        !this.controls.enabled ||
+        this.gun.toggled == false ||
+        event.button == 2
+      ) {
         return;
       }
 
