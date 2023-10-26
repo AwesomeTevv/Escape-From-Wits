@@ -123,6 +123,8 @@ class Game {
     this.enemyBody = [];
     /** @type[] THREE.Mesh */
     this.enemy = [];
+    /** @type[] THREE.Mesh */
+    this.scopeEnemy = [];
     /** @type[] YUKA.Vehicle */
     this.vehicle = [];
     /** @type[] YUKA.EntityManager */
@@ -186,7 +188,7 @@ class Game {
     this.minimapScene.background = new THREE.Color(0x000011);
 
     this.scopeScene = new THREE.Scene();
-    this.scopeScene.background = new THREE.Color(0x000011);
+    this.scopeScene.background = new THREE.Color(0x000066);
 
     let scopeCanvas = document.getElementById("scope");
     this.renderScope = new THREE.WebGLRenderer({
@@ -244,6 +246,17 @@ class Game {
     this.rendererMap.setSize(200, 200);
 
     this.composer = new EffectComposer(this.renderer);
+
+    const scopeGeometry = new THREE.BoxGeometry(1.2, 1.5, 1.2);
+    const scopeMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    const scopeEnemyMesh = new THREE.Mesh(scopeGeometry, scopeMaterial);
+    scopeEnemyMesh.position.set(2000, 0, 2000);
+    this.scopeScene.add(scopeEnemyMesh);
+    this.scopeScene.add(scopeEnemyMesh);
+    this.scopeScene.add(scopeEnemyMesh);
+    this.scopeEnemy.push(scopeEnemyMesh);
+    this.scopeEnemy.push(scopeEnemyMesh);
+    this.scopeEnemy.push(scopeEnemyMesh);
 
     //Shader uniform composer
     this.shaderTime = 0.0;
@@ -642,6 +655,7 @@ class Game {
           this.gun.object.position.z = this.gun.object.position.z - 100;
         } else {
           scope.style.display = "block";
+          scope.style.border = "5px solid black";
           // Return to normal view when the right mouse button is released
           this.zoomIn();
           this.isRightMouseDown = true;
@@ -1037,6 +1051,7 @@ class Game {
             }
           }
           this.enemy[i].position.copy(this.vehicle[i].position);
+          this.scopeEnemy[i].position.copy(this.enemy[i].position);
           this.enemyBody[i].position.copy(this.enemy[i].position);
           if (this.player.position.distanceTo(this.enemyBody[i].position) < 3) {
             this.hurt();
