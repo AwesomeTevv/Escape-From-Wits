@@ -46,11 +46,13 @@ class Game {
   ) {
     this.scene = null; // ThreeJS Scene
     this.minimapScene = null;
+    this.scopeScene = null;
     this.renderer = null; // ThreeJS Renderer
     this.camera = null; // ThreeJS Perspective Camera for First Person View
     this.composer = null;
     this.mapCamera = null; // ThreeJS Orthographic Camera for the Minimap
     this.rendererMap = null; // The Minimap at the top right of the screen
+    this.renderScope = null;
     this.controls = null; // Character/FPS controls
     this.world = null; // CannonJS Physics World
     this.stats = null; // ThreeJS Addon: Stats -- Appears at the top left of the screen
@@ -73,11 +75,20 @@ class Game {
       mesh: null, // The mesh of the exit door
       body: null, // The body of the exit door
     };
+
+    this.entryDoor = {
+      mesh: null, // The mesh of the exit door
+      body: null, // The body of the exit door
+    };
     this.gateNumber = 0;
+    this.gateFallNumber = 0;
+    this.animateGateOpen = false;
+
     this.frameNumber = 0;
 
     this.ballBodies = []; // List storing the physics bodies of the projectile balls
     this.ballMeshes = []; // List storing the meshes of the projectile balls
+    this.scopeBallMeshes = [];
     this.lastCallTime = 0;
 
     this.player = null;
@@ -101,6 +112,10 @@ class Game {
     this.breakableMeshes = [];
     this.breakableBodies = [];
     this.breakableMeshID = 0;
+
+    //Variable for scoping in
+    this.isRightMouseDown = false;
+    this.zoomFactor = 1.2;
 
     /*
      * YUKA Variables
@@ -170,6 +185,12 @@ class Game {
     this.minimapScene = new THREE.Scene();
     this.minimapScene.background = new THREE.Color(0x000011);
 
+    this.scopeScene = new THREE.Scene();
+    this.scopeScene.background = new THREE.Color(0x000011);
+
+    let scopeCanvas = document.getElementById("scope");
+    this.renderScope = new THREE.WebGLRenderer({ canvas: scopeCanvas });
+
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
     });
@@ -216,10 +237,10 @@ class Game {
     this.composer = new EffectComposer(this.renderer);
 
     //Shader uniform composer
-    //this.shaderTime = 0.0;
-    //this.vhsUniforms = vhsScanlines.uniforms;
-    //this.staticUniforms = vhsStatic.uniforms;
-
+    this.shaderTime = 0.0;
+    this.vhsUniforms = vhsScanlines.uniforms;
+    this.staticUniforms = vhsStatic.uniforms;
+    //document.getElementById('overlay').style.display = 'block';
 
     this.stats = new Stats();
     this.stats.domElement.style.position = "absolute";
@@ -479,6 +500,8 @@ class Game {
     });
 
     this.controls.addEventListener("unlock", () => {
+      scope.style.display = "none";
+      zoomedImage.style.display = "none";
       this.controls.enabled = false;
       instructions.style.display = null;
       overlay.style.display = "none";
@@ -516,6 +539,18 @@ class Game {
     this.scene.add(this.gun.object);
     this.gun.loaded = true;
   };
+
+  // Function to zoom in
+  zoomIn() {
+    this.camera.fov -= 30;
+    this.camera.updateProjectionMatrix();
+  }
+
+  // Function to zoom out
+  zoomOut() {
+    this.camera.fov += 30;
+    this.camera.updateProjectionMatrix();
+  }
 
   /**
    * Sets up the shooting functionality.
@@ -564,7 +599,6 @@ class Game {
     nmap.wrapS = nmap.wrapT = THREE.RepeatWrapping;
     nmap.repeat.set(1, 1);
 
-    
     const ballMaterial = new THREE.MeshStandardMaterial({
       color: 0xffffff,
       roughness: 0.5,
@@ -578,8 +612,46 @@ class Game {
       normalMap: nmap,
     });
 
+    const scopeMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+
+    const scope = document.getElementById("scope");
+    scope.style.display = "none";
     window.addEventListener("click", (event) => {
       if (!this.controls.enabled || this.gun.toggled == false) {
+        return;
+      }
+
+      if (event.button === 2) {
+        //console.log("clicked");
+        event.preventDefault();
+
+        if (this.isRightMouseDown) {
+          //Zoom in when the right mouse button is held down
+          this.zoomOut();
+          this.isRightMouseDown = false;
+          //console.log("zoom in");
+
+          // Hide the image when zoomed out
+          // const zoomedImage = document.getElementById("zoomedImage");
+          scope.style.display = "none";
+          zoomedImage.style.display = "none";
+          this.gun.object.position.z = this.gun.object.position.z - 100;
+        } else {
+          // Show the image when zoomed in
+          const zoomedImage = document.getElementById("zoomedImage");
+          scope.style.display = "block";
+          zoomedImage.style.display = "block";
+          // Return to normal view when the right mouse button is released
+          this.zoomIn();
+          this.isRightMouseDown = true;
+          //console.log("zoom out");
+          this.gun.object.position.z = this.gun.object.position.z + 100;
+        }
+      }
+    });
+
+    window.addEventListener("click", (event) => {
+      if (!this.controls.enabled || this.gun.toggled == false || event.button == 2) {
         return;
       }
 
@@ -595,10 +667,14 @@ class Game {
       ballMesh.castShadow = true;
       ballMesh.receiveShadow = true;
 
+      const scopeBallMesh = new THREE.Mesh(ballGeometry, scopeMaterial);
+
       this.world.addBody(ballBody);
       this.scene.add(ballMesh);
+      this.scopeScene.add(scopeBallMesh);
       this.ballBodies.push(ballBody);
       this.ballMeshes.push(ballMesh);
+      this.scopeBallMeshes.push(scopeBallMesh);
 
       // Returns a vector pointing the the diretion the camera is at
       const vector = new THREE.Vector3(0, 0, 1);
@@ -626,6 +702,7 @@ class Game {
         shootDirection.z * (1.3 * 1.02 + ballShape.radius);
       ballBody.position.set(x, y, z);
       ballMesh.position.copy(ballBody.position);
+      scopeBallMesh.position.copy(ballBody.position);
 
       ballBody.addEventListener("collide", (e) => {
         if (e.body.userData) {
@@ -729,6 +806,7 @@ class Game {
             // this.gun.object.scale.x = 0.9999;
             // this.gun.object.scale.y = 0.9999;
             this.gun.object.scale.z = 2;
+            this.animateGateOpen = true;
           }
         }
       },
@@ -916,13 +994,18 @@ class Game {
     while (this.ballBodies.length > 10) {
       let body = this.ballBodies.shift();
       let mesh = this.ballMeshes.shift();
+      let smesh = this.scopeBallMeshes.shift();
       this.world.removeBody(body);
       this.scene.remove(mesh);
+      this.scopeScene.remove(smesh);
     }
 
     for (let i = 0; i < this.ballBodies.length; i++) {
       this.ballMeshes[i].position.copy(this.ballBodies[i].position);
       this.ballMeshes[i].quaternion.copy(this.ballBodies[i].quaternion);
+
+      this.scopeBallMeshes[i].position.copy(this.ballBodies[i].position);
+      this.scopeBallMeshes[i].quaternion.copy(this.ballBodies[i].quaternion);
     }
 
     let pos = this.player.position.clone();
@@ -935,6 +1018,7 @@ class Game {
         if (this.enemyBody[i] != null) {
           this.entityManager[i].update(dt);
           if (pos.z <= 5 * (19 - 10)) {
+            this.animateGateOpen = false;
             if (this.frameNumber > 10) {
               this.npcArr[i].regeneratePath(
                 this.maze,
@@ -971,6 +1055,25 @@ class Game {
       }
     }
 
+    if (this.animateGateOpen) {
+      if (this.gateFallNumber < 500) {
+        this.entryDoor.body.position.copy(this.entryDoor.mesh.position);
+        this.entryDoor.body.quaternion.copy(this.entryDoor.mesh.quaternion);
+        this.entryDoor.mesh.translateY((this.gateFallNumber + 15 / 2) * 0.0001);
+        this.gateFallNumber++;
+      }
+    } else {
+      if (this.entryDoor.mesh.position.y != 0) {
+        if (this.gateFallNumber > 0) {
+          this.entryDoor.body.position.set(10, this.wallHeight / 2, 50);
+          this.entryDoor.mesh.translateY(
+            -(this.gateFallNumber + 15 / 2) * 0.0001
+          );
+          this.gateFallNumber--;
+        }
+      }
+    }
+
     for (let i = 0; i < 3; i++) {
       if (this.npcAnimateDeath[i]) {
         if (this.npcDeathFrames[i] < 100) {
@@ -988,8 +1091,6 @@ class Game {
     if (this.playerLives <= 0) {
       //alert("You died!");
       window.location = this.restartLevel;
-
-
     }
 
     for (let i = 0; i < this.tokens.length; i++) {
@@ -1017,10 +1118,9 @@ class Game {
     }
 
     //Update shader time value
-    //this.shaderTime = this.shaderTime + 0.025;
-    //this.vhsUniforms.time.value = this.shaderTime;
-    //this.staticUniforms.time.value = this.shaderTime;
-    //console.log(this.vhsUniforms.time.value, this.staticUniforms.time.value);
+    this.shaderTime = this.shaderTime + 0.025;
+    this.vhsUniforms.time.value = this.shaderTime;
+    this.staticUniforms.time.value = this.shaderTime;
   }
 
   /**
@@ -1032,6 +1132,7 @@ class Game {
   _Render() {
     this.renderer.render(this.scene, this.camera);
     this.rendererMap.render(this.minimapScene, this.mapCamera);
+    this.renderScope.render(this.scopeScene, this.camera);
     this.composer.render();
   }
 
@@ -1090,6 +1191,10 @@ class Game {
     const mapCube = new THREE.Mesh(geometry, minimapMaterial);
     mapCube.position.set(x, this.wallHeight / 2, z);
     this.minimapScene.add(mapCube);
+
+    const scopeCube = new THREE.Mesh(geometry, new THREE.MeshNormalMaterial());
+    scopeCube.position.set(x, this.wallHeight / 2, z);
+    this.scopeScene.add(scopeCube);
   }
 
   body(x, z) {
@@ -1303,6 +1408,66 @@ class Game {
     this.scene.add(cube);
   }
 
+  enter() {
+    const shape = new CANNON.Box(
+      new CANNON.Vec3(5 * 0.5, this.wallHeight * 0.5, 5 * 0.5)
+    );
+    const body = new CANNON.Body({
+      type: CANNON.Body.KINEMATIC,
+      shape,
+    });
+    body.position.set(10, this.wallHeight / 2, 50);
+    this.entryDoor.body = body;
+    this.world.addBody(body);
+
+    // Loading in textures
+    const loader = new THREE.TextureLoader();
+    const base = "../../assets/textures/wallTextures/" + this.exitTexture;
+    const map = loader.load(base + "_COL_2K.png");
+    const bmap = loader.load(base + "_BUMP_2K.png");
+    const dmap = loader.load(base + "_DISP_2K.png");
+    const nmap = loader.load(base + "_NRM_2K.png");
+    const amap = loader.load(base + "_AO_2K.png");
+
+    const scale = 1;
+    map.wrapS = map.wrapT = THREE.RepeatWrapping;
+    map.repeat.set(scale, (this.wallHeight / 5) * scale);
+    map.mapping = THREE.CubeRefractionMapping;
+
+    bmap.wrapS = bmap.wrapT = THREE.RepeatWrapping;
+    bmap.repeat.set(scale, (this.wallHeight / 5) * scale);
+
+    dmap.wrapS = dmap.wrapT = THREE.RepeatWrapping;
+    dmap.repeat.set(scale, (this.wallHeight / 5) * scale);
+
+    nmap.wrapS = nmap.wrapT = THREE.RepeatWrapping;
+    nmap.repeat.set(scale, (this.wallHeight / 5) * scale);
+
+    amap.wrapS = amap.wrapT = THREE.RepeatWrapping;
+    amap.repeat.set(scale, (this.wallHeight / 5) * scale);
+
+    const material = new THREE.MeshPhongMaterial({
+      specular: 0x666666,
+      shininess: 15,
+      bumpMap: bmap,
+      bumpScale: 15,
+      displacementMap: dmap,
+      displacementScale: 0,
+      normalMap: nmap,
+      aoMap: amap,
+      aoMapIntensity: 1,
+      map: map,
+      depthTest: true,
+      refractionRatio: 0.1,
+    });
+
+    const geometry = new THREE.BoxGeometry(5, this.wallHeight, 5);
+    const cube = new THREE.Mesh(geometry, material);
+    cube.position.set(10, this.wallHeight / 2, 50);
+    this.entryDoor.mesh = cube;
+    this.scene.add(cube);
+  }
+
   /**
    * Adds the maze to the game scene.
    *
@@ -1314,6 +1479,7 @@ class Game {
     this.maze = this.generateMaze(20, 20); // Generates the maze
     this.visualise(this.maze); // Visualises the maze
     this.exit(); // Adds the exit door
+    this.enter(); // Adds the entry door
     this.bounds(); // Adds invisible boundaries to the starting area
   }
 
