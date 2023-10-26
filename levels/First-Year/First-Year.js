@@ -14,7 +14,13 @@ import { vhsStatic } from "../../assets/Shaders/vhsStatic";
 
 let _App = null;
 window.addEventListener("DOMContentLoaded", () => {
+
+
   _App = new FirstLevel();
+
+  
+
+
 });
 
 class FirstLevel extends Game {
@@ -27,7 +33,7 @@ class FirstLevel extends Game {
       "Terazzo/TerrazzoSlab018"
     );
     this.nextLevel = "/levels/Second-Year/Second-Year.html";
-
+    this.restartLevel = "/levels/First-Year/First-Year.html";
     // Add Post-Processing Effects
     // this._PostProcessing();
   }

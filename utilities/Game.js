@@ -5,9 +5,6 @@ import Stats from "three/examples/jsm/libs/stats.module";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 
-import { BloomPass } from "three/examples/jsm/postprocessing/BloomPass";
-import { AfterimagePass } from "three/examples/jsm/postprocessing/AfterimagePass";
-
 // Cannon-ES Imports
 import * as CANNON from "cannon-es";
 import { PointerLockControlsCannon } from "./PointerLockControlsCannon";
@@ -69,8 +66,6 @@ class Game {
     this.bulletTexture = bulletTexture;
 
     this.exitTexture = exitTexture;
-
-    this.bloom = null;
 
     this.maze = null; // The generated maze of the game
 
@@ -219,7 +214,6 @@ class Game {
     this.rendererMap.setSize(200, 200);
 
     this.composer = new EffectComposer(this.renderer);
-    this.bloom = new AfterimagePass();
 
     //Shader uniform composer
     this.shaderTime = 0.0;
@@ -570,18 +564,7 @@ class Game {
     nmap.wrapS = nmap.wrapT = THREE.RepeatWrapping;
     nmap.repeat.set(1, 1);
 
-    // let ballMaterial = new THREE.MeshPhongMaterial({
-    //   specular: 0x666666,
-    //   shininess: 10,
-    //   bumpMap: vbmap,
-    //   bumpScale: 0.5,
-    //   displacementMap: vdmap,
-    //   displacementScale: 0,
-    //   map: vmap,
-    //   depthTest: true,
-    //   reflectivity: 1,
-    //   refractionRatio: 0.1,
-    // });
+    
     const ballMaterial = new THREE.MeshStandardMaterial({
       color: 0xffffff,
       roughness: 0.5,
@@ -890,7 +873,6 @@ class Game {
   }
 
   hurt() {
-    this.composer.addPass(this.bloom);
     this.currentHealth -= 1;
     console.log(this.currentHealth);
     if (this.currentHealth < 0 && this.playerLives != 0) {
@@ -969,7 +951,6 @@ class Game {
           if (this.player.position.distanceTo(this.enemyBody[i].position) < 3) {
             this.hurt();
           } else {
-            this.composer.removePass(this.bloom);
           }
         }
       }
@@ -1005,7 +986,10 @@ class Game {
     }
 
     if (this.playerLives <= 0) {
-      alert("You died, refresh page to restart game!");
+      //alert("You died!");
+      window.location = this.restartLevel;
+
+
     }
 
     for (let i = 0; i < this.tokens.length; i++) {
