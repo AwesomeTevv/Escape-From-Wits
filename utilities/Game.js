@@ -73,11 +73,9 @@ class Game {
 
     this.tokens = [];
 
-    this.mainAudio = null;
-    this.mainAudioSrc = null;
-    this.mainAudioListener = null;
-    this.numberOfKeys = 0;
-
+    this.AudioListener = null;
+    this.mainSound = null;
+  
     this.convexObjectBreaker = null;
     this.breakableMeshes = [];
     this.breakableBodies = [];
@@ -125,7 +123,8 @@ class Game {
     );
     // this.checkProximity();
 
-    this.mainAudio.play();
+    this._Animate = this._Animate.bind(this);
+    this._Animate();
     window.addEventListener("resize", () => {
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
@@ -133,8 +132,6 @@ class Game {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       this.composer.setSize(window.innerWidth, window.innerHeight);
     });
-    this._Animate = this._Animate.bind(this);
-    this._Animate();
   }
 
   /**
@@ -284,14 +281,15 @@ class Game {
     /*
      * Audio Initialisation
      */
-
-    this.mainAudio = new Audio("../../assets/sounds/scary_chime-17193.mp3");
-    this.mainAudio.loop = true;
-    this.mainAudioListener = new THREE.AudioListener();
-    this.audioSource = new THREE.Audio(this.mainAudioListener);
-    this.audioSource.setMediaElementSource(this.mainAudio);
-    this.audioSource.setVolume(0.5);
-    this.camera.add(this.mainAudioListener);
+    this.AudioListener = new THREE.AudioListener();
+    this.camera.add(this.AudioListener);
+    this.mainSound = new THREE.Audio(this.AudioListener);
+    new THREE.AudioLoader().load("../../assets/sounds/scary_chime-17193.mp3", (buffer) =>{
+      this.mainSound.setBuffer(buffer);
+      this.mainSound.setLoop(true);
+      this.mainSound.setVolume(0.5);
+      this.mainSound.play();
+    });  
 
     this.convexObjectBreaker = new ConvexObjectBreaker();
   }
@@ -666,6 +664,7 @@ class Game {
               this.tokens[tokenid].object.scale.z =
                 this.tokens[tokenid].toggledScale.z;
               this.numberOfKeys += 1;
+              this.tokens[tokenid].sound.stop();
             }
           }
 
@@ -762,6 +761,15 @@ class Game {
       token.loaded = true;
       this.onTokenLoaded(token);
       this.setKeyPos(token);
+      token.sound = new THREE.PositionalAudio(this.AudioListener);
+      token.object.add(token.sound);
+      new THREE.AudioLoader().load("../../assets/sounds/wind-chimes-bells-115747.mp3", (buffer) =>{
+        token.sound.setBuffer(buffer);
+        token.sound.setLoop(true);
+        token.sound.setVolume(1);
+        token.sound.setRefDistance(0.1);
+        token.sound.play();
+      });
     });
   }
 
@@ -1178,7 +1186,7 @@ class Game {
     triggerEnd.position.set(0, 1.3, -55);
     this.world.addBody(triggerBodyEnd);
     triggerBodyEnd.addEventListener("collide", (event) => {
-      if (this.numberOfKeys == 2) {
+      if (this.numberOfKeys == 1) {
         if (event.body === this.player) {
           window.location = "/levels/Second-Year/Second-Year.html";
         }
