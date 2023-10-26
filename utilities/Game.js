@@ -150,7 +150,7 @@ class Game {
     this.scene = new THREE.Scene();
     // this.scene.background = new THREE.Color(0x88ccee);
     this.scene.background = new THREE.Color(0x000000);
-    this.scene.fog = new THREE.Fog(0x000000, 1, 20); // Commented out for development purposes
+    this.scene.fog = new THREE.Fog(0x000000, 1, 10); // Commented out for development purposes
 
     this.minimapScene = new THREE.Scene();
     this.minimapScene.background = new THREE.Color(0x000011);
@@ -494,7 +494,7 @@ class Game {
     this.torch = new THREE.SpotLight(
       0xffffff,
       200.0,
-      20,
+      10,
       Math.PI * 0.1,
       0.5,
       2
