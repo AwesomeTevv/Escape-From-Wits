@@ -23,6 +23,7 @@ class FirstLevel extends Game {
       "Sand/GroundSand005"
       // "desertWall/StuccoRoughCast001_"
     );
+    this.nextLevel = "/levels/Second-Year/Second-Year.html";
 
     // Add Post-Processing Effects
     // this._PostProcessing();
