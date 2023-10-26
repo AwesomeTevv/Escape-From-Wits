@@ -75,7 +75,8 @@ class Game {
 
     this.AudioListener = null;
     this.mainSound = null;
-  
+    this.notEnoughKeys = false;
+    this.timerKeys = 0;  
     this.convexObjectBreaker = null;
     this.breakableMeshes = [];
     this.breakableBodies = [];
@@ -878,15 +879,19 @@ class Game {
 
     if (this.tokens.length > 0) {
       this.checkProximity();
-      // console.log(this.player.position);
-      // console.log(
-      //   "Token pos: " +
-      //     this.tokens[0].getPosition().x +
-      //     "," +
-      //     this.tokens[0].getPosition().z
-      // );
+    }
+
+    if (this.notEnoughKeys && this.timerKeys < 500){
+      this.timerKeys += 1
+      document.getElementById("tokenText").textContent = "You've been token for a poes...find the tokens";
+    }else{
+      this.notEnoughKeys = false;
+      this.timerKeys = 0;
+      document.getElementById("tokenText").textContent = "";
     }
   }
+
+ 
 
   /**
    * Renders our game.
@@ -1164,10 +1169,21 @@ class Game {
       if (event.body === this.player) {
         if (this.numberOfKeys == 1) {
           this.liftWall = true;
+          this.notEnoughKeys = false;
+          
         } else {
-          console.log("You have " + this.numberOfKeys + " already!");
+
+
+
           // alert("Please collect all keys to escape!");
           console.log("Need to collect all Keys!");
+          this.notEnoughKeys = true;
+          this.timerKeys = 0;
+          
+          //const newText = ;
+          
+          
+
         }
       }
     });
