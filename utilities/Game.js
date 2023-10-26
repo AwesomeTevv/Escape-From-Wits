@@ -19,6 +19,9 @@ import { ConvexObjectBreaker } from "three/examples/jsm/misc/ConvexObjectBreaker
 import CannonUtils from "./cannonUtils";
 import { ConvexGeometry } from "three/examples/jsm/geometries/ConvexGeometry";
 
+//Import Shaders
+import { vhsScanlines } from "../assets/Shaders/vhsScanlines";
+
 /**
  * Base game class.
  *
@@ -199,6 +202,11 @@ class Game {
     this.rendererMap.setSize(200, 200);
 
     this.composer = new EffectComposer(this.renderer);
+
+    //Shader uniform composer
+    this.shaderTime = 0.0;
+    this.vhsUniforms = vhsScanlines.uniforms;
+
 
     this.stats = new Stats();
     this.stats.domElement.style.position = "absolute";
@@ -962,6 +970,10 @@ class Game {
         document.getElementById("tokenText").textContent = "";
       }
     }
+
+    //Update shader time value
+    this.shaderTime = this.shaderTime + 0.1;
+    this.vhsUniforms.time.value = this.shaderTime;
   }
 
   /**
