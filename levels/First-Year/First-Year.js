@@ -29,7 +29,7 @@ class FirstLevel extends Game {
     this.nextLevel = "/levels/Second-Year/Second-Year.html";
 
     // Add Post-Processing Effects
-    this._PostProcessing();
+    // this._PostProcessing();
   }
   _PostProcessing() {
     this.composer.addPass(new RenderPass(this.scene, this.camera));
