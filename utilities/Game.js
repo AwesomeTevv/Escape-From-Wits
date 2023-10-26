@@ -809,9 +809,9 @@ class Game {
   }
 
   _SpawnNPC(token) {
-    console.log("Spawning npc: " + this.npcId);
     let loaderObj = new GLTFLoader();
     loaderObj.load("../../assets/models/characters/npc/scene.gltf", (gltf) => {
+      console.log("Spawning npc: " + this.npcId);
       let t_npc = new NPC();
       let result = t_npc.getNPC(this.npcId);
       t_npc.mesh = gltf.scene;
