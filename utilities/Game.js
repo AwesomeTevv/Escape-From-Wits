@@ -21,6 +21,7 @@ import { ConvexGeometry } from "three/examples/jsm/geometries/ConvexGeometry";
 
 //Import Shaders
 import { vhsScanlines } from "../assets/Shaders/vhsScanlines";
+import { vhsStatic } from "../assets/Shaders/vhsStatic";
 
 /**
  * Base game class.
@@ -215,6 +216,7 @@ class Game {
     //Shader uniform composer
     this.shaderTime = 0.0;
     this.vhsUniforms = vhsScanlines.uniforms;
+    this.staticUniforms = vhsStatic.uniforms;
 
 
     this.stats = new Stats();
@@ -1008,8 +1010,10 @@ class Game {
     }
 
     //Update shader time value
-    this.shaderTime = this.shaderTime + 0.1;
+    this.shaderTime = this.shaderTime + 0.025;
     this.vhsUniforms.time.value = this.shaderTime;
+    this.staticUniforms.time.value = this.shaderTime;
+    console.log(this.vhsUniforms.time.value, this.staticUniforms.time.value);
   }
 
   /**
