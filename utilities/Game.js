@@ -88,6 +88,7 @@ class Game {
 
     this.ballBodies = []; // List storing the physics bodies of the projectile balls
     this.ballMeshes = []; // List storing the meshes of the projectile balls
+    this.scopeBallMeshes = [];
     this.lastCallTime = 0;
 
     this.player = null;
@@ -240,7 +241,6 @@ class Game {
     this.vhsUniforms = vhsScanlines.uniforms;
     this.staticUniforms = vhsStatic.uniforms;
     //document.getElementById('overlay').style.display = 'block';
-
 
     this.stats = new Stats();
     this.stats.domElement.style.position = "absolute";
@@ -598,7 +598,6 @@ class Game {
     nmap.wrapS = nmap.wrapT = THREE.RepeatWrapping;
     nmap.repeat.set(1, 1);
 
-    
     const ballMaterial = new THREE.MeshStandardMaterial({
       color: 0xffffff,
       roughness: 0.5,
@@ -611,6 +610,8 @@ class Game {
       roughnessMap: rmap,
       normalMap: nmap,
     });
+
+    const scopeMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
 
     const scope = document.getElementById("scope");
     scope.style.display = "none";
@@ -665,10 +666,14 @@ class Game {
       ballMesh.castShadow = true;
       ballMesh.receiveShadow = true;
 
+      const scopeBallMesh = new THREE.Mesh(ballGeometry, scopeMaterial);
+
       this.world.addBody(ballBody);
       this.scene.add(ballMesh);
+      this.scopeScene.add(scopeBallMesh);
       this.ballBodies.push(ballBody);
       this.ballMeshes.push(ballMesh);
+      this.scopeBallMeshes.push(scopeBallMesh);
 
       // Returns a vector pointing the the diretion the camera is at
       const vector = new THREE.Vector3(0, 0, 1);
@@ -696,6 +701,7 @@ class Game {
         shootDirection.z * (1.3 * 1.02 + ballShape.radius);
       ballBody.position.set(x, y, z);
       ballMesh.position.copy(ballBody.position);
+      scopeBallMesh.position.copy(ballBody.position);
 
       ballBody.addEventListener("collide", (e) => {
         if (e.body.userData) {
@@ -987,13 +993,18 @@ class Game {
     while (this.ballBodies.length > 10) {
       let body = this.ballBodies.shift();
       let mesh = this.ballMeshes.shift();
+      let smesh = this.scopeBallMeshes.shift();
       this.world.removeBody(body);
       this.scene.remove(mesh);
+      this.scopeScene.remove(smesh);
     }
 
     for (let i = 0; i < this.ballBodies.length; i++) {
       this.ballMeshes[i].position.copy(this.ballBodies[i].position);
       this.ballMeshes[i].quaternion.copy(this.ballBodies[i].quaternion);
+
+      this.scopeBallMeshes[i].position.copy(this.ballBodies[i].position);
+      this.scopeBallMeshes[i].quaternion.copy(this.ballBodies[i].quaternion);
     }
 
     let pos = this.player.position.clone();
@@ -1059,14 +1070,16 @@ class Game {
         this.entryDoor.mesh.translateY((this.gateFallNumber + 15 / 2) * 0.0001);
         this.gateFallNumber++;
       }
-    }else{
-      if(this.entryDoor.mesh.position.y != 0){
+    } else {
+      if (this.entryDoor.mesh.position.y != 0) {
         if (this.gateFallNumber > 0) {
           this.entryDoor.body.position.copy(this.entryDoor.mesh.position);
           this.entryDoor.body.quaternion.copy(this.entryDoor.mesh.quaternion);
-          this.entryDoor.mesh.translateY(-(this.gateFallNumber + 15 / 2) * 0.0001);
-          this.gateFallNumber--
-        } 
+          this.entryDoor.mesh.translateY(
+            -(this.gateFallNumber + 15 / 2) * 0.0001
+          );
+          this.gateFallNumber--;
+        }
       }
     }
 
@@ -1087,8 +1100,6 @@ class Game {
     if (this.playerLives <= 0) {
       //alert("You died!");
       window.location = this.restartLevel;
-
-
     }
 
     for (let i = 0; i < this.tokens.length; i++) {
