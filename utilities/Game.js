@@ -67,6 +67,10 @@ class Game {
     this.lastCallTime = 0;
 
     this.player = null;
+    this.playerLives = 3;
+    this.healthSize = 100;
+    this.currentHealth = this.healthSize;
+
     this.gun = null;
     this.torch = null;
     this.torchTarget = null;
@@ -294,10 +298,6 @@ class Game {
         }
       );
     });
-
-    /*
-     *   YUKA Initialisation
-     */
 
     /*
      * Audio Initialisation
@@ -909,7 +909,17 @@ class Game {
         }
         this.enemy.position.copy(this.vehicle.position);
         this.enemyBody.position.copy(this.enemy.position);
+        if(this.player.position.distanceTo(this.enemyBody.position) < 3){
+          this.currentHealth -= 1;
+          console.log(this.currentHealth);
+          if(this.currentHealth < 0 && this.playerLives != 0){
+            this.currentHealth = this.healthSize;
+            this.playerLives -= 1;
+            console.log("You lost a life!");
+          }
+        }
       }
+
     }
     // console.log(
     //   `NPC Position : (${this.enemy.position.x},${this.enemy.position.y} , ${this.enemy.position.z})`
@@ -937,6 +947,10 @@ class Game {
         this.enemy = null;
         this.npcAnimateDeath = false;
       }
+    }
+
+    if(this.playerLives <= 0){
+      alert("You died, refresh page to restart game!");
     }
 
     for (let i = 0; i < this.tokens.length; i++) {
