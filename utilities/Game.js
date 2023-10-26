@@ -394,7 +394,7 @@ class Game {
       bumpMap: bmap,
       bumpScale: 20,
       displacementMap: dmap,
-      displacementScale: 0.1,
+      displacementScale: 0,
       displacementBias: 0.01,
       normalMap: nmap,
       aoMap: amap,
@@ -593,7 +593,7 @@ class Game {
     // });
     const ballMaterial = new THREE.MeshStandardMaterial({
       color: 0xffffff,
-      roughness: 1,
+      roughness: 0.5,
       metalness: 1,
       map: map,
       bumpMap: bmap,
@@ -909,17 +909,16 @@ class Game {
         }
         this.enemy.position.copy(this.vehicle.position);
         this.enemyBody.position.copy(this.enemy.position);
-        if(this.player.position.distanceTo(this.enemyBody.position) < 3){
+        if (this.player.position.distanceTo(this.enemyBody.position) < 3) {
           this.currentHealth -= 1;
           console.log(this.currentHealth);
-          if(this.currentHealth < 0 && this.playerLives != 0){
+          if (this.currentHealth < 0 && this.playerLives != 0) {
             this.currentHealth = this.healthSize;
             this.playerLives -= 1;
             console.log("You lost a life!");
           }
         }
       }
-
     }
     // console.log(
     //   `NPC Position : (${this.enemy.position.x},${this.enemy.position.y} , ${this.enemy.position.z})`
@@ -949,7 +948,7 @@ class Game {
       }
     }
 
-    if(this.playerLives <= 0){
+    if (this.playerLives <= 0) {
       alert("You died, refresh page to restart game!");
     }
 
