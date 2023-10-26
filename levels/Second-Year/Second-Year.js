@@ -10,20 +10,10 @@ class SecondYear extends Game {
   constructor() {
     super(
       "mayhem/mayhem1/trough",
-      "DesertWall/StuccoRoughCast001",
-      "Sand/GroundSand005"
-      // "desertWall/StuccoRoughCast001_"
+      "ZigzagTiles/TilesCeramicHerringbone002",
+      "ShinyTiles/TilesZelligeSquaresWeathered001",
+      "BrushedSteel/MetalSteelBrushed001"
     );
-    // const geometry = new THREE.ConeGeometry( 10, 30, 4, 1 );
-    // const material = new THREE.MeshPhongMaterial( { color: 0x000000, flatShading: true } );
-    // for ( let i = 0; i < 500; i ++ ) {
-    //   const mesh = new THREE.Mesh( geometry, material );
-    //   mesh.position.x = Math.random() * 1600 - 800;
-    //   mesh.position.y = 0;
-    //   mesh.position.z = Math.random() * 1600 - 800;
-    //   mesh.updateMatrix();
-    //   mesh.matrixAutoUpdate = false;
-    //   this.scene.add(mesh);
-    // }
+    this.nextLevel = "/levels/Third-Year/Third-Year.html";
   }
 }

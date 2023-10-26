@@ -21,10 +21,11 @@ class FirstLevel extends Game {
   constructor() {
     super(
       "mayhem/mayhem8/flame",
-      "Bricks/BricksReclaimedWhitewashedOffset001",
-      "Sand/GroundSand005"
-      // "desertWall/StuccoRoughCast001_"
+      "DesertWall/StuccoRoughCast001",
+      "Sand/GroundSand005",
+      "GalvanizedZinc/MetalZincGalvanized001"
     );
+    this.nextLevel = "/levels/Second-Year/Second-Year.html";
 
     // Add Post-Processing Effects
     this._PostProcessing();

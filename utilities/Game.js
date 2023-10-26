@@ -33,7 +33,7 @@ class Game {
    * @param {string} skyboxImage Path to the skybox image assets
    * @param {string} wallTexture Path to the wall texture image assets
    */
-  constructor(skyboxImage, wallTexture, groundTexture) {
+  constructor(skyboxImage, wallTexture, groundTexture, bulletTexture) {
     this.scene = null; // ThreeJS Scene
     this.minimapScene = null;
     this.renderer = null; // ThreeJS Renderer
@@ -53,6 +53,8 @@ class Game {
 
     this.groundTexture = groundTexture;
 
+    this.bulletTexture = bulletTexture;
+
     this.maze = null; // The generated maze of the game
 
     this.exitDoor = {
@@ -67,6 +69,10 @@ class Game {
     this.lastCallTime = 0;
 
     this.player = null;
+    this.playerLives = 3;
+    this.healthSize = 100;
+    this.currentHealth = this.healthSize;
+
     this.gun = null;
     this.torch = null;
     this.torchTarget = null;
@@ -103,7 +109,7 @@ class Game {
     this.npcAnimateDeath = false;
 
     this.liftWall = false; // Whether or not to lift the exit wall
-
+    this.nextLevel = "/levels/Second-Year/First-Year.html";
     this._Init();
     this._BuildWorld();
     this._BuildLights();
@@ -144,7 +150,7 @@ class Game {
     this.scene = new THREE.Scene();
     // this.scene.background = new THREE.Color(0x88ccee);
     this.scene.background = new THREE.Color(0x000000);
-    this.scene.fog = new THREE.Fog(0x000000, 1, 20); // Commented out for development purposes
+    this.scene.fog = new THREE.Fog(0x000000, 1, 10); // Commented out for development purposes
 
     this.minimapScene = new THREE.Scene();
     this.minimapScene.background = new THREE.Color(0x000011);
@@ -296,10 +302,6 @@ class Game {
     });
 
     /*
-     *   YUKA Initialisation
-     */
-
-    /*
      * Audio Initialisation
      */
     this.AudioListener = new THREE.AudioListener();
@@ -310,7 +312,7 @@ class Game {
       (buffer) => {
         this.mainSound.setBuffer(buffer);
         this.mainSound.setLoop(true);
-        this.mainSound.setVolume(0.25);
+        this.mainSound.setVolume(0.1);
         this.mainSound.play();
       }
     );
@@ -394,7 +396,7 @@ class Game {
       bumpMap: bmap,
       bumpScale: 20,
       displacementMap: dmap,
-      displacementScale: 0.1,
+      displacementScale: 0,
       displacementBias: 0.01,
       normalMap: nmap,
       aoMap: amap,
@@ -536,40 +538,59 @@ class Game {
     const shootVelocity = 20;
     const ballShape = new CANNON.Sphere(0.1);
     const ballGeometry = new THREE.SphereGeometry(ballShape.radius, 32, 32);
+    const base = "../../assets/textures/bulletTextures/" + this.bulletTexture;
     let loader = new THREE.TextureLoader();
-    const vmap = loader.load(
-      "/assets/textures/bulletTextures/gold/MetalGoldPaint002_COL_1K_METALNESS.png"
-    );
-    const vbmap = loader.load(
-      "/assets/textures/bulletTextures/gold/MetalGoldPaint002_BUMP_1K_METALNESS.png"
-    );
+    const map = loader.load(base + "_COL_1K_METALNESS.png");
+    const bmap = loader.load(base + "_BUMP_1K_METALNESS.png");
+    const dmap = loader.load(base + "_DISP_1K_METALNESS.png");
+    const mmap = loader.load(base + "_METALNESS_1K_METALNESS.png");
+    const rmap = loader.load(base + "_ROUGHNESS_1K_METALNESS.png");
+    const nmap = loader.load(base + "_NRM_1K_METALNESS.png");
 
-    const vdmap = loader.load(
-      "/assets/textures/bulletTextures/gold/MetalGoldPaint002_DISP_1K_METALNESS.png"
-    );
+    map.wrapS = map.wrapT = THREE.RepeatWrapping;
+    map.repeat.set(1, 1);
+    map.mapping = THREE.CubeReflectionMapping;
 
-    vmap.wrapS = vmap.wrapT = THREE.RepeatWrapping;
-    vmap.repeat.set(50, 50);
-    vmap.mapping = THREE.CubeReflectionMapping;
+    bmap.wrapS = bmap.wrapT = THREE.RepeatWrapping;
+    bmap.repeat.set(1, 1);
 
-    vbmap.wrapS = vbmap.wrapT = THREE.RepeatWrapping;
-    vbmap.repeat.set(50, 50);
+    dmap.wrapS = dmap.wrapT = THREE.RepeatWrapping;
+    dmap.repeat.set(1, 1);
 
-    vdmap.wrapS = vdmap.wrapT = THREE.RepeatWrapping;
-    vdmap.repeat.set(50, 50);
+    mmap.wrapS = mmap.wrapT = THREE.RepeatWrapping;
+    mmap.repeat.set(1, 1);
 
-    let ballMaterial = new THREE.MeshPhongMaterial({
-      specular: 0x666666,
-      shininess: 10,
-      bumpMap: vbmap,
-      bumpScale: 0.5,
-      displacementMap: vdmap,
+    rmap.wrapS = rmap.wrapT = THREE.RepeatWrapping;
+    rmap.repeat.set(1, 1);
+
+    nmap.wrapS = nmap.wrapT = THREE.RepeatWrapping;
+    nmap.repeat.set(1, 1);
+
+    // let ballMaterial = new THREE.MeshPhongMaterial({
+    //   specular: 0x666666,
+    //   shininess: 10,
+    //   bumpMap: vbmap,
+    //   bumpScale: 0.5,
+    //   displacementMap: vdmap,
+    //   displacementScale: 0,
+    //   map: vmap,
+    //   depthTest: true,
+    //   reflectivity: 1,
+    //   refractionRatio: 0.1,
+    // });
+    const ballMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      roughness: 0.5,
+      metalness: 1,
+      map: map,
+      bumpMap: bmap,
+      displacementMap: dmap,
       displacementScale: 0,
-      map: vmap,
-      depthTest: true,
-      reflectivity: 1,
-      refractionRatio: 0.1,
+      metalnessMap: mmap,
+      roughnessMap: rmap,
+      normalMap: nmap,
     });
+
     window.addEventListener("click", (event) => {
       if (!this.controls.enabled || this.gun.toggled == false) {
         return;
@@ -875,6 +896,15 @@ class Game {
         }
         this.enemy.position.copy(this.vehicle.position);
         this.enemyBody.position.copy(this.enemy.position);
+        if (this.player.position.distanceTo(this.enemyBody.position) < 3) {
+          this.currentHealth -= 1;
+          console.log(this.currentHealth);
+          if (this.currentHealth < 0 && this.playerLives != 0) {
+            this.currentHealth = this.healthSize;
+            this.playerLives -= 1;
+            console.log("You lost a life!");
+          }
+        }
       }
     }
     // console.log(
@@ -903,6 +933,10 @@ class Game {
         this.enemy = null;
         this.npcAnimateDeath = false;
       }
+    }
+
+    if (this.playerLives <= 0) {
+      alert("You died, refresh page to restart game!");
     }
 
     for (let i = 0; i < this.tokens.length; i++) {
@@ -1204,7 +1238,7 @@ class Game {
     // of the trigger.
     triggerBody.addEventListener("collide", (event) => {
       if (event.body === this.player) {
-        if (this.numberOfKeys == 1) {
+        if (this.numberOfKeys == this.tokens.length) {
           this.liftWall = true;
           this.notEnoughKeys = false;
         } else {
@@ -1233,9 +1267,9 @@ class Game {
     triggerEnd.position.set(0, 1.3, -55);
     this.world.addBody(triggerBodyEnd);
     triggerBodyEnd.addEventListener("collide", (event) => {
-      if (this.numberOfKeys == 1) {
+      if (this.numberOfKeys == this.tokens.length) {
         if (event.body === this.player) {
-          window.location = "/levels/Second-Year/Second-Year.html";
+          window.location = this.nextLevel;
         }
       }
     });

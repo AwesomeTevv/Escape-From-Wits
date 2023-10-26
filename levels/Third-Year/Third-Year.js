@@ -2,22 +2,12 @@ import * as THREE from "three";
 
 // Custom Classes
 import { Game } from "../../utilities/Game";
+import { Decorator } from "../../utilities/Decorator";
 
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
-import { GlitchPass } from "three/examples/jsm/postprocessing/GlitchPass";
 import { BloomPass } from "three/examples/jsm/postprocessing/BloomPass";
 import { FilmPass } from "three/examples/jsm/postprocessing/FilmPass";
-import { DotScreenPass } from "three/examples/jsm/postprocessing/DotScreenPass";
-import {
-  MaskPass,
-  ClearMaskPass,
-} from "three/examples/jsm/postprocessing/MaskPass";
-import { RGBShiftShader } from "three/examples/jsm/shaders/RGBShiftShader";
-import { DotScreenShader } from "three/examples/jsm/shaders/DotScreenShader";
-import { DigitalGlitch } from "three/examples/jsm/shaders/DigitalGlitch";
-import { HorizontalBlurShader } from "three/examples/jsm/shaders/HorizontalBlurShader";
-import { VerticalBlurShader } from "three/examples/jsm/shaders/VerticalBlurShader";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass";
 
 let _App = null;
@@ -30,8 +20,8 @@ class ThirdYear extends Game {
     super(
       "mayhem/mayhem8/flame",
       "Bricks/BricksReclaimedWhitewashedOffset001",
-      "Grass/GroundGrassGreen002"
-      // "desertWall/StuccoRoughCast001_"
+      "Grass/GroundGrassGreen002",
+      "Bronze/MetalBronzeWorn001"
     );
 
     // const decorator = new Decorator(this.maze, this.scene);
@@ -50,9 +40,8 @@ class ThirdYear extends Game {
     const effectFilm = new FilmPass(1);
     this.composer.addPass(effectFilm);
 
-    const badTVPass = new THREE.ShaderPass(THREE.BadTVShader);
-    // this.addPass(badTVPass);
-    badTVPass.renderToScreen = true;
+    // const bloom = new BloomPass(1);
+    // this.composer.addPass(bloom);
 
     const effect4 = new OutputPass();
     this.composer.addPass(effect4);
