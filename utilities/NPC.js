@@ -152,7 +152,7 @@ class NPC {
         }
         // vehicle.position.copy(enemy.position);
   
-        vehicle.maxSpeed = 15;
+        vehicle.maxSpeed = 5;
   
         mazeCopy[Math.floor(enemyZ / 5 + 10)][Math.floor(enemyX / 5 + 10)] = 0;
         //enemy.position.copy(enemyPath.current());
