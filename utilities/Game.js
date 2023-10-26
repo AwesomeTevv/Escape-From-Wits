@@ -216,10 +216,9 @@ class Game {
     this.composer = new EffectComposer(this.renderer);
 
     //Shader uniform composer
-    this.shaderTime = 0.0;
-    this.vhsUniforms = vhsScanlines.uniforms;
-    this.staticUniforms = vhsStatic.uniforms;
-    //document.getElementById('overlay').style.display = 'block';
+    //this.shaderTime = 0.0;
+    //this.vhsUniforms = vhsScanlines.uniforms;
+    //this.staticUniforms = vhsStatic.uniforms;
 
 
     this.stats = new Stats();
@@ -482,6 +481,7 @@ class Game {
     this.controls.addEventListener("unlock", () => {
       this.controls.enabled = false;
       instructions.style.display = null;
+      overlay.style.display = "none";
     });
 
     characterBody.position.set(10, radius / 2, 55);
@@ -1017,10 +1017,10 @@ class Game {
     }
 
     //Update shader time value
-    this.shaderTime = this.shaderTime + 0.025;
-    this.vhsUniforms.time.value = this.shaderTime;
-    this.staticUniforms.time.value = this.shaderTime;
-    console.log(this.vhsUniforms.time.value, this.staticUniforms.time.value);
+    //this.shaderTime = this.shaderTime + 0.025;
+    //this.vhsUniforms.time.value = this.shaderTime;
+    //this.staticUniforms.time.value = this.shaderTime;
+    //console.log(this.vhsUniforms.time.value, this.staticUniforms.time.value);
   }
 
   /**

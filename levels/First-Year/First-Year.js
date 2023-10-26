@@ -35,16 +35,16 @@ class FirstLevel extends Game {
     this.nextLevel = "/levels/Second-Year/Second-Year.html";
     this.restartLevel = "/levels/First-Year/First-Year.html";
     // Add Post-Processing Effects
-    // this._PostProcessing();
+    this._PostProcessing();
   }
   _PostProcessing() {
     this.composer.addPass(new RenderPass(this.scene, this.camera));
 
-    const film = new FilmPass(1);
-    this.composer.addPass(film);
+    //const film = new FilmPass(1);
+    //this.composer.addPass(film);
 
-    // const effectVHSScanlines = new ShaderPass(vhsScanlines);
-    // this.composer.addPass(effectVHSScanlines);
+    const effectVHSScanlines = new ShaderPass(vhsScanlines);
+    this.composer.addPass(effectVHSScanlines);
 
     //const hurt = new ShaderPass(hurtPlayer);
     //this.composer.addPass(hurt);
@@ -64,6 +64,7 @@ class FirstLevel extends Game {
     // vignette.uniforms["softness"].value = 0.3; // default is 0.3
     // vignette.uniforms["gain"].value = 0.3; // default is 0.9
     //this.composer.addPass(redVignette);
+    document.getElementById('overlay').style.display = 'block';
 
     const outputPass = new OutputPass();
     this.composer.addPass(outputPass);
