@@ -10,8 +10,8 @@ class SecondYear extends Game {
   constructor() {
     super(
       "mayhem/mayhem1/trough",
-      "DesertWall/StuccoRoughCast001",
-      "Sand/GroundSand005"
+      "ConcretePanels/ConcretePrecastPlates004",
+      "ShinyTiles/TilesZelligeSquaresWeathered001"
       // "desertWall/StuccoRoughCast001_"
     );
     // const geometry = new THREE.ConeGeometry( 10, 30, 4, 1 );
