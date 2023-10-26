@@ -32,12 +32,12 @@ class NPC {
    *
    * @returns [THREE.Mesh, THREE.Body]
    */
-  getNPC() {
+  getNPC(id) {
     const geometry = new THREE.BoxGeometry(2, 10, 2);
     const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
     this.mesh = new THREE.Mesh(geometry, material);
     const body = new CANNON.Body({mass: 1, type: CANNON.Body.KINEMATIC});
-    (body).userData = { numberLives : 10 }
+    (body).userData = { numberLives : 10, meshId: id }
     body.addShape(new CANNON.Box(new CANNON.Vec3(1,5,1)));
     
     return [this.mesh,body];
