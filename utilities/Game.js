@@ -504,7 +504,6 @@ class Game {
       zoomedImage.style.display = "none";
       this.controls.enabled = false;
       instructions.style.display = null;
-      overlay.style.display = "none";
     });
 
     characterBody.position.set(10, radius / 2, 55);

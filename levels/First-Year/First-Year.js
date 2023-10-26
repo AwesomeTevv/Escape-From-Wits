@@ -34,9 +34,21 @@ class FirstLevel extends Game {
     );
     this.nextLevel = "/levels/Second-Year/Second-Year.html";
     this.restartLevel = "/levels/First-Year/First-Year.html";
+
+    this.controls.addEventListener("lock", () => {
+      overlay.style.display = "block";
+    });
+
+    this.controls.addEventListener("unlock", () => {
+      overlay.style.display = "none";
+    });
+
     // Add Post-Processing Effects
     this._PostProcessing();
   }
+
+
+
   _PostProcessing() {
     this.composer.addPass(new RenderPass(this.scene, this.camera));
 
