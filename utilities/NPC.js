@@ -142,6 +142,7 @@ class NPC {
         console.log(path.length);
         if(!this.dead){
           if(path.length < 50 && path.length > 25){
+            this.humm.stop();
             if(!this.sound.isPlaying){
               this.sound.play();
             }
