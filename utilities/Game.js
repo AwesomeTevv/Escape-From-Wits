@@ -46,11 +46,13 @@ class Game {
   ) {
     this.scene = null; // ThreeJS Scene
     this.minimapScene = null;
+    this.scopeScene = null;
     this.renderer = null; // ThreeJS Renderer
     this.camera = null; // ThreeJS Perspective Camera for First Person View
     this.composer = null;
     this.mapCamera = null; // ThreeJS Orthographic Camera for the Minimap
     this.rendererMap = null; // The Minimap at the top right of the screen
+    this.renderScope = null;
     this.controls = null; // Character/FPS controls
     this.world = null; // CannonJS Physics World
     this.stats = null; // ThreeJS Addon: Stats -- Appears at the top left of the screen
@@ -109,6 +111,10 @@ class Game {
     this.breakableMeshes = [];
     this.breakableBodies = [];
     this.breakableMeshID = 0;
+
+    //Variable for scoping in
+    this.isRightMouseDown = false;
+    this.zoomFactor = 1.2;
 
     /*
      * YUKA Variables
@@ -177,6 +183,12 @@ class Game {
 
     this.minimapScene = new THREE.Scene();
     this.minimapScene.background = new THREE.Color(0x000011);
+
+    this.scopeScene = new THREE.Scene();
+    this.scopeScene.background = new THREE.Color(0x000011);
+
+    let scopeCanvas = document.getElementById("scope");
+    this.renderScope = new THREE.WebGLRenderer({ canvas: scopeCanvas });
 
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -488,6 +500,8 @@ class Game {
     });
 
     this.controls.addEventListener("unlock", () => {
+      scope.style.display = "none";
+      zoomedImage.style.display = "none";
       this.controls.enabled = false;
       instructions.style.display = null;
     });
@@ -524,6 +538,18 @@ class Game {
     this.scene.add(this.gun.object);
     this.gun.loaded = true;
   };
+
+  // Function to zoom in
+  zoomIn() {
+    this.camera.fov -= 30;
+    this.camera.updateProjectionMatrix();
+  }
+
+  // Function to zoom out
+  zoomOut() {
+    this.camera.fov += 30;
+    this.camera.updateProjectionMatrix();
+  }
 
   /**
    * Sets up the shooting functionality.
@@ -584,6 +610,42 @@ class Game {
       metalnessMap: mmap,
       roughnessMap: rmap,
       normalMap: nmap,
+    });
+
+    const scope = document.getElementById("scope");
+    scope.style.display = "none";
+    window.addEventListener("click", (event) => {
+      if (!this.controls.enabled || this.gun.toggled == false) {
+        return;
+      }
+
+      if (event.button === 2) {
+        //console.log("clicked");
+        event.preventDefault();
+
+        if (this.isRightMouseDown) {
+          //Zoom in when the right mouse button is held down
+          this.zoomOut();
+          this.isRightMouseDown = false;
+          //console.log("zoom in");
+
+          // Hide the image when zoomed out
+          // const zoomedImage = document.getElementById("zoomedImage");
+          scope.style.display = "none";
+          zoomedImage.style.display = "none";
+          this.gun.object.position.z = this.gun.object.position.z - 100;
+        } else {
+          // Show the image when zoomed in
+          const zoomedImage = document.getElementById("zoomedImage");
+          scope.style.display = "block";
+          zoomedImage.style.display = "block";
+          // Return to normal view when the right mouse button is released
+          this.zoomIn();
+          this.isRightMouseDown = true;
+          //console.log("zoom out");
+          this.gun.object.position.z = this.gun.object.position.z + 100;
+        }
+      }
     });
 
     window.addEventListener("click", (event) => {
@@ -1058,6 +1120,7 @@ class Game {
   _Render() {
     this.renderer.render(this.scene, this.camera);
     this.rendererMap.render(this.minimapScene, this.mapCamera);
+    this.renderScope.render(this.scopeScene, this.camera);
     this.composer.render();
   }
 
@@ -1116,6 +1179,10 @@ class Game {
     const mapCube = new THREE.Mesh(geometry, minimapMaterial);
     mapCube.position.set(x, this.wallHeight / 2, z);
     this.minimapScene.add(mapCube);
+
+    const scopeCube = new THREE.Mesh(geometry, new THREE.MeshNormalMaterial());
+    scopeCube.position.set(x, this.wallHeight / 2, z);
+    this.scopeScene.add(scopeCube);
   }
 
   body(x, z) {
