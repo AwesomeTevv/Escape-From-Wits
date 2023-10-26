@@ -47,8 +47,9 @@ class ThirdYear extends Game {
       token.name = "guitar";
       token.loaded = true;
       this.onTokenLoaded(token);
-      //this.setKeyPos(token);
-      token.object.position.set(this.player.position.x + 2, this.player.position.y, this.player.position.z );
+      this.setKeyPos(token);
+      //token.object.position.set(this.player.position.x + 2, this.player.position.y, this.player.position.z );
+      console.log("This is the second token position " + token.object.position.x + " " + token.object.position.z);
       token.sound = new THREE.PositionalAudio(this.AudioListener);
       token.object.add(token.sound);
       new THREE.AudioLoader().load(
@@ -66,30 +67,31 @@ class ThirdYear extends Game {
 
 
     loaderObj.load("../../../assets/models/tokens/grad/scene.gltf", (gltf) => {
-      let token = new Token();
-      token.object = gltf.scene;
-      token.object.scale.set(0.1, 0.1, 0.1);
-      token.setToggledScale(0.01, 0.01, 0.01);
-      token.setToggledRotation(Math.PI * 1.5);
-      token.setToggledOffsets(-0.5, -0.5, -0.9);
-      token.name = "diploma";
-      token.loaded = true;
-      this.onTokenLoaded(token);
-      //this.setKeyPos(token);
-      token.object.position.set(this.player.position.x - 2, this.player.position.y, this.player.position.z );
-      token.sound = new THREE.PositionalAudio(this.AudioListener);
-      token.object.add(token.sound);
+      let token2 = new Token();
+      token2.object = gltf.scene;
+      token2.object.scale.set(0.1, 0.1, 0.1);
+      token2.setToggledScale(0.01, 0.01, 0.01);
+      token2.setToggledRotation(Math.PI * 1.5);
+      token2.setToggledOffsets(-0.5, -0.5, -0.9);
+      token2.name = "diploma";
+      token2.loaded = true;
+      this.onTokenLoaded(token2);
+      this.setKeyPos(token2);
+      //token.object.position.set(this.player.position.x - 2, this.player.position.y, this.player.position.z );
+      console.log("This is the third token position " + token2.object.position.x + " " + token2.object.position.z);
+      token2.sound = new THREE.PositionalAudio(this.AudioListener);
+      token2.object.add(token2.sound);
       new THREE.AudioLoader().load(
         "../../assets/sounds/wind-chimes-bells-115747.mp3",
         (buffer) => {
-          token.sound.setBuffer(buffer);
-          token.sound.setLoop(true);
-          token.sound.setVolume(1);
-          token.sound.setRefDistance(0.1);
-          token.sound.play();
+          token2.sound.setBuffer(buffer);
+          token2.sound.setLoop(true);
+          token2.sound.setVolume(1);
+          token2.sound.setRefDistance(0.1);
+          token2.sound.play();
         }
       );
-      this._SpawnNPC(token);
+      this._SpawnNPC(token2);
     });
 
   }
