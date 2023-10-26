@@ -1013,7 +1013,6 @@ class Game {
     this.shaderTime = this.shaderTime + 0.025;
     this.vhsUniforms.time.value = this.shaderTime;
     this.staticUniforms.time.value = this.shaderTime;
-    console.log(this.vhsUniforms.time.value, this.staticUniforms.time.value);
   }
 
   /**
