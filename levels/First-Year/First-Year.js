@@ -24,7 +24,7 @@ class FirstLevel extends Game {
       "DesertWall/StuccoRoughCast001",
       "Sand/GroundSand005",
       "GalvanizedZinc/MetalZincGalvanized001",
-      "Dots/TilesMosaicPennyround001"
+      "Terazzo/TerrazzoSlab018"
     );
     this.nextLevel = "/levels/Second-Year/Second-Year.html";
 
