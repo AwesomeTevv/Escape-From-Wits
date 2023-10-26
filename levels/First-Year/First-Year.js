@@ -23,7 +23,8 @@ class FirstLevel extends Game {
       "mayhem/mayhem8/flame",
       "DesertWall/StuccoRoughCast001",
       "Sand/GroundSand005",
-      "GalvanizedZinc/MetalZincGalvanized001"
+      "GalvanizedZinc/MetalZincGalvanized001",
+      "Dots/TilesMosaicPennyround001"
     );
     this.nextLevel = "/levels/Second-Year/Second-Year.html";
 

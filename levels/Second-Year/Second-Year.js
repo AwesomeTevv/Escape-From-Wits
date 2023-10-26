@@ -12,7 +12,8 @@ class SecondYear extends Game {
       "mayhem/mayhem1/trough",
       "ZigzagTiles/TilesCeramicHerringbone002",
       "ShinyTiles/TilesZelligeSquaresWeathered001",
-      "BrushedSteel/MetalSteelBrushed001"
+      "BrushedSteel/MetalSteelBrushed001",
+      "Dots/TilesMosaicPennyround001"
     );
     this.nextLevel = "/levels/Third-Year/Third-Year.html";
   }

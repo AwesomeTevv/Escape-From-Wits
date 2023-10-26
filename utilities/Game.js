@@ -33,7 +33,13 @@ class Game {
    * @param {string} skyboxImage Path to the skybox image assets
    * @param {string} wallTexture Path to the wall texture image assets
    */
-  constructor(skyboxImage, wallTexture, groundTexture, bulletTexture) {
+  constructor(
+    skyboxImage,
+    wallTexture,
+    groundTexture,
+    bulletTexture,
+    exitTexture
+  ) {
     this.scene = null; // ThreeJS Scene
     this.minimapScene = null;
     this.renderer = null; // ThreeJS Renderer
@@ -54,6 +60,8 @@ class Game {
     this.groundTexture = groundTexture;
 
     this.bulletTexture = bulletTexture;
+
+    this.exitTexture = exitTexture;
 
     this.maze = null; // The generated maze of the game
 
@@ -1205,8 +1213,48 @@ class Game {
     this.exitDoor.body = body;
     this.world.addBody(body);
 
+    // Loading in textures
+    const loader = new THREE.TextureLoader();
+    const base = "../../assets/textures/wallTextures/" + this.exitTexture;
+    const map = loader.load(base + "_COL_2K.png");
+    const bmap = loader.load(base + "_BUMP_2K.png");
+    const dmap = loader.load(base + "_DISP_2K.png");
+    const nmap = loader.load(base + "_NRM_2K.png");
+    const amap = loader.load(base + "_AO_2K.png");
+
+    const scale = 1;
+    map.wrapS = map.wrapT = THREE.RepeatWrapping;
+    map.repeat.set(scale, (this.wallHeight / 5) * scale);
+    map.mapping = THREE.CubeRefractionMapping;
+
+    bmap.wrapS = bmap.wrapT = THREE.RepeatWrapping;
+    bmap.repeat.set(scale, (this.wallHeight / 5) * scale);
+
+    dmap.wrapS = dmap.wrapT = THREE.RepeatWrapping;
+    dmap.repeat.set(scale, (this.wallHeight / 5) * scale);
+
+    nmap.wrapS = nmap.wrapT = THREE.RepeatWrapping;
+    nmap.repeat.set(scale, (this.wallHeight / 5) * scale);
+
+    amap.wrapS = amap.wrapT = THREE.RepeatWrapping;
+    amap.repeat.set(scale, (this.wallHeight / 5) * scale);
+
+    const material = new THREE.MeshPhongMaterial({
+      specular: 0x666666,
+      shininess: 15,
+      bumpMap: bmap,
+      bumpScale: 15,
+      displacementMap: dmap,
+      displacementScale: 0,
+      normalMap: nmap,
+      aoMap: amap,
+      aoMapIntensity: 1,
+      map: map,
+      depthTest: true,
+      refractionRatio: 0.1,
+    });
+
     const geometry = new THREE.BoxGeometry(5, this.wallHeight, 5);
-    const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
     const cube = new THREE.Mesh(geometry, material);
     cube.position.set(0, this.wallHeight / 2, -50);
     this.exitDoor.mesh = cube;
