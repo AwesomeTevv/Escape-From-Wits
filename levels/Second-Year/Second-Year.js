@@ -18,6 +18,7 @@ class SecondYear extends Game {
       "Dots/TilesMosaicPennyround001"
     );
     this.nextLevel = "/levels/Third-Year/Third-Year.html";
+    this.restartLevel = "/levels/Second-Year/Second-Year.html";
     this._AddSecondTokens();
   }
   _AddSecondTokens() {

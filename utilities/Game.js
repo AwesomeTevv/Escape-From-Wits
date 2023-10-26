@@ -75,7 +75,15 @@ class Game {
       mesh: null, // The mesh of the exit door
       body: null, // The body of the exit door
     };
+
+    this.entryDoor = {
+      mesh: null, // The mesh of the exit door
+      body: null, // The body of the exit door
+    };
     this.gateNumber = 0;
+    this.gateFallNumber = 0;
+    this.animateGateOpen = false;
+
     this.frameNumber = 0;
 
     this.ballBodies = []; // List storing the physics bodies of the projectile balls
@@ -231,6 +239,8 @@ class Game {
     this.shaderTime = 0.0;
     this.vhsUniforms = vhsScanlines.uniforms;
     this.staticUniforms = vhsStatic.uniforms;
+    //document.getElementById('overlay').style.display = 'block';
+
 
     this.stats = new Stats();
     this.stats.domElement.style.position = "absolute";
@@ -588,18 +598,7 @@ class Game {
     nmap.wrapS = nmap.wrapT = THREE.RepeatWrapping;
     nmap.repeat.set(1, 1);
 
-    // let ballMaterial = new THREE.MeshPhongMaterial({
-    //   specular: 0x666666,
-    //   shininess: 10,
-    //   bumpMap: vbmap,
-    //   bumpScale: 0.5,
-    //   displacementMap: vdmap,
-    //   displacementScale: 0,
-    //   map: vmap,
-    //   depthTest: true,
-    //   reflectivity: 1,
-    //   refractionRatio: 0.1,
-    // });
+    
     const ballMaterial = new THREE.MeshStandardMaterial({
       color: 0xffffff,
       roughness: 0.5,
@@ -800,6 +799,7 @@ class Game {
             // this.gun.object.scale.x = 0.9999;
             // this.gun.object.scale.y = 0.9999;
             this.gun.object.scale.z = 2;
+            this.animateGateOpen = true;
           }
         }
       },
@@ -1006,6 +1006,7 @@ class Game {
         if (this.enemyBody[i] != null) {
           this.entityManager[i].update(dt);
           if (pos.z <= 5 * (19 - 10)) {
+            this.animateGateOpen = false;
             if (this.frameNumber > 10) {
               this.npcArr[i].regeneratePath(
                 this.maze,
@@ -1042,6 +1043,33 @@ class Game {
       }
     }
 
+    if (this.liftWall) {
+      if (this.gateNumber < 500) {
+        this.exitDoor.body.position.copy(this.exitDoor.mesh.position);
+        this.exitDoor.body.quaternion.copy(this.exitDoor.mesh.quaternion);
+        this.exitDoor.mesh.translateY((this.gateNumber + 15 / 2) * 0.0001);
+        this.gateNumber++;
+      }
+    }
+
+    if (this.animateGateOpen) {
+      if (this.gateFallNumber < 500) {
+        this.entryDoor.body.position.copy(this.entryDoor.mesh.position);
+        this.entryDoor.body.quaternion.copy(this.entryDoor.mesh.quaternion);
+        this.entryDoor.mesh.translateY((this.gateFallNumber + 15 / 2) * 0.0001);
+        this.gateFallNumber++;
+      }
+    }else{
+      if(this.entryDoor.mesh.position.y != 0){
+        if (this.gateFallNumber > 0) {
+          this.entryDoor.body.position.copy(this.entryDoor.mesh.position);
+          this.entryDoor.body.quaternion.copy(this.entryDoor.mesh.quaternion);
+          this.entryDoor.mesh.translateY(-(this.gateFallNumber + 15 / 2) * 0.0001);
+          this.gateFallNumber--
+        } 
+      }
+    }
+
     for (let i = 0; i < 3; i++) {
       if (this.npcAnimateDeath[i]) {
         if (this.npcDeathFrames[i] < 100) {
@@ -1057,7 +1085,10 @@ class Game {
     }
 
     if (this.playerLives <= 0) {
-      alert("You died, refresh page to restart game!");
+      //alert("You died!");
+      window.location = this.restartLevel;
+
+
     }
 
     for (let i = 0; i < this.tokens.length; i++) {
@@ -1088,7 +1119,6 @@ class Game {
     this.shaderTime = this.shaderTime + 0.025;
     this.vhsUniforms.time.value = this.shaderTime;
     this.staticUniforms.time.value = this.shaderTime;
-    console.log(this.vhsUniforms.time.value, this.staticUniforms.time.value);
   }
 
   /**
@@ -1376,6 +1406,66 @@ class Game {
     this.scene.add(cube);
   }
 
+  enter() {
+    const shape = new CANNON.Box(
+      new CANNON.Vec3(5 * 0.5, this.wallHeight * 0.5, 5 * 0.5)
+    );
+    const body = new CANNON.Body({
+      type: CANNON.Body.KINEMATIC,
+      shape,
+    });
+    body.position.set(10, this.wallHeight / 2, 50);
+    this.entryDoor.body = body;
+    this.world.addBody(body);
+
+    // Loading in textures
+    const loader = new THREE.TextureLoader();
+    const base = "../../assets/textures/wallTextures/" + this.exitTexture;
+    const map = loader.load(base + "_COL_2K.png");
+    const bmap = loader.load(base + "_BUMP_2K.png");
+    const dmap = loader.load(base + "_DISP_2K.png");
+    const nmap = loader.load(base + "_NRM_2K.png");
+    const amap = loader.load(base + "_AO_2K.png");
+
+    const scale = 1;
+    map.wrapS = map.wrapT = THREE.RepeatWrapping;
+    map.repeat.set(scale, (this.wallHeight / 5) * scale);
+    map.mapping = THREE.CubeRefractionMapping;
+
+    bmap.wrapS = bmap.wrapT = THREE.RepeatWrapping;
+    bmap.repeat.set(scale, (this.wallHeight / 5) * scale);
+
+    dmap.wrapS = dmap.wrapT = THREE.RepeatWrapping;
+    dmap.repeat.set(scale, (this.wallHeight / 5) * scale);
+
+    nmap.wrapS = nmap.wrapT = THREE.RepeatWrapping;
+    nmap.repeat.set(scale, (this.wallHeight / 5) * scale);
+
+    amap.wrapS = amap.wrapT = THREE.RepeatWrapping;
+    amap.repeat.set(scale, (this.wallHeight / 5) * scale);
+
+    const material = new THREE.MeshPhongMaterial({
+      specular: 0x666666,
+      shininess: 15,
+      bumpMap: bmap,
+      bumpScale: 15,
+      displacementMap: dmap,
+      displacementScale: 0,
+      normalMap: nmap,
+      aoMap: amap,
+      aoMapIntensity: 1,
+      map: map,
+      depthTest: true,
+      refractionRatio: 0.1,
+    });
+
+    const geometry = new THREE.BoxGeometry(5, this.wallHeight, 5);
+    const cube = new THREE.Mesh(geometry, material);
+    cube.position.set(10, this.wallHeight / 2, 50);
+    this.entryDoor.mesh = cube;
+    this.scene.add(cube);
+  }
+
   /**
    * Adds the maze to the game scene.
    *
@@ -1387,6 +1477,7 @@ class Game {
     this.maze = this.generateMaze(20, 20); // Generates the maze
     this.visualise(this.maze); // Visualises the maze
     this.exit(); // Adds the exit door
+    this.enter(); // Adds the entry door
     this.bounds(); // Adds invisible boundaries to the starting area
   }
 
