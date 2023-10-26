@@ -195,7 +195,10 @@ class Game {
     });
     // this.renderScope.setScissorTest(true);
     this.renderScope.setPixelRatio(window.devicePixelRatio);
-    this.renderScope.setSize(window.innerWidth, window.innerHeight);
+    this.renderScope.setSize(
+      window.innerHeight - 100,
+      window.innerHeight - 100
+    );
 
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -507,7 +510,6 @@ class Game {
 
     this.controls.addEventListener("unlock", () => {
       scope.style.display = "none";
-      zoomedImage.style.display = "none";
       this.controls.enabled = false;
       instructions.style.display = null;
     });
@@ -636,16 +638,10 @@ class Game {
           this.isRightMouseDown = false;
           //console.log("zoom in");
 
-          // Hide the image when zoomed out
-          // const zoomedImage = document.getElementById("zoomedImage");
           scope.style.display = "none";
-          zoomedImage.style.display = "none";
           this.gun.object.position.z = this.gun.object.position.z - 100;
         } else {
-          // Show the image when zoomed in
-          const zoomedImage = document.getElementById("zoomedImage");
           scope.style.display = "block";
-          zoomedImage.style.display = "block";
           // Return to normal view when the right mouse button is released
           this.zoomIn();
           this.isRightMouseDown = true;
