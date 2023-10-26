@@ -316,6 +316,15 @@ class Game {
         this.mainSound.play();
       }
     );
+    new THREE.AudioLoader().load(
+      "../../assets/sounds/scary-creaking-knocking-wood-6103.mp3",
+      (buffer) => {
+        this.mainSound.setBuffer(buffer);
+        this.mainSound.setLoop(true);
+        this.mainSound.setVolume(0.05);
+        this.mainSound.play();
+      }
+    );
 
     this.convexObjectBreaker = new ConvexObjectBreaker();
   }
