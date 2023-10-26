@@ -23,7 +23,7 @@ class Decorator {
   }
 
   loadBlock = (block) => {
-    block.translateY(-2.5);
+    block.translateY(-2.7);
     this.scene.add(block);
   };
 
