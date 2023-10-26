@@ -14,6 +14,7 @@ class SecondYear extends Game {
       "ShinyTiles/TilesZelligeSquaresWeathered001"
       // "desertWall/StuccoRoughCast001_"
     );
+    this.nextLevel = "/levels/Second-Year/Third-Year.html";
     // const geometry = new THREE.ConeGeometry( 10, 30, 4, 1 );
     // const material = new THREE.MeshPhongMaterial( { color: 0x000000, flatShading: true } );
     // for ( let i = 0; i < 500; i ++ ) {

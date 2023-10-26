@@ -103,7 +103,7 @@ class Game {
     this.npcAnimateDeath = false;
 
     this.liftWall = false; // Whether or not to lift the exit wall
-
+    this.nextLevel = "/levels/Second-Year/First-Year.html";
     this._Init();
     this._BuildWorld();
     this._BuildLights();
@@ -1204,7 +1204,7 @@ class Game {
     // of the trigger.
     triggerBody.addEventListener("collide", (event) => {
       if (event.body === this.player) {
-        if (this.numberOfKeys == 1) {
+        if (this.numberOfKeys == this.tokens.length) {
           this.liftWall = true;
           this.notEnoughKeys = false;
         } else {
@@ -1233,9 +1233,9 @@ class Game {
     triggerEnd.position.set(0, 1.3, -55);
     this.world.addBody(triggerBodyEnd);
     triggerBodyEnd.addEventListener("collide", (event) => {
-      if (this.numberOfKeys == 1) {
+      if (this.numberOfKeys == this.tokens.length) {
         if (event.body === this.player) {
-          window.location = "/levels/Second-Year/Second-Year.html";
+          window.location = this.nextLevel;
         }
       }
     });
