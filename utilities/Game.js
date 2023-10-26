@@ -657,6 +657,7 @@ class Game {
           this.gun.object.position.z = this.gun.object.position.z - 100;
         } else {
           scope.style.display = "block";
+          scope.style.border = "5px solid black";
           // Return to normal view when the right mouse button is released
           this.zoomIn();
           this.isRightMouseDown = true;
