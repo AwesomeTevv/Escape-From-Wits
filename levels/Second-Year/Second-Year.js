@@ -14,6 +14,6 @@ class SecondYear extends Game {
       "ShinyTiles/TilesZelligeSquaresWeathered001",
       "BrushedSteel/MetalSteelBrushed001"
     );
-    this.nextLevel = "/levels/Second-Year/Third-Year.html";
+    this.nextLevel = "/levels/Third-Year/Third-Year.html";
   }
 }

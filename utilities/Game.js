@@ -494,7 +494,7 @@ class Game {
     this.torch = new THREE.SpotLight(
       0xffffff,
       200.0,
-      10,
+      20,
       Math.PI * 0.1,
       0.5,
       2
