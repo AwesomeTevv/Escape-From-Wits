@@ -881,6 +881,7 @@ class Game {
       this.checkProximity();
     }
 
+    if (this.notEnoughKeys == true){
     if (this.notEnoughKeys && this.timerKeys < 500){
       this.timerKeys += 1
       document.getElementById("tokenText").textContent = "You've been token for a poes...find the tokens";
@@ -889,6 +890,7 @@ class Game {
       this.timerKeys = 0;
       document.getElementById("tokenText").textContent = "";
     }
+  }
   }
 
  
