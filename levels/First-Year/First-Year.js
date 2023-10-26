@@ -19,10 +19,9 @@ class FirstLevel extends Game {
   constructor() {
     super(
       "mayhem/mayhem8/flame",
-      "Bricks/BricksReclaimedWhitewashedOffset001",
+      "DesertWall/StuccoRoughCast001",
       "Sand/GroundSand005",
       "GalvanizedZinc/MetalZincGalvanized001"
-      // "desertWall/StuccoRoughCast001_"
     );
     this.nextLevel = "/levels/Second-Year/Second-Year.html";
 
