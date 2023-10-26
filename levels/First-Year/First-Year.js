@@ -34,14 +34,17 @@ class FirstLevel extends Game {
   _PostProcessing() {
     this.composer.addPass(new RenderPass(this.scene, this.camera));
 
-    const effectVHSScanlines = new ShaderPass(vhsScanlines);
-    this.composer.addPass(effectVHSScanlines);
+    const film = new FilmPass(1);
+    this.composer.addPass(film);
+
+    // const effectVHSScanlines = new ShaderPass(vhsScanlines);
+    // this.composer.addPass(effectVHSScanlines);
 
     //const hurt = new ShaderPass(hurtPlayer);
     //this.composer.addPass(hurt);
 
-    const effectVHSStatic = new ShaderPass(vhsStatic);
-    this.composer.addPass(effectVHSStatic);
+    // const effectVHSStatic = new ShaderPass(vhsStatic);
+    // this.composer.addPass(effectVHSStatic);
 
     //const redVignette = new ShaderPass(VignetteShader);
     //.uniforms['offset'].value = 0.8;
