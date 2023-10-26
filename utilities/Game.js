@@ -92,7 +92,9 @@ class Game {
     this.tokens = [];
 
     this.AudioListener = null;
-    this.mainSound = null;
+    this.staticNoise = null;
+    this.ambientNoise = null;
+    this.complimentNoise = null;
     this.notEnoughKeys = false;
     this.timerKeys = 0;
     this.convexObjectBreaker = null;
@@ -117,8 +119,8 @@ class Game {
 
     /** @type[] NPC */
     this.npcArr = [];
-    this.npcDeathFrames = [0,0,0];
-    this.npcAnimateDeath = [false,false,false];
+    this.npcDeathFrames = [0, 0, 0];
+    this.npcAnimateDeath = [false, false, false];
     this.npcId = 0;
 
     this.liftWall = false; // Whether or not to lift the exit wall
@@ -218,7 +220,6 @@ class Game {
     this.vhsUniforms = vhsScanlines.uniforms;
     this.staticUniforms = vhsStatic.uniforms;
 
-
     this.stats = new Stats();
     this.stats.domElement.style.position = "absolute";
     this.stats.domElement.style.top = "0px";
@@ -279,23 +280,36 @@ class Game {
      */
     this.AudioListener = new THREE.AudioListener();
     this.camera.add(this.AudioListener);
-    this.mainSound = new THREE.Audio(this.AudioListener);
-    new THREE.AudioLoader().load(
-      "../../assets/sounds/scary_chime-17193.mp3",
-      (buffer) => {
-        this.mainSound.setBuffer(buffer);
-        this.mainSound.setLoop(true);
-        this.mainSound.setVolume(0.1);
-        this.mainSound.play();
-      }
-    );
+
+    this.staticNoise = new THREE.Audio(this.AudioListener);
+    this.ambientNoise = new THREE.Audio(this.AudioListener);
+    this.complimentNoise = new THREE.Audio(this.AudioListener);
+
     new THREE.AudioLoader().load(
       "../../assets/sounds/scary-creaking-knocking-wood-6103.mp3",
       (buffer) => {
-        this.mainSound.setBuffer(buffer);
-        this.mainSound.setLoop(true);
-        this.mainSound.setVolume(0.05);
-        this.mainSound.play();
+        this.complimentNoise.setBuffer(buffer);
+        this.complimentNoise.setLoop(true);
+        this.complimentNoise.setVolume(0.1);
+        this.complimentNoise.play();
+      }
+    );
+    new THREE.AudioLoader().load(
+      "../../assets/sounds/vinyl-crackle-33rpm-6065.mp3",
+      (buffer) => {
+        this.staticNoise.setBuffer(buffer);
+        this.staticNoise.setLoop(true);
+        this.staticNoise.setVolume(0.05);
+        this.staticNoise.play();
+      }
+    );
+    new THREE.AudioLoader().load(
+      "../../assets/sounds/thriller-ambient-14563.mp3",
+      (buffer) => {
+        this.ambientNoise.setBuffer(buffer);
+        this.ambientNoise.setLoop(true);
+        this.ambientNoise.setVolume(0.1);
+        this.ambientNoise.play();
       }
     );
 
@@ -920,7 +934,7 @@ class Game {
     this.mapCamera.position.z = pos.z;
     this.mapCamera.lookAt(new THREE.Vector3(pos.x, -1, pos.z));
 
-    for(let  i = 0; i < this.enemy.length;i++){
+    for (let i = 0; i < this.enemy.length; i++) {
       if (this.enemy[i] != null) {
         if (this.enemyBody[i] != null) {
           this.entityManager[i].update(dt);
@@ -938,17 +952,16 @@ class Game {
           }
           this.enemy[i].position.copy(this.vehicle[i].position);
           this.enemyBody[i].position.copy(this.enemy[i].position);
-          if(this.player.position.distanceTo(this.enemyBody[i].position) < 3){
+          if (this.player.position.distanceTo(this.enemyBody[i].position) < 3) {
             this.currentHealth -= 1;
             console.log(this.currentHealth);
-            if(this.currentHealth < 0 && this.playerLives != 0){
+            if (this.currentHealth < 0 && this.playerLives != 0) {
               this.currentHealth = this.healthSize;
               this.playerLives -= 1;
               console.log("You lost a life!");
             }
           }
         }
-  
       }
     }
     // console.log(
@@ -967,7 +980,7 @@ class Game {
       }
     }
 
-    for(let i = 0; i < 3;i++){
+    for (let i = 0; i < 3; i++) {
       if (this.npcAnimateDeath[i]) {
         if (this.npcDeathFrames[i] < 100) {
           console.log(this.npcDeathFrames[i]);
