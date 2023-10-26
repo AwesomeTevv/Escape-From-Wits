@@ -10,6 +10,7 @@ import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
 import { BloomPass } from "three/examples/jsm/postprocessing/BloomPass";
 import { FilmPass } from "three/examples/jsm/postprocessing/FilmPass";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass";
+import Token from "../../utilities/tokens";
 
 let _App = null;
 window.addEventListener("DOMContentLoaded", () => {
