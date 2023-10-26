@@ -34,8 +34,9 @@ class SecondYear extends Game {
       token.name = "doll";
       token.loaded = true;
       this.onTokenLoaded(token);
-      //this.setKeyPos(token);
-      token.object.position.set(this.player.position.x + 2, this.player.position.y, this.player.position.z );
+      this.setKeyPos(token);
+      console.log("This is the second token position " + token.object.position.x + " " + token.object.position.z);
+      //token.object.position.set(this.player.position.x + 2, this.player.position.y, this.player.position.z );
       token.sound = new THREE.PositionalAudio(this.AudioListener);
       token.object.add(token.sound);
       new THREE.AudioLoader().load(

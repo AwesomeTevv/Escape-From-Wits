@@ -885,6 +885,7 @@ class Game {
       token.loaded = true;
       this.onTokenLoaded(token);
       this.setKeyPos(token);
+      console.log("This is the first token position " + token.object.position.x + " " + token.object.position.z);
       token.sound = new THREE.PositionalAudio(this.AudioListener);
       token.object.add(token.sound);
       new THREE.AudioLoader().load(
@@ -1047,6 +1048,7 @@ class Game {
     // console.log(
     //   `NPC Position : (${this.enemy.position.x},${this.enemy.position.y} , ${this.enemy.position.z})`
     //   );
+    console.log(this.player.position);
 
     this.controls.update(dt);
     this.stats.update();
