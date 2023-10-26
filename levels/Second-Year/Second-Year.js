@@ -12,11 +12,11 @@ class SecondYear extends Game {
   constructor() {
     super(
       "mayhem/mayhem1/trough",
-      "ConcretePanels/ConcretePrecastPlates004",
-      "ShinyTiles/TilesZelligeSquaresWeathered001"
-      // "desertWall/StuccoRoughCast001_"
+      "ZigzagTiles/TilesCeramicHerringbone002",
+      "ShinyTiles/TilesZelligeSquaresWeathered001",
+      "BrushedSteel/MetalSteelBrushed001"
     );
-    this.nextLevel = "/levels/Second-Year/Third-Year.html";
+    this.nextLevel = "/levels/Third-Year/Third-Year.html";
     this._AddSecondTokens();
   }
   _AddSecondTokens() {

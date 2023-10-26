@@ -20,8 +20,8 @@ class ThirdYear extends Game {
     super(
       "mayhem/mayhem8/flame",
       "Bricks/BricksReclaimedWhitewashedOffset001",
-      "Grass/GroundGrassGreen002"
-      // "desertWall/StuccoRoughCast001_"
+      "Grass/GroundGrassGreen002",
+      "Bronze/MetalBronzeWorn001"
     );
 
     // const decorator = new Decorator(this.maze, this.scene);

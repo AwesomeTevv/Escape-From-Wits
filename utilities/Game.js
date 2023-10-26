@@ -33,7 +33,7 @@ class Game {
    * @param {string} skyboxImage Path to the skybox image assets
    * @param {string} wallTexture Path to the wall texture image assets
    */
-  constructor(skyboxImage, wallTexture, groundTexture) {
+  constructor(skyboxImage, wallTexture, groundTexture, bulletTexture) {
     this.scene = null; // ThreeJS Scene
     this.minimapScene = null;
     this.renderer = null; // ThreeJS Renderer
@@ -52,6 +52,8 @@ class Game {
     this.wallHeight = 1000; // Height of the maze walls -- Adjust accordingly to the feel of the game
 
     this.groundTexture = groundTexture;
+
+    this.bulletTexture = bulletTexture;
 
     this.maze = null; // The generated maze of the game
 
@@ -149,7 +151,7 @@ class Game {
     this.scene = new THREE.Scene();
     // this.scene.background = new THREE.Color(0x88ccee);
     this.scene.background = new THREE.Color(0x000000);
-    this.scene.fog = new THREE.Fog(0x000000, 1, 20); // Commented out for development purposes
+    this.scene.fog = new THREE.Fog(0x000000, 1, 10); // Commented out for development purposes
 
     this.minimapScene = new THREE.Scene();
     this.minimapScene.background = new THREE.Color(0x000011);
@@ -265,7 +267,16 @@ class Game {
       (buffer) => {
         this.mainSound.setBuffer(buffer);
         this.mainSound.setLoop(true);
-        this.mainSound.setVolume(0.25);
+        this.mainSound.setVolume(0.1);
+        this.mainSound.play();
+      }
+    );
+    new THREE.AudioLoader().load(
+      "../../assets/sounds/scary-creaking-knocking-wood-6103.mp3",
+      (buffer) => {
+        this.mainSound.setBuffer(buffer);
+        this.mainSound.setLoop(true);
+        this.mainSound.setVolume(0.05);
         this.mainSound.play();
       }
     );
@@ -349,7 +360,7 @@ class Game {
       bumpMap: bmap,
       bumpScale: 20,
       displacementMap: dmap,
-      displacementScale: 0.1,
+      displacementScale: 0,
       displacementBias: 0.01,
       normalMap: nmap,
       aoMap: amap,
@@ -491,33 +502,18 @@ class Game {
     const shootVelocity = 20;
     const ballShape = new CANNON.Sphere(0.1);
     const ballGeometry = new THREE.SphereGeometry(ballShape.radius, 32, 32);
+    const base = "../../assets/textures/bulletTextures/" + this.bulletTexture;
     let loader = new THREE.TextureLoader();
-    const map = loader.load(
-      "/assets/textures/bulletTextures/gold/MetalGoldPaint002_COL_1K_METALNESS.png"
-    );
-    const bmap = loader.load(
-      "/assets/textures/bulletTextures/gold/MetalGoldPaint002_BUMP_1K_METALNESS.png"
-    );
-
-    const dmap = loader.load(
-      "/assets/textures/bulletTextures/gold/MetalGoldPaint002_DISP_1K_METALNESS.png"
-    );
-
-    const mmap = loader.load(
-      "/assets/textures/bulletTextures/gold/MetalGoldPaint002_METALNESS_1K_METALNESS.png"
-    );
-
-    const rmap = loader.load(
-      "/assets/textures/bulletTextures/gold/MetalGoldPaint002_ROUGHNESS_1K_METALNESS.png"
-    );
-
-    const nmap = loader.load(
-      "/assets/textures/bulletTextures/gold/MetalGoldPaint002_NRM_1K_METALNESS.png"
-    );
+    const map = loader.load(base + "_COL_1K_METALNESS.png");
+    const bmap = loader.load(base + "_BUMP_1K_METALNESS.png");
+    const dmap = loader.load(base + "_DISP_1K_METALNESS.png");
+    const mmap = loader.load(base + "_METALNESS_1K_METALNESS.png");
+    const rmap = loader.load(base + "_ROUGHNESS_1K_METALNESS.png");
+    const nmap = loader.load(base + "_NRM_1K_METALNESS.png");
 
     map.wrapS = map.wrapT = THREE.RepeatWrapping;
     map.repeat.set(1, 1);
-    // map.mapping = THREE.CubeReflectionMapping;
+    map.mapping = THREE.CubeReflectionMapping;
 
     bmap.wrapS = bmap.wrapT = THREE.RepeatWrapping;
     bmap.repeat.set(1, 1);
@@ -548,7 +544,7 @@ class Game {
     // });
     const ballMaterial = new THREE.MeshStandardMaterial({
       color: 0xffffff,
-      roughness: 1,
+      roughness: 0.5,
       metalness: 1,
       map: map,
       bumpMap: bmap,
@@ -967,7 +963,7 @@ class Game {
       }
     }
 
-    if(this.playerLives <= 0){
+    if (this.playerLives <= 0) {
       alert("You died, refresh page to restart game!");
     }
 
