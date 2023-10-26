@@ -1,0 +1,11 @@
+Model Information:
+* title:	Scary acoustic guitar
+* source:	https://sketchfab.com/3d-models/scary-acoustic-guitar-c7022e2914a34189ab11ce5c1240249e
+* author:	yotam92 (https://sketchfab.com/yotam92)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Scary acoustic guitar" (https://sketchfab.com/3d-models/scary-acoustic-guitar-c7022e2914a34189ab11ce5c1240249e) by yotam92 (https://sketchfab.com/yotam92) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
