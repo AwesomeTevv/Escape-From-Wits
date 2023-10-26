@@ -650,7 +650,7 @@ class Game {
     });
 
     window.addEventListener("click", (event) => {
-      if (!this.controls.enabled || this.gun.toggled == false) {
+      if (!this.controls.enabled || this.gun.toggled == false || event.button == 2) {
         return;
       }
 
@@ -811,24 +811,6 @@ class Game {
       },
       false
     );
-
-
-
-
-    document.addEventListener(
-      "keydown",
-      (event) => {
-        if (event.key.toLowerCase() === "r") {
-          event.preventDefault();
-          // Calculate the distance between the character and sphereTwo
-          document.getElementById("deathText").textContent ="Loser";
-          window.location = this.restartLevel;
-          
-        }
-      },
-      false
-    );
-
   }
 
   checkProximity() {
@@ -1107,9 +1089,7 @@ class Game {
 
     if (this.playerLives <= 0) {
       //alert("You died!");
-      document.getElementById("deathText").textContent ="You died...reloading...";
       window.location = this.restartLevel;
-
     }
 
     for (let i = 0; i < this.tokens.length; i++) {
