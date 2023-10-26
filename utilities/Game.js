@@ -312,7 +312,7 @@ class Game {
       (buffer) => {
         this.mainSound.setBuffer(buffer);
         this.mainSound.setLoop(true);
-        this.mainSound.setVolume(0.25);
+        this.mainSound.setVolume(0.1);
         this.mainSound.play();
       }
     );
