@@ -22,7 +22,7 @@ class ThirdYear extends Game {
       "Bricks/BricksReclaimedWhitewashedOffset001",
       "Grass/GroundGrassGreen002",
       "Bronze/MetalBronzeWorn001",
-      "Dots/TilesMosaicPennyround001"
+      "Bricks2/StoneBricksSplitface001"
     );
 
     // const decorator = new Decorator(this.maze, this.scene);
