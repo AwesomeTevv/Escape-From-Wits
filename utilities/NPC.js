@@ -20,7 +20,9 @@ class NPC {
     this.mesh = null;
     this.loaded = false;
     this.addedToScene = false;
-    
+    this.sound = null;
+    this.humm = null;
+    this.dead = false;
   }
 
   /**
@@ -138,7 +140,18 @@ class NPC {
         // console.log("Current path place: " + path[0]);
         // console.log("Next path place: " + path[1]);
         console.log(path.length);
-  
+        if(!this.dead){
+          if(path.length < 50 && path.length > 25){
+            if(!this.sound.isPlaying){
+              this.sound.play();
+            }
+          }else if(path.length < 10){
+            this.sound.stop();
+            if(!this.humm.isPlaying){
+              this.humm.play();
+            }
+          }
+        }
         // if ((path[0][0] !=  (enemyZ / 5 + 10)) && ((path[0][1] !=  (enemyZ / 5 + 10)))){
         //   path.shift();
         // }
