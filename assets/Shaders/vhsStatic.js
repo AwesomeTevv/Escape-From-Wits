@@ -5,7 +5,7 @@ const vhsStatic = {
 	uniforms: {
 
 		"tDiffuse": { type: "t", value: null },
-		"time": { type: "f", value: 1.0 },
+		"time": { type: "f", value: 0.0 },
 		"amount": { type: "f", value: 0.05 },
 		"size": { type: "f", value: 2.0 }
 

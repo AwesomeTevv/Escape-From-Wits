@@ -39,8 +39,8 @@ class FirstLevel extends Game {
     //const hurt = new ShaderPass(hurtPlayer);
     //this.composer.addPass(hurt);
 
-    //const effectVHSStatic = new ShaderPass(vhsStatic);
-    //this.composer.addPass(effectVHSStatic);
+    const effectVHSStatic = new ShaderPass(vhsStatic);
+    this.composer.addPass(effectVHSStatic);
 
     //const redVignette = new ShaderPass(VignetteShader);
     //.uniforms['offset'].value = 0.8;
