@@ -123,6 +123,8 @@ class Game {
     this.enemyBody = [];
     /** @type[] THREE.Mesh */
     this.enemy = [];
+    /** @type[] THREE.Mesh */
+    this.scopeEnemy = [];
     /** @type[] YUKA.Vehicle */
     this.vehicle = [];
     /** @type[] YUKA.EntityManager */
@@ -244,6 +246,17 @@ class Game {
     this.rendererMap.setSize(200, 200);
 
     this.composer = new EffectComposer(this.renderer);
+
+    const scopeGeometry = new THREE.BoxGeometry(1.2, 1.5, 1.2);
+    const scopeMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    const scopeEnemyMesh = new THREE.Mesh(scopeGeometry, scopeMaterial);
+    scopeEnemyMesh.position.set(2000, 0, 2000);
+    this.scopeScene.add(scopeEnemyMesh);
+    this.scopeScene.add(scopeEnemyMesh);
+    this.scopeScene.add(scopeEnemyMesh);
+    this.scopeEnemy.push(scopeEnemyMesh);
+    this.scopeEnemy.push(scopeEnemyMesh);
+    this.scopeEnemy.push(scopeEnemyMesh);
 
     //Shader uniform composer
     this.shaderTime = 0.0;
@@ -1036,6 +1049,7 @@ class Game {
             }
           }
           this.enemy[i].position.copy(this.vehicle[i].position);
+          this.scopeEnemy[i].position.copy(this.enemy[i].position);
           this.enemyBody[i].position.copy(this.enemy[i].position);
           if (this.player.position.distanceTo(this.enemyBody[i].position) < 3) {
             this.hurt();
