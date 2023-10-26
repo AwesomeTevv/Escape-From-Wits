@@ -70,15 +70,13 @@ class Game {
     this.gun = null;
     this.torch = null;
     this.torchTarget = null;
-
+    this.numberOfKeys = 0;
     this.tokens = [];
 
-    this.mainAudio = null;
-    this.mainAudioSrc = null;
-    this.mainAudioListener = null;
-    this.numberOfKeys = 0;
+    this.AudioListener = null;
+    this.mainSound = null;
     this.notEnoughKeys = false;
-    this.timerKeys = 0;
+    this.timerKeys = 0;  
     this.convexObjectBreaker = null;
     this.breakableMeshes = [];
     this.breakableBodies = [];
@@ -103,7 +101,7 @@ class Game {
     this.npc = null;
     this.npcDeathFrames = 0;
     this.npcAnimateDeath = false;
-    
+
     this.liftWall = false; // Whether or not to lift the exit wall
 
     this._Init();
@@ -116,10 +114,18 @@ class Game {
     this._AddCharacterEquipment();
     this._AddTokens();
 
-    this._CreateBreakableObject(2,2,2,this.player.position.x,this.player.position.y,this.player.position.z + 5);
+    this._CreateBreakableObject(
+      2,
+      2,
+      2,
+      this.player.position.x,
+      this.player.position.y,
+      this.player.position.z + 5
+    );
     // this.checkProximity();
 
-    this.mainAudio.play();
+    this._Animate = this._Animate.bind(this);
+    this._Animate();
     window.addEventListener("resize", () => {
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
@@ -127,8 +133,6 @@ class Game {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       this.composer.setSize(window.innerWidth, window.innerHeight);
     });
-    this._Animate = this._Animate.bind(this);
-    this._Animate();
   }
 
   /**
@@ -140,7 +144,7 @@ class Game {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x88ccee);
     // this.scene.background = new THREE.Color(0x000000);
-    this.scene.fog = new THREE.Fog(0x000000, 1, 7.5);
+    // this.scene.fog = new THREE.Fog(0x000000, 1, 7.5); // Commented out for development purposes
 
     this.minimapScene = new THREE.Scene();
     this.minimapScene.background = new THREE.Color(0x000011);
@@ -206,7 +210,7 @@ class Game {
 
     // Loading in textures
     const loader = new THREE.TextureLoader();
-    const base = "../../assets/wallTextures/" + this.wallTexture;
+    const base = "../../assets/textures/wallTextures/" + this.wallTexture;
     const map = loader.load(base + "_COL_2K.png");
     const bmap = loader.load(base + "_BUMP_2K.png");
     const dmap = loader.load(base + "_DISP_2K.png");
@@ -251,53 +255,42 @@ class Game {
     this.npc = new NPC();
     let result = this.npc.getNPC();
 
-
-    
-
     let loaderObj = new GLTFLoader();
-      loaderObj.load("../../assets/npc/scene.gltf", (gltf) => {
-       
-        this.npc.mesh = gltf.scene;
-        this.npc.loaded = true;
-        this.enemy = gltf.scene;
-        this.enemyBody = result[1];
-        this.enemy.position.set(5 * (10 - 10), 5, 5 * (1 - 10));
-        this.enemyBody.position.copy(this.enemy.position);
-        this.world.addBody(this.enemyBody);
-        this.enemy.matrixAutoUpdate = false;
-        this.scene.add(this.enemy);
-        this.time = new YUKA.Time();
-        this.enemyPath = new YUKA.Path();
-        this.vehicle = new YUKA.Vehicle();
-        this.entityManager = new YUKA.EntityManager();
-    
-        this.vehicle.setRenderComponent(this.enemy, this.sync);
-        this.entityManager.add(this.vehicle);
-      });
+    loaderObj.load("../../assets/models/characters/npc/scene.gltf", (gltf) => {
+      this.npc.mesh = gltf.scene;
+      this.npc.loaded = true;
+      this.enemy = gltf.scene;
+      this.enemyBody = result[1];
+      this.enemy.position.set(5 * (10 - 10), 5, 5 * (1 - 10));
+      this.enemyBody.position.copy(this.enemy.position);
+      this.world.addBody(this.enemyBody);
+      this.enemy.matrixAutoUpdate = false;
+      this.scene.add(this.enemy);
+      this.time = new YUKA.Time();
+      this.enemyPath = new YUKA.Path();
+      this.vehicle = new YUKA.Vehicle();
+      this.entityManager = new YUKA.EntityManager();
 
-
-   
-
-    
-    
+      this.vehicle.setRenderComponent(this.enemy, this.sync);
+      this.entityManager.add(this.vehicle);
+    });
 
     /*
      *   YUKA Initialisation
      */
 
-   
-
     /*
      * Audio Initialisation
      */
-
-    this.mainAudio = new Audio("../../assets/scary_chime-17193.mp3");
-    this.mainAudio.loop = true;
-    this.mainAudioListener = new THREE.AudioListener();
-    this.audioSource = new THREE.Audio(this.mainAudioListener);
-    this.audioSource.setMediaElementSource(this.mainAudio);
-    this.audioSource.setVolume(0.5);
-    this.camera.add(this.mainAudioListener);
+    this.AudioListener = new THREE.AudioListener();
+    this.camera.add(this.AudioListener);
+    this.mainSound = new THREE.Audio(this.AudioListener);
+    new THREE.AudioLoader().load("../../assets/sounds/scary_chime-17193.mp3", (buffer) =>{
+      this.mainSound.setBuffer(buffer);
+      this.mainSound.setLoop(true);
+      this.mainSound.setVolume(0.5);
+      this.mainSound.play();
+    });  
 
     this.convexObjectBreaker = new ConvexObjectBreaker();
   }
@@ -346,7 +339,7 @@ class Game {
     // Loading in textures for the ground plane
     const loader = new THREE.TextureLoader();
 
-    const base = "../../assets/groundTextures/" + this.groundTexture;
+    const base = "../../assets/textures/groundTextures/" + this.groundTexture;
 
     const map = loader.load(base + "_COL_2K.jpg");
     const bmap = loader.load(base + "_BUMP_2K.jpg");
@@ -505,7 +498,7 @@ class Game {
    */
   _BindShooting() {
     let loaderObj = new GLTFLoader();
-    loaderObj.load("../../assets/weapons/gun.glb", (gltf) => {
+    loaderObj.load("../../assets/models/weapons/gun.glb", (gltf) => {
       var gunobj = gltf.scene;
       this.onGunLoaded(gunobj);
     });
@@ -515,14 +508,14 @@ class Game {
     const ballGeometry = new THREE.SphereGeometry(ballShape.radius, 32, 32);
     let loader = new THREE.TextureLoader();
     const vmap = loader.load(
-      "/assets/gold/MetalGoldPaint002_COL_1K_METALNESS.png"
+      "/assets/textures/bulletTextures/gold/MetalGoldPaint002_COL_1K_METALNESS.png"
     );
     const vbmap = loader.load(
-      "/assets/gold/MetalGoldPaint002_BUMP_1K_METALNESS.png"
+      "/assets/textures/bulletTextures/gold/MetalGoldPaint002_BUMP_1K_METALNESS.png"
     );
 
     const vdmap = loader.load(
-      "/assets/gold/MetalGoldPaint002_DISP_1K_METALNESS.png"
+      "/assets/textures/bulletTextures/gold/MetalGoldPaint002_DISP_1K_METALNESS.png"
     );
 
     vmap.wrapS = vmap.wrapT = THREE.RepeatWrapping;
@@ -596,20 +589,20 @@ class Game {
       ballBody.position.set(x, y, z);
       ballMesh.position.copy(ballBody.position);
 
-      ballBody.addEventListener('collide', (e)=>{
-        if(e.body.userData){
-          if(e.body.userData.numberLives){
-            if(e.body.userData.numberLives > 1){
+      ballBody.addEventListener("collide", (e) => {
+        if (e.body.userData) {
+          if (e.body.userData.numberLives) {
+            if (e.body.userData.numberLives > 1) {
               e.body.userData.numberLives -= 1;
-            }else{
-              if(this.enemyBody != null){
+            } else {
+              if (this.enemyBody != null) {
                 this.world.removeBody(this.enemyBody);
                 this.enemyBody = null;
                 this.npcAnimateDeath = true;
               }
             }
-          }else{
-            if(e.body.userData.splitCount < 3){
+          } else {
+            if (e.body.userData.splitCount < 3) {
               this.splitObject(e.body.userData, e.contact);
             }
           }
@@ -672,6 +665,7 @@ class Game {
               this.tokens[tokenid].object.scale.z =
                 this.tokens[tokenid].toggledScale.z;
               this.numberOfKeys += 1;
+              this.tokens[tokenid].sound.stop();
             }
           }
 
@@ -752,7 +746,7 @@ class Game {
 
   _AddTokens() {
     let loaderObj = new GLTFLoader();
-    loaderObj.load("../../assets/sword/scene.gltf", (gltf) => {
+    loaderObj.load("../../assets/models/tokens/sword/scene.gltf", (gltf) => {
       let token = new Token();
       token.object = gltf.scene;
       token.object.scale.set(0.001, 0.001, 0.001);
@@ -768,6 +762,15 @@ class Game {
       token.loaded = true;
       this.onTokenLoaded(token);
       this.setKeyPos(token);
+      token.sound = new THREE.PositionalAudio(this.AudioListener);
+      token.object.add(token.sound);
+      new THREE.AudioLoader().load("../../assets/sounds/wind-chimes-bells-115747.mp3", (buffer) =>{
+        token.sound.setBuffer(buffer);
+        token.sound.setLoop(true);
+        token.sound.setVolume(1);
+        token.sound.setRefDistance(0.1);
+        token.sound.play();
+      });
     });
   }
 
@@ -788,60 +791,60 @@ class Game {
     this.lastCallTime = time;
     this.world.step(timeStep, dt);
 
-    Object.keys(this.breakableMeshes).forEach((m) =>{
+    Object.keys(this.breakableMeshes).forEach((m) => {
       this.breakableMeshes[m].position.set(
         this.breakableBodies[m].position.x,
         this.breakableBodies[m].position.y,
-        this.breakableBodies[m].position.z,
+        this.breakableBodies[m].position.z
       );
       this.breakableMeshes[m].quaternion.set(
         this.breakableBodies[m].quaternion.x,
         this.breakableBodies[m].quaternion.y,
         this.breakableBodies[m].quaternion.z,
-        this.breakableBodies[m].quaternion.w,
+        this.breakableBodies[m].quaternion.w
       );
     });
-    
+
     while (this.ballBodies.length > 10) {
       let body = this.ballBodies.shift();
       let mesh = this.ballMeshes.shift();
       this.world.removeBody(body);
       this.scene.remove(mesh);
     }
-    
+
     for (let i = 0; i < this.ballBodies.length; i++) {
       this.ballMeshes[i].position.copy(this.ballBodies[i].position);
       this.ballMeshes[i].quaternion.copy(this.ballBodies[i].quaternion);
     }
-    
+
     let pos = this.player.position.clone();
     this.mapCamera.position.x = pos.x;
     this.mapCamera.position.z = pos.z;
     this.mapCamera.lookAt(new THREE.Vector3(pos.x, -1, pos.z));
-    
-    if(this.enemy != null){
-      if(this.enemyBody != null){
+
+    if (this.enemy != null) {
+      if (this.enemyBody != null) {
         this.entityManager.update(dt);
         if (pos.z <= 5 * (19 - 10)) {
-          if(this.frameNumber > 10){
+          if (this.frameNumber > 10) {
             this.npc.regeneratePath(
               this.maze,
               this.player,
               this.enemy,
               this.enemyPath,
               this.vehicle
-              );
-              this.frameNumber = 0;
-            }
+            );
+            this.frameNumber = 0;
           }
-          this.enemy.position.copy(this.vehicle.position);
-          this.enemyBody.position.copy(this.enemy.position);
+        }
+        this.enemy.position.copy(this.vehicle.position);
+        this.enemyBody.position.copy(this.enemy.position);
       }
     }
     // console.log(
     //   `NPC Position : (${this.enemy.position.x},${this.enemy.position.y} , ${this.enemy.position.z})`
     //   );
-      
+
     this.controls.update(dt);
     this.stats.update();
 
@@ -854,12 +857,12 @@ class Game {
       }
     }
 
-    if(this.npcAnimateDeath){
+    if (this.npcAnimateDeath) {
       if (this.npcDeathFrames < 100) {
         console.log(this.npcDeathFrames);
-        this.enemy.rotateZ(100*this.npcDeathFrames);
+        this.enemy.rotateZ(100 * this.npcDeathFrames);
         this.npcDeathFrames++;
-      }else{
+      } else {
         this.scene.remove(this.enemy);
         this.enemy = null;
         this.npcAnimateDeath = false;
@@ -1200,7 +1203,7 @@ class Game {
     triggerEnd.position.set(0, 1.3, -55);
     this.world.addBody(triggerBodyEnd);
     triggerBodyEnd.addEventListener("collide", (event) => {
-      if (this.numberOfKeys == 2) {
+      if (this.numberOfKeys == 1) {
         if (event.body === this.player) {
           window.location = "/levels/Second-Year/Second-Year.html";
         }
@@ -1213,111 +1216,107 @@ class Game {
   }
 
   geometryToShape(geometry) {
-    const position = (geometry.attributes.position).array
-    const points = []
+    const position = geometry.attributes.position.array;
+    const points = [];
     for (let i = 0; i < position.length; i += 3) {
-        points.push(
-            new THREE.Vector3(position[i], position[i + 1], position[i + 2])
-        )
+      points.push(
+        new THREE.Vector3(position[i], position[i + 1], position[i + 2])
+      );
     }
-    const convexHull = new ConvexGeometry(points)
-    const shape = CannonUtils.CreateConvexPolyhedron(convexHull)
-    return shape
-}
+    const convexHull = new ConvexGeometry(points);
+    const shape = CannonUtils.CreateConvexPolyhedron(convexHull);
+    return shape;
+  }
 
   splitObject(userData, contact) {
     const contactId = userData.id;
     if (this.breakableMeshes[contactId]) {
-        const poi = this.breakableBodies[contactId].pointToLocalFrame(
-            contact.bj.position.vadd(contact.rj)
-        )
-        const n = new THREE.Vector3(
-            contact.ni.x,
-            contact.ni.y,
-            contact.ni.z
-        ).negate()
-        const shards = this.convexObjectBreaker.subdivideByImpact(
-            this.breakableMeshes[contactId],
-            new THREE.Vector3(poi.x, poi.y, poi.z),
-            n,
-            1,
-            0
-        )
-        
-        if(this.breakableMeshes[contactId] && this.breakableBodies[contactId]){
-          this.scene.remove(this.breakableMeshes[contactId]);
-          delete this.breakableMeshes[contactId];
-          this.world.removeBody(this.breakableBodies[contactId]);
-          delete this.breakableBodies[contactId];
-        }
-  
-        shards.forEach((d) => {
-          // console.log("Add shard!");
-            const nextId = this.breakableMeshID++
-  
-            this.scene.add(d)
-            this.breakableMeshes[nextId] = d;
-            d.geometry.scale(0.99, 0.99, 0.99)
-            const shape = this.geometryToShape(d.geometry)
-  
-            const body = new CANNON.Body({ mass: 1 })
-            body.addShape(shape);
-            body.userData = {
-                splitCount: userData.splitCount + 1,
-                id: nextId,
-            }
-            body.position.x = d.position.x
-            body.position.y = d.position.y
-            body.position.z = d.position.z
-            body.quaternion.x = d.quaternion.x
-            body.quaternion.y = d.quaternion.y
-            body.quaternion.z = d.quaternion.z
-            body.quaternion.w = d.quaternion.w
-            this.world.addBody(body)
-            this.breakableBodies[nextId] = body
-          });
+      const poi = this.breakableBodies[contactId].pointToLocalFrame(
+        contact.bj.position.vadd(contact.rj)
+      );
+      const n = new THREE.Vector3(
+        contact.ni.x,
+        contact.ni.y,
+        contact.ni.z
+      ).negate();
+      const shards = this.convexObjectBreaker.subdivideByImpact(
+        this.breakableMeshes[contactId],
+        new THREE.Vector3(poi.x, poi.y, poi.z),
+        n,
+        1,
+        0
+      );
+
+      if (this.breakableMeshes[contactId] && this.breakableBodies[contactId]) {
+        this.scene.remove(this.breakableMeshes[contactId]);
+        delete this.breakableMeshes[contactId];
+        this.world.removeBody(this.breakableBodies[contactId]);
+        delete this.breakableBodies[contactId];
       }
+
+      shards.forEach((d) => {
+        // console.log("Add shard!");
+        const nextId = this.breakableMeshID++;
+
+        this.scene.add(d);
+        this.breakableMeshes[nextId] = d;
+        d.geometry.scale(0.99, 0.99, 0.99);
+        const shape = this.geometryToShape(d.geometry);
+
+        const body = new CANNON.Body({ mass: 1 });
+        body.addShape(shape);
+        body.userData = {
+          splitCount: userData.splitCount + 1,
+          id: nextId,
+        };
+        body.position.x = d.position.x;
+        body.position.y = d.position.y;
+        body.position.z = d.position.z;
+        body.quaternion.x = d.quaternion.x;
+        body.quaternion.y = d.quaternion.y;
+        body.quaternion.z = d.quaternion.z;
+        body.quaternion.w = d.quaternion.w;
+        this.world.addBody(body);
+        this.breakableBodies[nextId] = body;
+      });
+    }
   }
 
-  _CreateBreakableObject(sx,sy,sz,px,py,pz){
+  _CreateBreakableObject(sx, sy, sz, px, py, pz) {
     const size = {
-        x: sx,
-        y: sy,
-        z: sz,
-    }
-    const geo = new THREE.BoxGeometry(
-        size.x,
-        size.y,
-        size.z
-    )
+      x: sx,
+      y: sy,
+      z: sz,
+    };
+    const geo = new THREE.BoxGeometry(size.x, size.y, size.z);
     const cube = new THREE.Mesh(geo);
-    cube.position.set(px,py,pz);
-    cube.setRotationFromAxisAngle(new CANNON.Vec3(0,1,0));
+    cube.position.set(px, py, pz);
+    cube.setRotationFromAxisAngle(new CANNON.Vec3(0, 1, 0));
 
-    this.scene.add(cube)
-    this.breakableMeshes[this.breakableMeshID] = cube
+    this.scene.add(cube);
+    this.breakableMeshes[this.breakableMeshID] = cube;
     this.convexObjectBreaker.prepareBreakableObject(
-        this.breakableMeshes[this.breakableMeshID],
-        1,
-        new THREE.Vector3(),
-        new THREE.Vector3(),
-        true
-    )
+      this.breakableMeshes[this.breakableMeshID],
+      1,
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+      true
+    );
 
     const cubeShape = new CANNON.Box(
-        new CANNON.Vec3(size.x / 2, size.y / 2, size.z / 2)
-    )
+      new CANNON.Vec3(size.x / 2, size.y / 2, size.z / 2)
+    );
     const cubeBody = new CANNON.Body({ mass: 1 });
-    (cubeBody).userData = { splitCount: 0, id: this.breakableMeshID }
-    cubeBody.addShape(cubeShape)
-    cubeBody.position.x = cube.position.x
-    cubeBody.position.y = cube.position.y
-    cubeBody.position.z = cube.position.z
+    cubeBody.userData = { splitCount: 0, id: this.breakableMeshID };
+    cubeBody.addShape(cubeShape);
+    cubeBody.position.x = cube.position.x;
+    cubeBody.position.y = cube.position.y;
+    cubeBody.position.z = cube.position.z;
 
-    this.world.addBody(cubeBody)
-    this.breakableBodies[this.breakableMeshID] = cubeBody
+    this.world.addBody(cubeBody);
+    this.breakableBodies[this.breakableMeshID] = cubeBody;
 
-    this.breakableMeshID++
+    this.breakableMeshID++;
   }
 }
 
