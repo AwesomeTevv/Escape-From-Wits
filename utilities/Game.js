@@ -76,7 +76,7 @@ class Game {
     this.AudioListener = null;
     this.mainSound = null;
     this.notEnoughKeys = false;
-    this.timerKeys = 0;  
+    this.timerKeys = 0;
     this.convexObjectBreaker = null;
     this.breakableMeshes = [];
     this.breakableBodies = [];
@@ -142,9 +142,9 @@ class Game {
    */
   _Init() {
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x88ccee);
-    // this.scene.background = new THREE.Color(0x000000);
-    // this.scene.fog = new THREE.Fog(0x000000, 1, 7.5); // Commented out for development purposes
+    // this.scene.background = new THREE.Color(0x88ccee);
+    this.scene.background = new THREE.Color(0x000000);
+    this.scene.fog = new THREE.Fog(0x000000, 1, 20); // Commented out for development purposes
 
     this.minimapScene = new THREE.Scene();
     this.minimapScene.background = new THREE.Color(0x000011);
@@ -276,17 +276,23 @@ class Game {
 
       this.npc.sound = new THREE.PositionalAudio(this.AudioListener);
       this.npc.mesh.add(this.npc.sound);
-      new THREE.AudioLoader().load("../../assets/sounds/banshie-scream-70413.mp3", (buffer) =>{
-        this.npc.sound.setBuffer(buffer);
-        this.npc.sound.setVolume(1);
-        this.npc.sound.play();
-      });
+      new THREE.AudioLoader().load(
+        "../../assets/sounds/banshie-scream-70413.mp3",
+        (buffer) => {
+          this.npc.sound.setBuffer(buffer);
+          this.npc.sound.setVolume(1);
+          this.npc.sound.play();
+        }
+      );
       this.npc.humm = new THREE.PositionalAudio(this.AudioListener);
       this.npc.mesh.add(this.npc.humm);
-      new THREE.AudioLoader().load("../../assets/sounds/ghostly-humming-63204.mp3", (buffer) =>{
-        this.npc.humm.setBuffer(buffer);
-        this.npc.humm.setVolume(1);
-      });
+      new THREE.AudioLoader().load(
+        "../../assets/sounds/ghostly-humming-63204.mp3",
+        (buffer) => {
+          this.npc.humm.setBuffer(buffer);
+          this.npc.humm.setVolume(1);
+        }
+      );
     });
 
     /*
@@ -299,12 +305,15 @@ class Game {
     this.AudioListener = new THREE.AudioListener();
     this.camera.add(this.AudioListener);
     this.mainSound = new THREE.Audio(this.AudioListener);
-    new THREE.AudioLoader().load("../../assets/sounds/scary_chime-17193.mp3", (buffer) =>{
-      this.mainSound.setBuffer(buffer);
-      this.mainSound.setLoop(true);
-      this.mainSound.setVolume(0.25);
-      this.mainSound.play();
-    });  
+    new THREE.AudioLoader().load(
+      "../../assets/sounds/scary_chime-17193.mp3",
+      (buffer) => {
+        this.mainSound.setBuffer(buffer);
+        this.mainSound.setLoop(true);
+        this.mainSound.setVolume(0.25);
+        this.mainSound.play();
+      }
+    );
 
     this.convexObjectBreaker = new ConvexObjectBreaker();
   }
@@ -480,7 +489,14 @@ class Game {
 
   _AddCharacterEquipment() {
     let gunlight;
-    this.torch = new THREE.SpotLight(0xffffff, 200.0, 20, Math.PI * 0.08);
+    this.torch = new THREE.SpotLight(
+      0xffffff,
+      200.0,
+      20,
+      Math.PI * 0.1,
+      0.5,
+      2
+    );
     gunlight = new THREE.SpotLight(0xffffff, 10.0, 1);
     this.torch.castShadow = true;
 
@@ -781,13 +797,16 @@ class Game {
       this.setKeyPos(token);
       token.sound = new THREE.PositionalAudio(this.AudioListener);
       token.object.add(token.sound);
-      new THREE.AudioLoader().load("../../assets/sounds/wind-chimes-bells-115747.mp3", (buffer) =>{
-        token.sound.setBuffer(buffer);
-        token.sound.setLoop(true);
-        token.sound.setVolume(1);
-        token.sound.setRefDistance(0.1);
-        token.sound.play();
-      });
+      new THREE.AudioLoader().load(
+        "../../assets/sounds/wind-chimes-bells-115747.mp3",
+        (buffer) => {
+          token.sound.setBuffer(buffer);
+          token.sound.setLoop(true);
+          token.sound.setVolume(1);
+          token.sound.setRefDistance(0.1);
+          token.sound.play();
+        }
+      );
     });
   }
 
@@ -898,19 +917,18 @@ class Game {
       this.checkProximity();
     }
 
-    if (this.notEnoughKeys == true){
-    if (this.notEnoughKeys && this.timerKeys < 500){
-      this.timerKeys += 1
-      document.getElementById("tokenText").textContent = "You've been token for a poes...find the tokens";
-    }else{
-      this.notEnoughKeys = false;
-      this.timerKeys = 0;
-      document.getElementById("tokenText").textContent = "";
+    if (this.notEnoughKeys == true) {
+      if (this.notEnoughKeys && this.timerKeys < 500) {
+        this.timerKeys += 1;
+        document.getElementById("tokenText").textContent =
+          "You've been token for a poes...find the tokens";
+      } else {
+        this.notEnoughKeys = false;
+        this.timerKeys = 0;
+        document.getElementById("tokenText").textContent = "";
+      }
     }
   }
-  }
-
- 
 
   /**
    * Renders our game.
@@ -1189,20 +1207,13 @@ class Game {
         if (this.numberOfKeys == 1) {
           this.liftWall = true;
           this.notEnoughKeys = false;
-          
         } else {
-
-
-
           // alert("Please collect all keys to escape!");
           console.log("Need to collect all Keys!");
           this.notEnoughKeys = true;
           this.timerKeys = 0;
-          
-          //const newText = ;
-          
-          
 
+          //const newText = ;
         }
       }
     });
