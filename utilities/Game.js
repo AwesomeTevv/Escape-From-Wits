@@ -981,15 +981,6 @@ class Game {
       }
     }
 
-    if (this.liftWall) {
-      if (this.gateNumber < 500) {
-        this.exitDoor.body.position.copy(this.exitDoor.mesh.position);
-        this.exitDoor.body.quaternion.copy(this.exitDoor.mesh.quaternion);
-        this.exitDoor.mesh.translateY((this.gateNumber + 15 / 2) * 0.0001);
-        this.gateNumber++;
-      }
-    }
-
     if (this.animateGateOpen) {
       if (this.gateFallNumber < 500) {
         this.entryDoor.body.position.copy(this.entryDoor.mesh.position);
@@ -1000,8 +991,7 @@ class Game {
     }else{
       if(this.entryDoor.mesh.position.y != 0){
         if (this.gateFallNumber > 0) {
-          this.entryDoor.body.position.copy(this.entryDoor.mesh.position);
-          this.entryDoor.body.quaternion.copy(this.entryDoor.mesh.quaternion);
+          this.entryDoor.body.position.set(10, this.wallHeight / 2, 50);
           this.entryDoor.mesh.translateY(-(this.gateFallNumber + 15 / 2) * 0.0001);
           this.gateFallNumber--
         } 
