@@ -537,39 +537,73 @@ class Game {
     const ballShape = new CANNON.Sphere(0.1);
     const ballGeometry = new THREE.SphereGeometry(ballShape.radius, 32, 32);
     let loader = new THREE.TextureLoader();
-    const vmap = loader.load(
+    const map = loader.load(
       "/assets/textures/bulletTextures/gold/MetalGoldPaint002_COL_1K_METALNESS.png"
     );
-    const vbmap = loader.load(
+    const bmap = loader.load(
       "/assets/textures/bulletTextures/gold/MetalGoldPaint002_BUMP_1K_METALNESS.png"
     );
 
-    const vdmap = loader.load(
+    const dmap = loader.load(
       "/assets/textures/bulletTextures/gold/MetalGoldPaint002_DISP_1K_METALNESS.png"
     );
 
-    vmap.wrapS = vmap.wrapT = THREE.RepeatWrapping;
-    vmap.repeat.set(50, 50);
-    vmap.mapping = THREE.CubeReflectionMapping;
+    const mmap = loader.load(
+      "/assets/textures/bulletTextures/gold/MetalGoldPaint002_METALNESS_1K_METALNESS.png"
+    );
 
-    vbmap.wrapS = vbmap.wrapT = THREE.RepeatWrapping;
-    vbmap.repeat.set(50, 50);
+    const rmap = loader.load(
+      "/assets/textures/bulletTextures/gold/MetalGoldPaint002_ROUGHNESS_1K_METALNESS.png"
+    );
 
-    vdmap.wrapS = vdmap.wrapT = THREE.RepeatWrapping;
-    vdmap.repeat.set(50, 50);
+    const nmap = loader.load(
+      "/assets/textures/bulletTextures/gold/MetalGoldPaint002_NRM_1K_METALNESS.png"
+    );
 
-    let ballMaterial = new THREE.MeshPhongMaterial({
-      specular: 0x666666,
-      shininess: 10,
-      bumpMap: vbmap,
-      bumpScale: 0.5,
-      displacementMap: vdmap,
+    map.wrapS = map.wrapT = THREE.RepeatWrapping;
+    map.repeat.set(1, 1);
+    // map.mapping = THREE.CubeReflectionMapping;
+
+    bmap.wrapS = bmap.wrapT = THREE.RepeatWrapping;
+    bmap.repeat.set(1, 1);
+
+    dmap.wrapS = dmap.wrapT = THREE.RepeatWrapping;
+    dmap.repeat.set(1, 1);
+
+    mmap.wrapS = mmap.wrapT = THREE.RepeatWrapping;
+    mmap.repeat.set(1, 1);
+
+    rmap.wrapS = rmap.wrapT = THREE.RepeatWrapping;
+    rmap.repeat.set(1, 1);
+
+    nmap.wrapS = nmap.wrapT = THREE.RepeatWrapping;
+    nmap.repeat.set(1, 1);
+
+    // let ballMaterial = new THREE.MeshPhongMaterial({
+    //   specular: 0x666666,
+    //   shininess: 10,
+    //   bumpMap: vbmap,
+    //   bumpScale: 0.5,
+    //   displacementMap: vdmap,
+    //   displacementScale: 0,
+    //   map: vmap,
+    //   depthTest: true,
+    //   reflectivity: 1,
+    //   refractionRatio: 0.1,
+    // });
+    const ballMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      roughness: 1,
+      metalness: 1,
+      map: map,
+      bumpMap: bmap,
+      displacementMap: dmap,
       displacementScale: 0,
-      map: vmap,
-      depthTest: true,
-      reflectivity: 1,
-      refractionRatio: 0.1,
+      metalnessMap: mmap,
+      roughnessMap: rmap,
+      normalMap: nmap,
     });
+
     window.addEventListener("click", (event) => {
       if (!this.controls.enabled || this.gun.toggled == false) {
         return;
