@@ -10,7 +10,7 @@ class SecondYear extends Game {
   constructor() {
     super(
       "mayhem/mayhem1/trough",
-      "ConcretePanels/ConcretePrecastPlates004",
+      "ZigzagTiles/TilesCeramicHerringbone002",
       "ShinyTiles/TilesZelligeSquaresWeathered001",
       "BrushedSteel/MetalSteelBrushed001"
     );
