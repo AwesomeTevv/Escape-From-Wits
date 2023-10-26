@@ -273,6 +273,20 @@ class Game {
 
       this.vehicle.setRenderComponent(this.enemy, this.sync);
       this.entityManager.add(this.vehicle);
+
+      this.npc.sound = new THREE.PositionalAudio(this.AudioListener);
+      this.npc.mesh.add(this.npc.sound);
+      new THREE.AudioLoader().load("../../assets/sounds/banshie-scream-70413.mp3", (buffer) =>{
+        this.npc.sound.setBuffer(buffer);
+        this.npc.sound.setVolume(1);
+        this.npc.sound.play();
+      });
+      this.npc.humm = new THREE.PositionalAudio(this.AudioListener);
+      this.npc.mesh.add(this.npc.humm);
+      new THREE.AudioLoader().load("../../assets/sounds/ghostly-humming-63204.mp3", (buffer) =>{
+        this.npc.humm.setBuffer(buffer);
+        this.npc.humm.setVolume(1);
+      });
     });
 
     /*
@@ -288,7 +302,7 @@ class Game {
     new THREE.AudioLoader().load("../../assets/sounds/scary_chime-17193.mp3", (buffer) =>{
       this.mainSound.setBuffer(buffer);
       this.mainSound.setLoop(true);
-      this.mainSound.setVolume(0.5);
+      this.mainSound.setVolume(0.25);
       this.mainSound.play();
     });  
 
@@ -599,6 +613,9 @@ class Game {
                 this.world.removeBody(this.enemyBody);
                 this.enemyBody = null;
                 this.npcAnimateDeath = true;
+                this.npc.dead = true;
+                this.npc.sound.stop();
+                this.npc.humm.stop();
               }
             }
           } else {
