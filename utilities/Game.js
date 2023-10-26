@@ -186,7 +186,7 @@ class Game {
     this.minimapScene.background = new THREE.Color(0x000011);
 
     this.scopeScene = new THREE.Scene();
-    this.scopeScene.background = new THREE.Color(0x000011);
+    this.scopeScene.background = new THREE.Color(0x000066);
 
     let scopeCanvas = document.getElementById("scope");
     this.renderScope = new THREE.WebGLRenderer({
