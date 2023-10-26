@@ -89,22 +89,23 @@ class Game {
     /*
      * YUKA Variables
      */
-    this.enemyBody = null;
-    /** @type THREE.Mesh */
-    this.enemy = null;
-    /** @type YUKA.Vehicle */
-    this.vehicle = null;
-    /** @type YUKA.EntityManager */
-    this.entityManager = null;
-    /** @type  YUKA.Time*/
-    this.time = null;
-    /** @type YUKA.Path */
-    this.enemyPath = null;
+    this.enemyBody = [];
+    /** @type[] THREE.Mesh */
+    this.enemy = [];
+    /** @type[] YUKA.Vehicle */
+    this.vehicle = [];
+    /** @type[] YUKA.EntityManager */
+    this.entityManager = [];
+    /** @type[]  YUKA.Time*/
+    this.time = [];
+    /** @type[] YUKA.Path */
+    this.enemyPath = [];
 
-    /** @type NPC */
-    this.npc = null;
-    this.npcDeathFrames = 0;
-    this.npcAnimateDeath = false;
+    /** @type[] NPC */
+    this.npcArr = [];
+    this.npcDeathFrames = [0,0,0];
+    this.npcAnimateDeath = [false,false,false];
+    this.npcId = 0;
 
     this.liftWall = false; // Whether or not to lift the exit wall
     this.nextLevel = "/levels/Second-Year/First-Year.html";
@@ -251,52 +252,6 @@ class Game {
       map: map,
       depthTest: true,
       refractionRatio: 0.1,
-    });
-
-    /*
-     *   Enemy Mesh Setup
-     */
-    this.npc = new NPC();
-    let result = this.npc.getNPC();
-
-    let loaderObj = new GLTFLoader();
-    loaderObj.load("../../assets/models/characters/npc/scene.gltf", (gltf) => {
-      this.npc.mesh = gltf.scene;
-      this.npc.loaded = true;
-      this.enemy = gltf.scene;
-      this.enemyBody = result[1];
-      this.enemy.position.set(5 * (10 - 10), 5, 5 * (1 - 10));
-      this.enemyBody.position.copy(this.enemy.position);
-      this.world.addBody(this.enemyBody);
-      this.enemy.matrixAutoUpdate = false;
-      this.scene.add(this.enemy);
-      this.time = new YUKA.Time();
-      this.enemyPath = new YUKA.Path();
-      this.vehicle = new YUKA.Vehicle();
-      this.entityManager = new YUKA.EntityManager();
-
-      this.vehicle.setRenderComponent(this.enemy, this.sync);
-      this.entityManager.add(this.vehicle);
-
-      this.npc.sound = new THREE.PositionalAudio(this.AudioListener);
-      this.npc.mesh.add(this.npc.sound);
-      new THREE.AudioLoader().load(
-        "../../assets/sounds/banshie-scream-70413.mp3",
-        (buffer) => {
-          this.npc.sound.setBuffer(buffer);
-          this.npc.sound.setVolume(1);
-          this.npc.sound.play();
-        }
-      );
-      this.npc.humm = new THREE.PositionalAudio(this.AudioListener);
-      this.npc.mesh.add(this.npc.humm);
-      new THREE.AudioLoader().load(
-        "../../assets/sounds/ghostly-humming-63204.mp3",
-        (buffer) => {
-          this.npc.humm.setBuffer(buffer);
-          this.npc.humm.setVolume(1);
-        }
-      );
     });
 
     /*
@@ -657,15 +612,19 @@ class Game {
         if (e.body.userData) {
           if (e.body.userData.numberLives) {
             if (e.body.userData.numberLives > 1) {
+              let id = e.body.userData.meshId;
+              console.log("Shot at npc id: " + id);
               e.body.userData.numberLives -= 1;
             } else {
-              if (this.enemyBody != null) {
-                this.world.removeBody(this.enemyBody);
-                this.enemyBody = null;
-                this.npcAnimateDeath = true;
-                this.npc.dead = true;
-                this.npc.sound.stop();
-                this.npc.humm.stop();
+              let id = e.body.userData.meshId;
+              console.log("Killed npc id: " + id);
+              if (this.enemyBody[id] != null) {
+                this.world.removeBody(this.enemyBody[id]);
+                this.enemyBody[id] = null;
+                this.npcAnimateDeath[id] = true;
+                this.npcArr[id].dead = true;
+                this.npcArr[id].sound.stop();
+                this.npcArr[id].humm.stop();
               }
             }
           } else {
@@ -841,6 +800,61 @@ class Game {
           token.sound.play();
         }
       );
+      this._SpawnNPC(token);
+    });
+  }
+
+  _SpawnNPC(token) {
+    console.log("Spawning npc: " + this.npcId);
+    let loaderObj = new GLTFLoader();
+    loaderObj.load("../../assets/models/characters/npc/scene.gltf", (gltf) => {
+      let t_npc = new NPC();
+      let result = t_npc.getNPC(this.npcId);
+      t_npc.mesh = gltf.scene;
+      t_npc.loaded = true;
+      let t_enemy = gltf.scene;
+      let t_enemyBody = result[1];
+      t_enemy.position.set(token.object.position);
+      t_enemyBody.position.copy(t_enemy.position);
+      this.world.addBody(t_enemyBody);
+      t_enemy.matrixAutoUpdate = false;
+      this.scene.add(t_enemy);
+      let t_time = new YUKA.Time();
+      let t_enemyPath = new YUKA.Path();
+      let t_vehicle = new YUKA.Vehicle();
+      let t_entityManager = new YUKA.EntityManager();
+
+      t_vehicle.setRenderComponent(t_enemy, this.sync);
+      t_entityManager.add(t_vehicle);
+
+      t_npc.sound = new THREE.PositionalAudio(this.AudioListener);
+      t_npc.mesh.add(t_npc.sound);
+      new THREE.AudioLoader().load(
+        "../../assets/sounds/banshie-scream-70413.mp3",
+        (buffer) => {
+          t_npc.sound.setBuffer(buffer);
+          t_npc.sound.setVolume(1);
+          t_npc.sound.play();
+        }
+      );
+      t_npc.humm = new THREE.PositionalAudio(this.AudioListener);
+      t_npc.mesh.add(t_npc.humm);
+      new THREE.AudioLoader().load(
+        "../../assets/sounds/ghostly-humming-63204.mp3",
+        (buffer) => {
+          t_npc.humm.setBuffer(buffer);
+          t_npc.humm.setVolume(1);
+        }
+      );
+
+      this.npcArr[this.npcId] = t_npc;
+      this.enemyBody[this.npcId] = t_enemyBody;
+      this.enemy[this.npcId] = t_enemy;
+      this.vehicle[this.npcId] = t_vehicle;
+      this.entityManager[this.npcId] = t_entityManager;
+      this.time[this.npcId] = t_time;
+      this.enemyPath[this.npcId] = t_enemyPath;
+      this.npcId++;
     });
   }
 
@@ -892,34 +906,36 @@ class Game {
     this.mapCamera.position.z = pos.z;
     this.mapCamera.lookAt(new THREE.Vector3(pos.x, -1, pos.z));
 
-    if (this.enemy != null) {
-      if (this.enemyBody != null) {
-        this.entityManager.update(dt);
-        if (pos.z <= 5 * (19 - 10)) {
-          if (this.frameNumber > 10) {
-            this.npc.regeneratePath(
-              this.maze,
-              this.player,
-              this.enemy,
-              this.enemyPath,
-              this.vehicle
-            );
-            this.frameNumber = 0;
+    for(let  i = 0; i < this.enemy.length;i++){
+      if (this.enemy[i] != null) {
+        if (this.enemyBody[i] != null) {
+          this.entityManager[i].update(dt);
+          if (pos.z <= 5 * (19 - 10)) {
+            if (this.frameNumber > 10) {
+              this.npcArr[i].regeneratePath(
+                this.maze,
+                this.player,
+                this.enemy[i],
+                this.enemyPath[i],
+                this.vehicle[i]
+              );
+              this.frameNumber = 0;
+            }
+          }
+          this.enemy[i].position.copy(this.vehicle[i].position);
+          this.enemyBody[i].position.copy(this.enemy[i].position);
+          if(this.player.position.distanceTo(this.enemyBody[i].position) < 3){
+            this.currentHealth -= 1;
+            console.log(this.currentHealth);
+            if(this.currentHealth < 0 && this.playerLives != 0){
+              this.currentHealth = this.healthSize;
+              this.playerLives -= 1;
+              console.log("You lost a life!");
+            }
           }
         }
-        this.enemy.position.copy(this.vehicle.position);
-        this.enemyBody.position.copy(this.enemy.position);
-        if(this.player.position.distanceTo(this.enemyBody.position) < 3){
-          this.currentHealth -= 1;
-          console.log(this.currentHealth);
-          if(this.currentHealth < 0 && this.playerLives != 0){
-            this.currentHealth = this.healthSize;
-            this.playerLives -= 1;
-            console.log("You lost a life!");
-          }
-        }
+  
       }
-
     }
     // console.log(
     //   `NPC Position : (${this.enemy.position.x},${this.enemy.position.y} , ${this.enemy.position.z})`
@@ -937,15 +953,17 @@ class Game {
       }
     }
 
-    if (this.npcAnimateDeath) {
-      if (this.npcDeathFrames < 100) {
-        console.log(this.npcDeathFrames);
-        this.enemy.rotateZ(100 * this.npcDeathFrames);
-        this.npcDeathFrames++;
-      } else {
-        this.scene.remove(this.enemy);
-        this.enemy = null;
-        this.npcAnimateDeath = false;
+    for(let i = 0; i < 3;i++){
+      if (this.npcAnimateDeath[i]) {
+        if (this.npcDeathFrames[i] < 100) {
+          console.log(this.npcDeathFrames[i]);
+          this.enemy[i].rotateZ(100 * this.npcDeathFrames[i]);
+          this.npcDeathFrames[i]++;
+        } else {
+          this.scene.remove(this.enemy[i]);
+          this.enemy[i] = null;
+          this.npcAnimateDeath[i] = false;
+        }
       }
     }
 
