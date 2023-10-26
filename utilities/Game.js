@@ -568,18 +568,7 @@ class Game {
     nmap.wrapS = nmap.wrapT = THREE.RepeatWrapping;
     nmap.repeat.set(1, 1);
 
-    // let ballMaterial = new THREE.MeshPhongMaterial({
-    //   specular: 0x666666,
-    //   shininess: 10,
-    //   bumpMap: vbmap,
-    //   bumpScale: 0.5,
-    //   displacementMap: vdmap,
-    //   displacementScale: 0,
-    //   map: vmap,
-    //   depthTest: true,
-    //   reflectivity: 1,
-    //   refractionRatio: 0.1,
-    // });
+    
     const ballMaterial = new THREE.MeshStandardMaterial({
       color: 0xffffff,
       roughness: 0.5,
@@ -1003,7 +992,10 @@ class Game {
     }
 
     if (this.playerLives <= 0) {
-      alert("You died, refresh page to restart game!");
+      //alert("You died!");
+      window.location = this.restartLevel;
+
+
     }
 
     for (let i = 0; i < this.tokens.length; i++) {
