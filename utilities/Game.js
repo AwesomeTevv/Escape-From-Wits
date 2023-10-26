@@ -219,7 +219,7 @@ class Game {
     this.shaderTime = 0.0;
     this.vhsUniforms = vhsScanlines.uniforms;
     this.staticUniforms = vhsStatic.uniforms;
-    document.getElementById('overlay').style.display = 'block';
+    //document.getElementById('overlay').style.display = 'block';
 
 
     this.stats = new Stats();
