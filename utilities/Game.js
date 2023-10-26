@@ -30,6 +30,7 @@ class Game {
    * @param {string} skyboxImage Path to the skybox image assets
    * @param {string} wallTexture Path to the wall texture image assets
    */
+
   constructor(skyboxImage, wallTexture, groundTexture) {
     this.scene = null; // ThreeJS Scene
     this.minimapScene = null;
@@ -74,6 +75,9 @@ class Game {
     this.mainAudioSrc = null;
     this.mainAudioListener = null;
     this.numberOfKeys = 0;
+    //Variable for scoping in
+    this.isRightMouseDown = false;
+    this.zoomFactor = 1.2;
 
     /*
      * YUKA Variables
@@ -94,7 +98,7 @@ class Game {
     this.npc = null;
     this.npcDeathFrames = 0;
     this.npcAnimateDeath = false;
-    
+
     this.liftWall = false; // Whether or not to lift the exit wall
 
     this._Init();
@@ -150,6 +154,7 @@ class Game {
       10000
     );
     this.camera.position.set(0, 0, 0);
+    this.initialFOV = 75;
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.listenToKeyEvents(window); // optional
@@ -474,6 +479,19 @@ class Game {
    * Sets the velocity of the projectiles.
    * Gets the direction that the projectile needs to be shot at.
    */
+
+  // Function to zoom in
+  zoomIn() {
+    this.camera.fov -= 30;
+    this.camera.updateProjectionMatrix();
+  }
+
+  // Function to zoom out
+  zoomOut() {
+    this.camera.fov += 30;
+    this.camera.updateProjectionMatrix();
+  }
+
   _BindShooting() {
     let loaderObj = new GLTFLoader();
     loaderObj.load("../../assets/weapons/gun.glb", (gltf) => {
@@ -522,66 +540,89 @@ class Game {
       if (!this.controls.enabled || this.gun.toggled == false) {
         return;
       }
+      
+      if (event.button === 2) {
+        console.log("clicked");
+        event.preventDefault();
 
-      const material = new THREE.MeshPhongMaterial({
-        color: 0xffffff,
-        flatShading: true,
-      });
-      const ballBody = new CANNON.Body({ mass: 1 });
-      ballBody.addShape(ballShape);
-      const ballMesh = new THREE.Mesh(ballGeometry, ballMaterial);
-      ballBody.angularDamping = 0.31;
-      ballBody.linearDamping = 0.31;
-      ballMesh.castShadow = true;
-      ballMesh.receiveShadow = true;
+        if (this.isRightMouseDown) {
+          //Zoom in when the right mouse button is held down
+          this.zoomOut();
+          this.isRightMouseDown = false;
+          console.log("zoom in");
+        } else {
+          // Return to normal view when the right mouse button is released
+          this.zoomIn();
+          this.isRightMouseDown = true;
+          console.log("zoom out");
+        }
+      }
 
-      this.world.addBody(ballBody);
-      this.scene.add(ballMesh);
-      this.ballBodies.push(ballBody);
-      this.ballMeshes.push(ballMesh);
+      
 
-      // Returns a vector pointing the the diretion the camera is at
-      const vector = new THREE.Vector3(0, 0, 1);
-      vector.unproject(this.camera);
-      const ray = new THREE.Ray(
-        this.player.position,
-        vector.sub(this.player.position).normalize()
-      );
-      const shootDirection = ray.direction;
-      ballBody.velocity.set(
-        shootDirection.x * shootVelocity,
-        shootDirection.y * shootVelocity,
-        shootDirection.z * shootVelocity
-      );
-
-      // Move the ball outside the player sphere
-      const x =
-        this.player.position.x +
-        shootDirection.x * (1.3 * 1.02 + ballShape.radius);
-      const y =
-        this.player.position.y +
-        shootDirection.y * (1.3 * 1.02 + ballShape.radius);
-      const z =
-        this.player.position.z +
-        shootDirection.z * (1.3 * 1.02 + ballShape.radius);
-      ballBody.position.set(x, y, z);
-      ballMesh.position.copy(ballBody.position);
-
-      ballBody.addEventListener('collide', (e)=>{
-        if(e.body.userData){
-          if(e.body.userData.numberLives > 1){
-            e.body.userData.numberLives -= 1;
-            console.log("lives left: " + e.body.userData.numberLives)
-          }else{
-            if(this.enemyBody != null){
-              this.world.removeBody(this.enemyBody);
-              this.enemyBody = null;
-              this.npcAnimateDeath = true;
+      if(event.button === 0) {
+        const material = new THREE.MeshPhongMaterial({
+          color: 0xffffff,
+          flatShading: true,
+        });
+        const ballBody = new CANNON.Body({ mass: 1 });
+        ballBody.addShape(ballShape);
+        const ballMesh = new THREE.Mesh(ballGeometry, ballMaterial);
+        ballBody.angularDamping = 0.31;
+        ballBody.linearDamping = 0.31;
+        ballMesh.castShadow = true;
+        ballMesh.receiveShadow = true;
+  
+        this.world.addBody(ballBody);
+        this.scene.add(ballMesh);
+        this.ballBodies.push(ballBody);
+        this.ballMeshes.push(ballMesh);
+  
+        // Returns a vector pointing the the diretion the camera is at
+        const vector = new THREE.Vector3(0, 0, 1);
+        vector.unproject(this.camera);
+        const ray = new THREE.Ray(
+          this.player.position,
+          vector.sub(this.player.position).normalize()
+        );
+        const shootDirection = ray.direction;
+        ballBody.velocity.set(
+          shootDirection.x * shootVelocity,
+          shootDirection.y * shootVelocity,
+          shootDirection.z * shootVelocity
+        );
+  
+        // Move the ball outside the player sphere
+        const x =
+          this.player.position.x +
+          shootDirection.x * (1.3 * 1.02 + ballShape.radius);
+        const y =
+          this.player.position.y +
+          shootDirection.y * (1.3 * 1.02 + ballShape.radius);
+        const z =
+          this.player.position.z +
+          shootDirection.z * (1.3 * 1.02 + ballShape.radius);
+        ballBody.position.set(x, y, z);
+        ballMesh.position.copy(ballBody.position);
+  
+        ballBody.addEventListener('collide', (e) => {
+          if (e.body.userData) {
+            if (e.body.userData.numberLives > 1) {
+              e.body.userData.numberLives -= 1;
+              console.log("lives left: " + e.body.userData.numberLives)
+            } else {
+              if (this.enemyBody != null) {
+                this.world.removeBody(this.enemyBody);
+                this.enemyBody = null;
+                this.npcAnimateDeath = true;
+              }
             }
           }
-        }
-      });
+        });
+      } 
     });
+
+
     document.addEventListener(
       "keydown",
       (event) => {
@@ -660,7 +701,10 @@ class Game {
       },
       false
     );
+
+
   }
+
 
   checkProximity() {
     const characterPosition = this.player.position;
@@ -752,7 +796,7 @@ class Game {
     const dt = time - this.lastCallTime;
     this.lastCallTime = time;
 
-    
+
     this.world.step(timeStep, dt);
     while (this.ballBodies.length > 10) {
       let body = this.ballBodies.shift();
@@ -760,40 +804,40 @@ class Game {
       this.world.removeBody(body);
       this.scene.remove(mesh);
     }
-    
+
     for (let i = 0; i < this.ballBodies.length; i++) {
       this.ballMeshes[i].position.copy(this.ballBodies[i].position);
       this.ballMeshes[i].quaternion.copy(this.ballBodies[i].quaternion);
     }
-    
+
     let pos = this.player.position.clone();
     this.mapCamera.position.x = pos.x;
     this.mapCamera.position.z = pos.z;
     this.mapCamera.lookAt(new THREE.Vector3(pos.x, -1, pos.z));
-    
-    if(this.enemy != null){
-      if(this.enemyBody != null){
+
+    if (this.enemy != null) {
+      if (this.enemyBody != null) {
         this.entityManager.update(dt);
         if (pos.z <= 5 * (19 - 10)) {
-          if(this.frameNumber > 10){
+          if (this.frameNumber > 10) {
             this.npc.regeneratePath(
               this.maze,
               this.player,
               this.enemy,
               this.enemyPath,
               this.vehicle
-              );
-              this.frameNumber = 0;
-            }
+            );
+            this.frameNumber = 0;
           }
-          this.enemy.position.copy(this.vehicle.position);
-          this.enemyBody.position.copy(this.enemy.position);
+        }
+        this.enemy.position.copy(this.vehicle.position);
+        this.enemyBody.position.copy(this.enemy.position);
       }
     }
     // console.log(
     //   `NPC Position : (${this.enemy.position.x}, ${this.enemy.position.z})`
     //   );
-      
+
     this.controls.update(dt);
     this.stats.update();
 
@@ -806,12 +850,12 @@ class Game {
       }
     }
 
-    if(this.npcAnimateDeath){
+    if (this.npcAnimateDeath) {
       if (this.npcDeathFrames < 100) {
         console.log(this.npcDeathFrames);
-        this.enemy.rotateZ(100*this.npcDeathFrames);
+        this.enemy.rotateZ(100 * this.npcDeathFrames);
         this.npcDeathFrames++;
-      }else{
+      } else {
         this.scene.remove(this.enemy);
         this.enemy = null;
         this.npcAnimateDeath = false;
@@ -836,6 +880,7 @@ class Game {
       //     this.tokens[0].getPosition().z
       // );
     }
+
   }
 
   /**
