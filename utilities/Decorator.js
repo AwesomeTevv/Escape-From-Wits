@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
 
+import { Decoration } from "./Decoration";
+
 class Decorator {
   /**
    *
@@ -12,17 +14,27 @@ class Decorator {
     this.maze = maze;
     this.scene = scene;
     this.world = world;
+
+    this.decoration = new Decoration();
   }
 
   DecorateDeadEnds(level = 1) {
     const deadEndsList = this.DeadEnds();
 
+    let count = 0;
     for (const [i, j] of deadEndsList) {
-      const geometry = new THREE.BoxGeometry(1, 1, 1);
-      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-      const cube = new THREE.Mesh(geometry, material);
-      cube.position.set(5 * (j - 10), 0.5, 5 * (i - 10));
-      this.scene.add(cube);
+      //   const geometry = new THREE.BoxGeometry(1, 1, 1);
+      //   const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+      //   const cube = new THREE.Mesh(geometry, material);
+      //   cube.position.set(5 * (j - 10), 0.5, 5 * (i - 10));
+      //   this.scene.add(cube);
+
+      /** @type {THREE.Object3D} */
+      const block = this.decoration.getDecoration(
+        count % this.decoration.decorationList.length
+      );
+      block.position.set(5 * (j - 10), 2.5, 5 * (i - 10));
+      this.scene.add(block);
     }
   }
 
