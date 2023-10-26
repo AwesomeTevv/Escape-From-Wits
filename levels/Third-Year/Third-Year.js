@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 // Custom Classes
 import { Game } from "../../utilities/Game";
@@ -29,10 +30,8 @@ class ThirdYear extends Game {
     // decorator.DecorateDeadEnds();
     this._AddSecondTokens();
     this._PostProcessing();
-    this.restartLevel = "/levels/Third-Year/Third-Year.html"
-
+    this.restartLevel = "/levels/Third-Year/Third-Year.html";
   }
-
 
   _AddSecondTokens() {
     console.log("Adding Second Token!");
