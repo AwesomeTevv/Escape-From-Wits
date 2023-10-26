@@ -70,7 +70,7 @@ class Game {
     this.gun = null;
     this.torch = null;
     this.torchTarget = null;
-
+    this.numberOfKeys = 0;
     this.tokens = [];
 
     this.AudioListener = null;
@@ -1165,6 +1165,7 @@ class Game {
         if (this.numberOfKeys == 1) {
           this.liftWall = true;
         } else {
+          console.log("You have " + this.numberOfKeys + " already!");
           // alert("Please collect all keys to escape!");
           console.log("Need to collect all Keys!");
         }
