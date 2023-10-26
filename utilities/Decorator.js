@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
 
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+
 import { Decoration } from "./Decoration";
 
 class Decorator {
@@ -15,13 +17,19 @@ class Decorator {
     this.scene = scene;
     this.world = world;
 
+    this.loader = new GLTFLoader();
+
     this.decoration = new Decoration();
   }
+
+  loadBlock = (block) => {
+    block.translateY(-2.5);
+    this.scene.add(block);
+  };
 
   DecorateDeadEnds(level = 1) {
     const deadEndsList = this.DeadEnds();
 
-    let count = 0;
     for (const [i, j] of deadEndsList) {
       //   const geometry = new THREE.BoxGeometry(1, 1, 1);
       //   const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
@@ -29,12 +37,32 @@ class Decorator {
       //   cube.position.set(5 * (j - 10), 0.5, 5 * (i - 10));
       //   this.scene.add(cube);
 
-      /** @type {THREE.Object3D} */
-      const block = this.decoration.getDecoration(
-        count % this.decoration.decorationList.length
+      const model = new THREE.Object3D();
+
+      this.loader.load(
+        "../../assets/models/decorations/cemetery_angel_-_furey.glb",
+        function (gltf) {
+          gltf.scene.scale.set(2.5, 2.5, 2.5);
+          gltf.scene.translateY(-5.2);
+          gltf.scene.position.set(5 * (j - 10), 2.5, 5 * (i - 10));
+          model.add(gltf.scene);
+        },
+        undefined,
+        function (error) {
+          console.error(error);
+        }
       );
-      block.position.set(5 * (j - 10), 2.5, 5 * (i - 10));
-      this.scene.add(block);
+
+      this.loadBlock(model);
+
+      //   /** @type {THREE.Object3D} */
+      //   const block = this.decoration.getDecoration(
+      //     count % this.decoration.decorationList.length
+      //   );
+      //   block.position.set(5 * (j - 10), 2.5, 5 * (i - 10));
+      //   this.scene.add(block);
+
+      console.log("placed.");
     }
   }
 
