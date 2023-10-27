@@ -1220,9 +1220,6 @@ class Game {
         }
       }
     }
-    // console.log(
-    //   `NPC Position : (${this.enemy.position.x},${this.enemy.position.y} , ${this.enemy.position.z})`
-    //   );
 
     this.controls.update(dt);
     this.stats.update();
@@ -1286,11 +1283,7 @@ class Game {
     }
 
     if (this.playerLives <= 0 && !this.hasReloaded) {
-      // this.hasReloaded = true;
-      //alert("You died!");
-      document.getElementById("deathText").textContent =
-        "You died...reloading...";
-      //window.location = this.restartLevel;
+      document.getElementById("deathText").textContent = "You died. Try again.";
       this.restartBoolean = true;
     }
 
@@ -1310,7 +1303,7 @@ class Game {
       if (this.notEnoughKeys && this.timerKeys < 500) {
         this.timerKeys += 1;
         document.getElementById("tokenText").textContent =
-          "You've been token for a poes...find the tokens";
+          "You must find all the artifacts in order to escape!";
       } else {
         this.notEnoughKeys = false;
         this.timerKeys = 0;
