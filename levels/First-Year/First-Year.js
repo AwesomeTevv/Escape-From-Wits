@@ -28,7 +28,7 @@ class FirstLevel extends Game {
       "Terazzo/TerrazzoSlab018"
     );
     this.nextLevel = "/levels/Second-Year/Second-Year.html";
-    this.restartLevel = "/levels/First-Year/First-Year.html";
+    this.restartLevel = "/~sjmsp/levels/First-Year/First-Year.html";
 
     this.controls.addEventListener("lock", () => {
       overlay.style.display = "block";

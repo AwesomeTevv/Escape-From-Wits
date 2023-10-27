@@ -116,6 +116,9 @@ class Game {
     this.breakableBodies = [];
     this.breakableMeshID = 0;
 
+    this.restartBoolean = false;
+    this.restartCounter = 0;
+
     //Variable for scoping in
     this.isRightMouseDown = false;
     this.zoomFactor = 1.2;
@@ -871,7 +874,8 @@ class Game {
           event.preventDefault();
           // Calculate the distance between the character and sphereTwo
           document.getElementById("deathText").textContent = "Loser";
-          window.location = this.restartLevel;
+          this.restartBoolean = true;
+          //window.location = this.restartLevel;
         }
       },
       false
@@ -1160,11 +1164,12 @@ class Game {
     }
 
     if (this.playerLives <= 0 && !this.hasReloaded) {
-      this.hasReloaded = true;
+     // this.hasReloaded = true;
       //alert("You died!");
       document.getElementById("deathText").textContent =
         "You died...reloading...";
-      window.location = this.restartLevel;
+      //window.location = this.restartLevel;
+      this.restartBoolean = true;
     }
 
     for (let i = 0; i < this.tokens.length; i++) {
@@ -1195,6 +1200,14 @@ class Game {
     this.shaderTime = this.shaderTime + 0.025;
     this.vhsUniforms.time.value = this.shaderTime;
     this.staticUniforms.time.value = this.shaderTime;
+
+    if (this.restartBoolean == true){
+      this.restartCounter += 1;
+      if (this.restartCounter > 50 && !this.hasReloaded){
+        this.hasReloaded = true;
+        window.location = this.restartLevel;
+      }
+    }
   }
 
   /**
