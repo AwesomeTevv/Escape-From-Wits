@@ -552,6 +552,7 @@ class Game {
 
     this.controls.addEventListener("unlock", () => {
       scope.style.display = "none";
+      zoomedImage.style.display = "none";
       this.controls.enabled = false;
       instructions.style.display = null;
     });
@@ -681,9 +682,11 @@ class Game {
           //console.log("zoom in");
 
           scope.style.display = "none";
+          zoomedImage.style.display = "none";
           this.gun.object.position.z = this.gun.object.position.z - 100;
         } else {
           scope.style.display = "block";
+          zoomedImage.style.display = "block";
           scope.style.border = "5px solid black";
           // Return to normal view when the right mouse button is released
           this.zoomIn();
