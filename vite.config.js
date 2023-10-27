@@ -35,11 +35,24 @@ export default defineConfig({
             // Include all asset files
             include: assetFiles,
             // Source directory for your assets
-            base: 'assets',
+            base: '/assets',
             // Output directory
-            outputDir: 'dist/assets',
+            outputDir: '/assets',
         },
     },
 
+    // Set the base URL to an empty string to generate relative URLs
     base: '/',
+
+    // Create a Vite plugin to adjust HTML references
+    plugins: [
+        {
+            name: 'adjust-html-references',
+            transformIndexHtml(html) {
+                // Modify HTML to use relative URLs without leading slash
+                const modifiedHTML = html.replace(/<a href="\/(.*?)">/g, '<a href="$1">');
+                return modifiedHTML;
+            },
+        },
+    ],
 });

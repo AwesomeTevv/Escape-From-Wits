@@ -326,13 +326,13 @@ class Game {
     });
 
     const gnmap = loader.load(
-      "/assets/textures/glassTexture/DirtWindowStains005_NRM_1K.jpg"
+      "../../assets/textures/glassTexture/DirtWindowStains005_NRM_1K.jpg"
     );
     const gamap = loader.load(
-      "/assets/textures/glassTexture/DirtWindowStains005_ALPHAMASKED_1K.png"
+      "../../assets/textures/glassTexture/DirtWindowStains005_ALPHAMASKED_1K.png"
     );
     const ggmap = loader.load(
-      "/assets/textures/glassTexture/DirtWindowStains005_GLOSS_1K.jpg"
+      "../../assets/textures/glassTexture/DirtWindowStains005_GLOSS_1K.jpg"
     );
     nmap.wrapS = THREE.RepeatWrapping;
     nmap.wrapT = THREE.RepeatWrapping;
@@ -552,6 +552,7 @@ class Game {
 
     this.controls.addEventListener("unlock", () => {
       scope.style.display = "none";
+      zoomedImage.style.display = "none";
       this.controls.enabled = false;
       instructions.style.display = null;
     });
@@ -681,9 +682,11 @@ class Game {
           //console.log("zoom in");
 
           scope.style.display = "none";
+          zoomedImage.style.display = "none";
           this.gun.object.position.z = this.gun.object.position.z - 100;
         } else {
           scope.style.display = "block";
+          zoomedImage.style.display = "block";
           scope.style.border = "5px solid black";
           // Return to normal view when the right mouse button is released
           this.zoomIn();
@@ -1216,7 +1219,7 @@ class Game {
    * @returns {string[]} An array of string containing the filename for each of the corresponding side of the skybox.
    */
   createPathStrings(filename) {
-    const basePath = "/assets/skybox/";
+    const basePath = "../../assets/skybox/";
     const baseFilename = basePath + filename;
     const fileType = ".jpg";
     const sides = ["ft", "bk", "up", "dn", "rt", "lf"];
