@@ -711,6 +711,8 @@ class Game {
    */
 
   _BindShooting() {
+
+    /*source: https://sketchfab.com/3d-models/pso-1-1-sniper-scope-lowpoly-gameready-423a3bd9e2344f26b3aff82e0ae185d7 */
     let loaderObj = new GLTFLoader();
     loaderObj.load("../../assets/models/weapons/gun.glb", (gltf) => {
       var gunobj = gltf.scene;
