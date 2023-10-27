@@ -371,6 +371,8 @@ class Game {
     this.npcDeathNoise = new THREE.Audio(this.AudioListener);
     this.gateNoiseEntrance = new THREE.PositionalAudio(this.AudioListener);
     this.gateNoiseExit = new THREE.PositionalAudio(this.AudioListener);
+    this.gunNoise = new THREE.Audio(this.AudioListener);
+    this.damageNoise = new THREE.Audio(this.AudioListener);
 
     new THREE.AudioLoader().load(
       "../../assets/sounds/tomb_door-95246.mp3",
@@ -391,10 +393,6 @@ class Game {
         this.gateNoiseExit.setRefDistance(1);
       }
     );
-
-    this.gunNoise = new THREE.Audio(this.AudioListener);
-    this.damageNoise = new THREE.Audio(this.AudioListener);
-
     new THREE.AudioLoader().load(
       "../../assets/sounds/scary-creaking-knocking-wood-6103.mp3",
       (buffer) => {
@@ -431,7 +429,7 @@ class Game {
       }
     );
     new THREE.AudioLoader().load(
-      "../../assets/sounds/grenade-launcher-106342.mp3",
+      "../../assets/sounds/meaty-gunshot-101257.mp3",
       (buffer) => {
         this.gunNoise.setBuffer(buffer);
         this.gunNoise.setLoop(false);
