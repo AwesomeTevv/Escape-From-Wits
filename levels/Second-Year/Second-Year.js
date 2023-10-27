@@ -17,8 +17,8 @@ class SecondYear extends Game {
       "BrushedSteel/MetalSteelBrushed001",
       "Dots/TilesMosaicPennyround001"
     );
-    this.nextLevel = "/levels/Third-Year/Third-Year.html";
-    this.restartLevel = "/levels/Second-Year/Second-Year.html";
+    this.nextLevel = "/~sjmsp/levels/Third-Year/Third-Year.html";
+    this.restartLevel = "/~sjmsp/levels/Second-Year/Second-Year.html";
     this._AddSecondTokens();
   }
   _AddSecondTokens() {

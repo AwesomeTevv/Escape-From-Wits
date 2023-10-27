@@ -27,7 +27,7 @@ class FirstLevel extends Game {
       "GalvanizedZinc/MetalZincGalvanized001",
       "Terazzo/TerrazzoSlab018"
     );
-    this.nextLevel = "/levels/Second-Year/Second-Year.html";
+    this.nextLevel = "/~sjmsp/levels/Second-Year/Second-Year.html";
     this.restartLevel = "/~sjmsp/levels/First-Year/First-Year.html";
 
     this.controls.addEventListener("lock", () => {

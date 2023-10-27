@@ -31,7 +31,7 @@ class ThirdYear extends Game {
     // decorator.DecorateDeadEnds();
     this._AddSecondTokens();
     this._PostProcessing();
-    this.restartLevel = "/levels/Third-Year/Third-Year.html";
+    this.restartLevel = "/~sjmsp/levels/Third-Year/Third-Year.html";
   }
 
   _AddSecondTokens() {
