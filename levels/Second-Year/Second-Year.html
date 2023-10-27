@@ -51,6 +51,9 @@
         transform: translate(-50%, -50%);
         /* background-color: seashell; */
       }
+      
+      
+      
 
       .dot {
         height: 10px;
@@ -143,6 +146,15 @@
         text-align: relative;
         margin: 0 20px;
       }
+      
+      .tokens {
+      position: absolute;
+      bottom: 10px; /* Adjust the distance from the bottom as needed */
+      right: 10px; /* Adjust the distance from the right as needed */
+      width: 200px; /* Set the width to your desired value */
+      height: 100px; /* Set the height to your desired value */
+      
+      }
 
       .column img {
         width: 225px; /* Adjust this value as needed to make the images the same size */
@@ -175,6 +187,20 @@
         transform: translateX(-50%); /* Center the text horizontally */
       }
 
+      #overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1; /* Ensure it's in front of other elements */
+        }
+      #overlay img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Scale the image to cover the entire div */
+      }
+
       .subtitle {
         bottom: 1rem;
         display: flex;
@@ -186,6 +212,30 @@
         font-size: 40px;
         font-family: monospace;
       }
+      .life {
+        bottom: 1rem;
+        display: flex;
+        width: 20%;
+        position: fixed;
+        justify-content: center;
+        align-items: center;
+        color: #ffffff;
+        font-size: 40px;
+        font-family: monospace;
+      }
+
+      .tokens {
+        bottom: 1rem;
+        display: flex;
+        width: 40%;
+        position: fixed;
+        justify-content: center;
+        align-items: center;
+        color: #ffffff;
+        font-size: 40px;
+        font-family: monospace;
+      }
+
       .death {
         
         bottom: 30rem;
@@ -198,6 +248,10 @@
         font-size: 100px;
         font-family: monospace;
       }
+      .scaled-heart {
+        width: 20%; /* You can adjust the percentage as needed */
+        height: auto; /* This maintains the image's aspect ratio */
+       }
     </style>
   </head>
   <body>
@@ -266,10 +320,23 @@
     <div class="death">
       <p id = "deathText"></p></p>
     </div>
+     
+
+    <div class="life">
+      <p id="lifeText"></p>
+      <img class="scaled-heart" id="Heart3" src="../../assets/images/heart.png" alt="Overlay Image" style="display: block; height: auto;">
+      <img class="scaled-heart" id="Heart2" src="../../assets/images/heart.png" alt="Overlay Image" style="display: block; height: auto;">
+      <img class="scaled-heart" id="Heart1" src="../../assets/images/heart.png" alt="Overlay Image" style="display: block; height: auto;">
+    </div>
+    
+    <div class="tokens" style="font-size: 70px">
+      <p id = "numTokensText"></p></p>
+    </div>
 
     <script type="module" src="/levels/Second-Year/Second-Year.js"></script>
-<img id="zoomedImage" src="../../assets/images/scope.png" class="centered-image" style="display: none; max-width: 32%; height: auto;">
-    <canvas id="scope" width="100" height="100"></canvas>
+    <img id="zoomedImage" src="../../assets/images/scope 3.png" class="centered-image" style="display: none; max-width: 32%; height: auto;">
+   <canvas id="scope"></canvas>
+
 
     <script>
       // Function to show game mechanics when the user presses Enter
@@ -280,6 +347,13 @@
           instructions.style.display = "none";
         }
       });
+
+      window.onload = function() { 
+            var canvas = document.getElementById("scope"); 
+            var context = canvas.getContext("2d"); 
+            var img = document.getElementById("zoomedImage"); 
+            context.drawImage(img, 10, 6); 
+        };
     </script>
   </body>
 </html>

@@ -146,6 +146,15 @@
         text-align: relative;
         margin: 0 20px;
       }
+      
+      .tokens {
+      position: absolute;
+      bottom: 10px; /* Adjust the distance from the bottom as needed */
+      right: 10px; /* Adjust the distance from the right as needed */
+      width: 200px; /* Set the width to your desired value */
+      height: 100px; /* Set the height to your desired value */
+      
+      }
 
       .column img {
         width: 225px; /* Adjust this value as needed to make the images the same size */
@@ -242,7 +251,7 @@
       .scaled-heart {
         width: 20%; /* You can adjust the percentage as needed */
         height: auto; /* This maintains the image's aspect ratio */
-    }
+       }
     </style>
   </head>
   <body>
@@ -305,8 +314,6 @@
     <canvas id="minimap" style="width: 100px; height: 100px"></canvas>
     <span class="dot"></span>
 
-    
-
     <div class="subtitle">
       <p id = "tokenText"></p></p>
     </div>
@@ -317,13 +324,14 @@
 
     <div class="life">
       <p id="lifeText"></p>
-      <img class="scaled-heart" id="Heart1" src="../../assets/images/heart.png" alt="Overlay Image" style="display: block;">
-      <img class="scaled-heart" id="Heart2" src="../../assets/images/heart.png" alt="Overlay Image" style="display: block;">
-      <img class="scaled-heart" id="Heart3" src="../../assets/images/heart.png" alt="Overlay Image" style="display: block;">
+      <img class="scaled-heart" id="Heart3" src="../../assets/images/heart.png" alt="Overlay Image" style="display: block; height: auto;">
+      <img class="scaled-heart" id="Heart2" src="../../assets/images/heart.png" alt="Overlay Image" style="display: block; height: auto;">
+      <img class="scaled-heart" id="Heart1" src="../../assets/images/heart.png" alt="Overlay Image" style="display: block; height: auto;">
     </div>
     
+    
 
-    <div class="tokens">
+    <div class="tokens" style="font-size: 70px">
       <p id = "numTokensText"></p></p>
     </div>
     

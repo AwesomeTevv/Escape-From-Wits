@@ -398,7 +398,7 @@ class Game {
         this.npcDeathNoise.setVolume(0.1);
       }
     );
-
+    numTokensText.textContent=`${0} out of 1`;
     this.convexObjectBreaker = new ConvexObjectBreaker();
   }
 
@@ -851,6 +851,7 @@ class Game {
               this.tokens[tokenid].object.scale.z =
                 this.tokens[tokenid].toggledScale.z;
               this.numberOfKeys += 1;
+              numTokensText.textContent=`${this.numberOfKeys} out of 1`;
               this.tokens[tokenid].sound.stop();
             }
           }
@@ -890,6 +891,20 @@ class Game {
       },
       false
     );
+  }
+
+    updateFraction() {
+    var numTokensText = document.getElementById("numTokensText");
+    var totalTokens = 100; // You can hard-code the denominator here
+  
+    // Sample input string
+    var inputString = "Your text containing number tokens goes here.";
+  
+    // Call the function to count number tokens
+    var tokenCount = countNumberTokens(inputString);
+  
+    // Update the content of the <p> element with the fraction
+    numTokensText.textContent = "Found " + tokenCount + "/" + totalTokens;
   }
 
   checkProximity() {
