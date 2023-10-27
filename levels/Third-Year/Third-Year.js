@@ -20,7 +20,7 @@ window.addEventListener("DOMContentLoaded", () => {
 class ThirdYear extends Game {
   constructor() {
     super(
-      "mayhem/mayhem8/flame",
+      "mayhem/mayhem6/grouse",
       "Bricks/BricksReclaimedWhitewashedOffset001",
       "Grass/GroundGrassGreen002",
       "Bronze/MetalBronzeWorn001",
@@ -37,34 +37,41 @@ class ThirdYear extends Game {
   _AddSecondTokens() {
     console.log("Adding Second Token!");
     let loaderObj = new GLTFLoader();
-    loaderObj.load("../../../assets/models/tokens/guitar/scene.gltf", (gltf) => {
-      let token = new Token();
-      token.object = gltf.scene;
-      //token.object.scale.set(0.001, 0.001, 0.001);
-      token.setToggledScale(0.1, 0.1, 0.1);
-      token.setToggledRotation(Math.PI );
-      token.setToggledOffsets(-0.2, -0.5, -0.9);
-      token.name = "guitar";
-      token.loaded = true;
-      this.onTokenLoaded(token);
-      this.setKeyPos(token);
-      //token.object.position.set(this.player.position.x + 2, this.player.position.y, this.player.position.z );
-      console.log("This is the second token position " + token.object.position.x + " " + token.object.position.z);
-      token.sound = new THREE.PositionalAudio(this.AudioListener);
-      token.object.add(token.sound);
-      new THREE.AudioLoader().load(
-        "../../assets/sounds/wind-chimes-bells-115747.mp3",
-        (buffer) => {
-          token.sound.setBuffer(buffer);
-          token.sound.setLoop(true);
-          token.sound.setVolume(1);
-          token.sound.setRefDistance(0.1);
-          token.sound.play();
-        }
-      );
-      this._SpawnNPC(token);
-    });
-
+    loaderObj.load(
+      "../../../assets/models/tokens/guitar/scene.gltf",
+      (gltf) => {
+        let token = new Token();
+        token.object = gltf.scene;
+        //token.object.scale.set(0.001, 0.001, 0.001);
+        token.setToggledScale(0.1, 0.1, 0.1);
+        token.setToggledRotation(Math.PI);
+        token.setToggledOffsets(-0.2, -0.5, -0.9);
+        token.name = "guitar";
+        token.loaded = true;
+        this.onTokenLoaded(token);
+        this.setKeyPos(token);
+        //token.object.position.set(this.player.position.x + 2, this.player.position.y, this.player.position.z );
+        console.log(
+          "This is the second token position " +
+            token.object.position.x +
+            " " +
+            token.object.position.z
+        );
+        token.sound = new THREE.PositionalAudio(this.AudioListener);
+        token.object.add(token.sound);
+        new THREE.AudioLoader().load(
+          "../../assets/sounds/wind-chimes-bells-115747.mp3",
+          (buffer) => {
+            token.sound.setBuffer(buffer);
+            token.sound.setLoop(true);
+            token.sound.setVolume(1);
+            token.sound.setRefDistance(0.1);
+            token.sound.play();
+          }
+        );
+        this._SpawnNPC(token);
+      }
+    );
 
     loaderObj.load("../../../assets/models/tokens/grad/scene.gltf", (gltf) => {
       let token2 = new Token();
@@ -78,7 +85,12 @@ class ThirdYear extends Game {
       this.onTokenLoaded(token2);
       this.setKeyPos(token2);
       //token.object.position.set(this.player.position.x - 2, this.player.position.y, this.player.position.z );
-      console.log("This is the third token position " + token2.object.position.x + " " + token2.object.position.z);
+      console.log(
+        "This is the third token position " +
+          token2.object.position.x +
+          " " +
+          token2.object.position.z
+      );
       token2.sound = new THREE.PositionalAudio(this.AudioListener);
       token2.object.add(token2.sound);
       new THREE.AudioLoader().load(
@@ -93,7 +105,6 @@ class ThirdYear extends Game {
       );
       this._SpawnNPC(token2);
     });
-
   }
 
   _PostProcessing() {
