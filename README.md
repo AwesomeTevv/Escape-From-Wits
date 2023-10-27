@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Welcome to "Escape from Wits," an exciting game developed by the JMSP team. This README provides an overview of our project and gives credit to the various models and assets we've used in the development of the game.
+Welcome to "**Escape from Wits**," an exciting game developed by the JMSP team. This README provides an overview of our project and gives credit to the various models and assets we've used in the development of the game.
 
 ### Team Members
 
@@ -66,4 +66,6 @@ This project is distributed under the [CC-BY-4.0 license](http://creativecommons
 
 Please make sure to credit the respective authors and sources when using these models and assets in your projects.
 
-Enjoy playing "Escape from Wits"!
+---
+
+Enjoy playing "**Escape from Wits**"!
