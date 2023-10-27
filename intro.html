@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        background-color: black;
+        font-family: Impact, Arial, sans-serif;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .fade-in {
+        opacity: 0;
+        animation: fadeIn 2s ease-in-out forwards;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <p class="fade-in" style="animation-delay: 5s">
+      In a world where the past holds the keys to the future, the Labyrinth of
+      Ages beckons the intrepid and the bold.
+    </p>
+    <p class="fade-in" style="animation-delay: 15s">
+      Legends speak of these ancient relics, said to contain the knowledge and
+      power of civilizations long forgotten. Whosoever possesses them can shape
+      the destiny of the world.
+    </p>
+    <p class="fade-in" style="animation-delay: 25s">
+      You are the chosen one, entrusted with a mission of utmost importance.
+    </p>
+    <p class="fade-in" style="animation-delay: 15s">
+      Your quest is to scour the depths of the Labyrinth, unravel its secrets,
+      and retrieve the artifacts that lie within.
+    </p>
+    <p class="fade-in" style="animation-delay: 35s">
+      But be warned, for the Keepers of the Artifacts are relentless in their
+      mission. They will stop at nothing to ensure that these treasures do not
+      leave the maze.
+    </p>
+    <p class="fade-in" style="animation-delay: 45s">
+      Kill or be killed, the choice is yours. Retrieve the artifacts, and then,
+      with haste, escape the Labyrinth.
+    </p>
+    <p class="fade-in" style="animation-delay: 60s">
+      The fate of the world rests in your hands. The Labyrinth awaits
+    </p>
+
+    <script>
+      const paragraphs = document.querySelectorAll(".fade-in");
+      let delay = 0;
+
+      paragraphs.forEach((p) => {
+        p.style.animationDelay = `${delay}s`;
+        delay += 2; // Adjust the delay to control the timing between paragraphs
+      });
+    </script>
+  </body>
+</html>
