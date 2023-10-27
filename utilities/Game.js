@@ -115,6 +115,8 @@ class Game {
     this.ambientNoise = null;
     this.complimentNoise = null;
     this.npcDeathNoise = null;
+    this.gateNoiseEntrance = null;
+    this.gateNoiseExit = null;
     this.notEnoughKeys = false;
     this.timerKeys = 0;
     this.convexObjectBreaker = null;
@@ -367,7 +369,18 @@ class Game {
     this.ambientNoise = new THREE.Audio(this.AudioListener);
     this.complimentNoise = new THREE.Audio(this.AudioListener);
     this.npcDeathNoise = new THREE.Audio(this.AudioListener);
+    this.gateNoiseEntrance = new THREE.PositionalAudio(this.AudioListener);
 
+    new THREE.AudioLoader().load(
+      "../../assets/sounds/tomb_door-95246.mp3",
+      (buffer) => {
+        this.gateNoiseEntrance.setBuffer(buffer);
+        this.gateNoiseEntrance.setLoop(false);
+        this.gateNoiseEntrance.setVolume(1);
+        this.gateNoiseEntrance.setRefDistance(1);
+      }
+    );
+    
     new THREE.AudioLoader().load(
       "../../assets/sounds/scary-creaking-knocking-wood-6103.mp3",
       (buffer) => {
@@ -1177,19 +1190,29 @@ class Game {
 
     if (this.animateGateOpen) {
       if (this.gateFallNumber < 500) {
+        if(!this.gateNoiseEntrance.isPlaying){
+          this.gateNoiseEntrance.play();
+        }
         this.entryDoor.body.position.copy(this.entryDoor.mesh.position);
         this.entryDoor.body.quaternion.copy(this.entryDoor.mesh.quaternion);
         this.entryDoor.mesh.translateY((this.gateFallNumber + 15 / 2) * 0.0001);
         this.gateFallNumber++;
+      }else{
+        this.gateNoiseEntrance.stop();
       }
     } else {
       if (this.entryDoor.mesh.position.y != 0) {
         if (this.gateFallNumber > 0) {
+          if(!this.gateNoiseEntrance.isPlaying){
+            this.gateNoiseEntrance.play();
+          }
           this.entryDoor.body.position.set(10, this.wallHeight / 2, 50);
           this.entryDoor.mesh.translateY(
             -(this.gateFallNumber + 15 / 2) * 0.0001
           );
           this.gateFallNumber--;
+        }else{
+          this.gateNoiseEntrance.stop();
         }
       }
     }
@@ -1197,7 +1220,9 @@ class Game {
     for (let i = 0; i < 3; i++) {
       if (this.npcAnimateDeath[i]) {
         if (this.npcDeathFrames[i] < 100) {
-          this.npcDeathNoise.play();
+          if(!this.npcDeathNoise.isPlaying){
+            this.npcDeathNoise.play();
+          }
           console.log(this.npcDeathFrames[i]);
           this.enemy[i].rotateZ(100 * this.npcDeathFrames[i]);
           this.npcDeathFrames[i]++;
@@ -1599,6 +1624,7 @@ class Game {
     cube.position.set(10, this.wallHeight / 2, 50);
     this.entryDoor.mesh = cube;
     this.scene.add(cube);
+    this.gateNoiseEntrance.position.set(this.entryDoor.mesh.position);
   }
 
   /**

@@ -30,15 +30,6 @@ class FirstLevel extends Game {
     );
     this.nextLevel = "/~sjmsp/levels/Second-Year/Second-Year.html";
     this.restartLevel = "/~sjmsp/levels/First-Year/First-Year.html";
-
-    this.controls.addEventListener("lock", () => {
-      overlay.style.display = "block";
-    });
-
-    this.controls.addEventListener("unlock", () => {
-      overlay.style.display = "none";
-    });
-
     // this.decorator = new Decorator(this.maze, this.scene, this.world);
     // this.decorator.GlassBlocks();
 
@@ -73,7 +64,7 @@ class FirstLevel extends Game {
     // vignette.uniforms["softness"].value = 0.3; // default is 0.3
     // vignette.uniforms["gain"].value = 0.3; // default is 0.9
     //this.composer.addPass(redVignette);
-    document.getElementById("overlay").style.display = "block";
+    // document.getElementById("overlay").style.display = "block";
 
     const outputPass = new OutputPass();
     this.composer.addPass(outputPass);
