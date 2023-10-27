@@ -4,6 +4,8 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "three/examples/jsm/libs/stats.module";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
+import { ConvexObjectBreaker } from "three/examples/jsm/misc/ConvexObjectBreaker";
+import { ConvexGeometry } from "three/examples/jsm/geometries/ConvexGeometry";
 
 // Cannon-ES Imports
 import * as CANNON from "cannon-es";
@@ -15,9 +17,8 @@ import * as YUKA from "yuka";
 // Custom Classes
 import Token from "./tokens";
 import { NPC } from "./NPC";
-import { ConvexObjectBreaker } from "three/examples/jsm/misc/ConvexObjectBreaker";
 import CannonUtils from "./cannonUtils";
-import { ConvexGeometry } from "three/examples/jsm/geometries/ConvexGeometry";
+import { Decorator } from "./Decorator";
 
 //Import Shaders
 import { vhsScanlines } from "../assets/Shaders/vhsScanlines";
@@ -155,15 +156,16 @@ class Game {
     this._AddTriggerBoxes();
     this._AddCharacterEquipment();
     this._AddTokens();
+    this._DecorateLevel();
 
-    this._CreateBreakableObject(
-      2,
-      2,
-      2,
-      this.player.position.x,
-      this.player.position.y,
-      this.player.position.z + 5
-    );
+    // this._CreateBreakableObject(
+    //   2,
+    //   2,
+    //   2,
+    //   this.player.position.x,
+    //   this.player.position.y,
+    //   this.player.position.z + 5
+    // );
     // this.checkProximity();
 
     this._Animate = this._Animate.bind(this);
@@ -324,13 +326,13 @@ class Game {
     });
 
     const gnmap = loader.load(
-      "/textures/glassTexture/DirtWindowStains005_NRM_1K.jpg"
+      "/assets/textures/glassTexture/DirtWindowStains005_NRM_1K.jpg"
     );
     const gamap = loader.load(
-      "/textures/glassTexture/DirtWindowStains005_ALPHAMASKED_1K.png"
+      "/assets/textures/glassTexture/DirtWindowStains005_ALPHAMASKED_1K.png"
     );
     const ggmap = loader.load(
-      "/textures/glassTexture/DirtWindowStains005_GLOSS_1K.jpg"
+      "/assets/textures/glassTexture/DirtWindowStains005_GLOSS_1K.jpg"
     );
     nmap.wrapS = THREE.RepeatWrapping;
     nmap.wrapT = THREE.RepeatWrapping;
@@ -1718,6 +1720,24 @@ class Game {
     this.breakableBodies[this.breakableMeshID] = cubeBody;
 
     this.breakableMeshID++;
+  }
+
+  _DecorateLevel() {
+    const decorator = new Decorator(this.maze, this.scene, this.world);
+
+    let count = 0;
+    for (let i = 0; i < this.maze.length; i++) {
+      for (let j = 0; j < this.maze[i].length; j++) {
+        if (
+          count % 6 == 0 &&
+          !decorator.isDeadEnd(i, j) &&
+          this.maze[i][j] != 1
+        ) {
+          this._CreateBreakableObject(1, 1, 1, 5 * (j - 10), 0.5, 5 * (i - 10));
+        }
+        count++;
+      }
+    }
   }
 }
 
