@@ -69,6 +69,8 @@ class Game {
 
     this.exitTexture = exitTexture;
 
+    this.glassMaterial = null;
+
     this.maze = null; // The generated maze of the game
 
     this.exitDoor = {
@@ -319,6 +321,29 @@ class Game {
       map: map,
       depthTest: true,
       refractionRatio: 0.1,
+    });
+
+    const gnmap = loader.load(
+      "/textures/glassTexture/DirtWindowStains005_NRM_1K.jpg"
+    );
+    const gamap = loader.load(
+      "/textures/glassTexture/DirtWindowStains005_ALPHAMASKED_1K.png"
+    );
+    const ggmap = loader.load(
+      "/textures/glassTexture/DirtWindowStains005_GLOSS_1K.jpg"
+    );
+    nmap.wrapS = THREE.RepeatWrapping;
+    nmap.wrapT = THREE.RepeatWrapping;
+    this.glassMaterial = new THREE.MeshPhysicalMaterial({
+      metalness: 0,
+      roughness: 0.1,
+      transmission: 1,
+      thickness: 0.5,
+      normalMap: gnmap,
+      clearcoatNormalMap: gnmap,
+      alphaMap: gamap,
+      sheenColorMap: ggmap,
+      reflectivity: 1,
     });
 
     /*
@@ -1661,26 +1686,8 @@ class Game {
       y: sy,
       z: sz,
     };
-    const textureLoader = new THREE.TextureLoader();
-    const nmap = textureLoader.load(
-      "/textures/glassTexture/DirtWindowStains005_NRM_1K.jpg"
-    );
-    const amap = textureLoader.load(
-      "/textures/glassTexture/DirtWindowStains005_ALPHAMASKED_1K.png"
-    );
-    nmap.wrapS = THREE.RepeatWrapping;
-    nmap.wrapT = THREE.RepeatWrapping;
-    const material = new THREE.MeshPhysicalMaterial({
-      metalness: 0,
-      roughness: 0.1,
-      transmission: 1,
-      thickness: 0.5,
-      normalMap: nmap,
-      clearcoatNormalMap: nmap,
-      alphaMap: amap,
-    });
     const geo = new THREE.BoxGeometry(size.x, size.y, size.z);
-    const cube = new THREE.Mesh(geo, material);
+    const cube = new THREE.Mesh(geo, this.glassMaterial);
     cube.position.set(px, py, pz);
     cube.setRotationFromAxisAngle(new CANNON.Vec3(0, 1, 0));
 
