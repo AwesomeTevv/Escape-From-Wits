@@ -67,7 +67,7 @@ class Game {
 
     this.wallMaterial = null; // ThreeJS material for the walls
     this.wallTexture = wallTexture; // Path to the wall texture assets
-    this.wallHeight = 1000; // Height of the maze walls -- Adjust accordingly to the feel of the game
+    this.wallHeight = 50; // Height of the maze walls -- Adjust accordingly to the feel of the game
 
     this.groundTexture = groundTexture;
     this.bulletTexture = bulletTexture;
@@ -516,7 +516,7 @@ class Game {
     amap.wrapS = amap.wrapT = THREE.RepeatWrapping;
     amap.repeat.set(scale, scale);
 
-    const geometry = new THREE.PlaneGeometry(1000, 1000);
+    const geometry = new THREE.PlaneGeometry(500, 500);
 
     const materialPlane = new THREE.MeshPhongMaterial({
       specular: 0x666666,
@@ -1113,7 +1113,7 @@ class Game {
    */
   _Animate() {
     requestAnimationFrame(this._Animate);
-
+    console.log(this.renderer.info.render.calls);
     if (this.dynamicSkybox) {
       this.skybox.rotation.x += 0.001;
       this.skybox.rotation.y += 0.001;
@@ -1181,13 +1181,13 @@ class Game {
           this.enemy[i].position.copy(this.vehicle[i].position);
           this.scopeEnemy[i].position.copy(this.enemy[i].position);
           this.enemyBody[i].position.copy(this.enemy[i].position);
-          if (this.player.position.distanceTo(this.enemyBody[i].position) < 3) {
-            this.damageNoise.play();
-            this.hurt();
-            this.complimentNoise.stop();
-          } else {
-            this.damageNoise.stop();
-            this.complimentNoise.play();
+          if(this.enemyBody[i] != null){
+            if (this.player.position.distanceTo(this.enemyBody[i].position) < 3) {
+              this.damageNoise.play();
+              this.hurt();
+            } else {
+              this.damageNoise.stop();
+            }
           }
         }
       }
@@ -1289,11 +1289,6 @@ class Game {
         document.getElementById("tokenText").textContent = "";
       }
     }
-
-    //Update shader time value
-    this.shaderTime = this.shaderTime + 0.025;
-    this.vhsUniforms.time.value = this.shaderTime;
-    this.staticUniforms.time.value = this.shaderTime;
 
     if (this.restartBoolean == true) {
       this.restartCounter += 1;
@@ -1657,11 +1652,12 @@ class Game {
   _AddTriggerBoxes() {
     // Trigger body End Game -> Destory Exit Wall
     const triggerGeometry = new THREE.BoxGeometry(4, 1, 1);
-    const triggerMaterial = new THREE.MeshBasicMaterial({
-      color: 0x00ff00,
-      wireframe: true,
+    const triggerMaterial = new THREE.MeshPhysicalMaterial({
+      transmission: 0,
+      // wireframe: true,
     });
     const trigger = new THREE.Mesh(triggerGeometry, triggerMaterial);
+    trigger.material.visible=false;
     this.scene.add(trigger);
     const boxShape = new CANNON.Box(new CANNON.Vec3(4, 1, 1));
     const triggerBody = new CANNON.Body({ isTrigger: true });
@@ -1690,11 +1686,12 @@ class Game {
 
     // Trigger body End Game -> Navigate to next level!
     const triggerGeometryEnd = new THREE.BoxGeometry(4, 1, 1);
-    const triggerMaterialEnd = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
-      wireframe: true,
+    const triggerMaterialEnd = new THREE.MeshPhysicalMaterial({
+      transmission: 0,
+      // wireframe: true,
     });
     const triggerEnd = new THREE.Mesh(triggerGeometryEnd, triggerMaterialEnd);
+    trigger.material.visible=false;
     this.scene.add(triggerEnd);
     const boxShapee = new CANNON.Box(new CANNON.Vec3(4, 1, 1));
     const triggerBodyEnd = new CANNON.Body({ isTrigger: true });
@@ -1826,7 +1823,7 @@ class Game {
     for (let i = 0; i < this.maze.length; i++) {
       for (let j = 0; j < this.maze[i].length; j++) {
         if (
-          count % 6 == 0 &&
+          count % 15 == 0 &&
           !decorator.isDeadEnd(i, j) &&
           this.maze[i][j] != 1
         ) {
