@@ -69,6 +69,8 @@ class Game {
 
     this.exitTexture = exitTexture;
 
+    this.glassMaterial = null;
+
     this.maze = null; // The generated maze of the game
 
     this.exitDoor = {
@@ -319,6 +321,29 @@ class Game {
       map: map,
       depthTest: true,
       refractionRatio: 0.1,
+    });
+
+    const gnmap = loader.load(
+      "/textures/glassTexture/DirtWindowStains005_NRM_1K.jpg"
+    );
+    const gamap = loader.load(
+      "/textures/glassTexture/DirtWindowStains005_ALPHAMASKED_1K.png"
+    );
+    const ggmap = loader.load(
+      "/textures/glassTexture/DirtWindowStains005_GLOSS_1K.jpg"
+    );
+    nmap.wrapS = THREE.RepeatWrapping;
+    nmap.wrapT = THREE.RepeatWrapping;
+    this.glassMaterial = new THREE.MeshPhysicalMaterial({
+      metalness: 0,
+      roughness: 0.1,
+      transmission: 1,
+      thickness: 0.5,
+      normalMap: gnmap,
+      clearcoatNormalMap: gnmap,
+      alphaMap: gamap,
+      sheenColorMap: ggmap,
+      reflectivity: 1,
     });
 
     /*
@@ -840,7 +865,7 @@ class Game {
         if (event.key.toLowerCase() === "r") {
           event.preventDefault();
           // Calculate the distance between the character and sphereTwo
-          document.getElementById("deathText").textContent ="Loser";
+          document.getElementById("deathText").textContent = "Loser";
           window.location = this.restartLevel;
         }
       },
@@ -914,7 +939,12 @@ class Game {
       token.loaded = true;
       this.onTokenLoaded(token);
       this.setKeyPos(token);
-      console.log("This is the first token position " + token.object.position.x + " " + token.object.position.z);
+      console.log(
+        "This is the first token position " +
+          token.object.position.x +
+          " " +
+          token.object.position.z
+      );
       token.sound = new THREE.PositionalAudio(this.AudioListener);
       token.object.add(token.sound);
       new THREE.AudioLoader().load(
@@ -1078,7 +1108,7 @@ class Game {
     // console.log(
     //   `NPC Position : (${this.enemy.position.x},${this.enemy.position.y} , ${this.enemy.position.z})`
     //   );
-    
+
     this.controls.update(dt);
     this.stats.update();
 
@@ -1127,7 +1157,8 @@ class Game {
     if (this.playerLives <= 0 && !this.hasReloaded) {
       this.hasReloaded = true;
       //alert("You died!");
-      document.getElementById("deathText").textContent ="You died...reloading...";
+      document.getElementById("deathText").textContent =
+        "You died...reloading...";
       window.location = this.restartLevel;
     }
 
@@ -1656,7 +1687,7 @@ class Game {
       z: sz,
     };
     const geo = new THREE.BoxGeometry(size.x, size.y, size.z);
-    const cube = new THREE.Mesh(geo);
+    const cube = new THREE.Mesh(geo, this.glassMaterial);
     cube.position.set(px, py, pz);
     cube.setRotationFromAxisAngle(new CANNON.Vec3(0, 1, 0));
 
