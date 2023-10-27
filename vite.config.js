@@ -22,7 +22,6 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 main: path.resolve(__dirname, 'index.html'),
-                intro: path.resolve(__dirname, 'intro.html'),
                 FirstYear: path.resolve(__dirname, 'levels/First-Year/First-Year.html'),
                 SecondYear: path.resolve(__dirname, 'levels/Second-Year/Second-Year.html'),
                 ThirdYear: path.resolve(__dirname, 'levels/Third-Year/Third-Year.html'),

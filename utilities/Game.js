@@ -1092,12 +1092,6 @@ class Game {
       token.loaded = true;
       this.onTokenLoaded(token);
       this.setKeyPos(token);
-      console.log(
-        "This is the first token position " +
-          token.object.position.x +
-          " " +
-          token.object.position.z
-      );
       token.sound = new THREE.PositionalAudio(this.AudioListener);
       token.object.add(token.sound);
       
@@ -1127,7 +1121,6 @@ class Game {
 author:    EWTube0 (https://sketchfab.com/EWTube0)*/
     let loaderObj = new GLTFLoader();
     loaderObj.load("../../assets/models/characters/npc/scene.gltf", (gltf) => {
-      console.log("Spawning npc: " + this.npcId);
       let t_npc = new NPC();
       let result = t_npc.getNPC(this.npcId);
       t_npc.mesh = gltf.scene;
@@ -1194,7 +1187,6 @@ author:    EWTube0 (https://sketchfab.com/EWTube0)*/
 
   hurt() {
     this.currentHealth -= 1;
-    console.log(this.currentHealth);
     if (this.currentHealth < 0 && this.playerLives != 0) {
       if (this.playerLives == 3) {
         Heart1.style.display = "none";
@@ -1352,7 +1344,6 @@ author:    EWTube0 (https://sketchfab.com/EWTube0)*/
           if (!this.npcDeathNoise.isPlaying) {
             this.npcDeathNoise.play();
           }
-          console.log(this.npcDeathFrames[i]);
           this.enemy[i].translateY(0.5 * this.npcDeathFrames[i]);
           this.npcDeathFrames[i]++;
         } else {
@@ -1791,7 +1782,7 @@ author:    EWTube0 (https://sketchfab.com/EWTube0)*/
     this.visualise(this.maze); // Visualises the maze
     this.exit(); // Adds the exit door
     this.enter(); // Adds the entry door
-    // this.bounds(); // Adds invisible boundaries to the starting area
+    this.bounds(); // Adds invisible boundaries to the starting area
   }
 
   /**

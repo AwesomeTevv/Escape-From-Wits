@@ -23,13 +23,11 @@ class SecondYear extends Game {
     this._AddSecondTokens();
   }
   _AddSecondTokens() {
-    console.log("Adding Second Token!");
-
     /*source:    https://sketchfab.com/3d-models/batman-arkham-asylum-harley-quinn-46b5868a4a8d4a2b9389221a039b24b2
     author:    EWTube0 (https://sketchfab.com/EWTube0) */
     let loaderObj = new GLTFLoader();
     loaderObj.load(
-      "../../../assets/models/tokens/batman/scene.gltf",
+      "../../assets/models/tokens/batman/scene.gltf",
       (gltf) => {
         let token = new Token();
         token.object = gltf.scene;
@@ -43,12 +41,6 @@ class SecondYear extends Game {
         this.setKeyPos(token);
         this.totalKeys += 1;
         numTokensText.textContent=`${0}/${2}`;
-        console.log(
-          "This is the second token position " +
-            token.object.position.x +
-            " " +
-            token.object.position.z
-        );
         //token.object.position.set(this.player.position.x + 2, this.player.position.y, this.player.position.z );
         token.sound = new THREE.PositionalAudio(this.AudioListener);
         token.object.add(token.sound);

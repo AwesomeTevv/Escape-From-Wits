@@ -26,19 +26,17 @@ class ThirdYear extends Game {
     );
 
     this._AddSecondTokens();
-    this._PostProcessing();
+    // this._PostProcessing();
     this.nextLevel = "/~sjmsp/";
     this.restartLevel = "/~sjmsp/levels/Third-Year/Third-Year.html";
   }
 
   _AddSecondTokens() {
-    console.log("Adding Second Token!");
-
     /*source:    https://sketchfab.com/3d-models/scary-acoustic-guitar-c7022e2914a34189ab11ce5c1240249e
 author:    yotam92 (https://sketchfab.com/yotam92) */
     let loaderObj = new GLTFLoader();
     loaderObj.load(
-      "../../../assets/models/tokens/guitar/scene.gltf",
+      "../../assets/models/tokens/guitar/scene.gltf",
       (gltf) => {
         let token = new Token();
         token.object = gltf.scene;
@@ -68,7 +66,7 @@ author:    yotam92 (https://sketchfab.com/yotam92) */
     );
       /*source:    https://sketchfab.com/3d-models/graduation-86895e10baf54c46896823394766fb86
       author:    Cyberluna (https://sketchfab.com/cyberluna) */
-    loaderObj.load("../../../assets/models/tokens/grad/scene.gltf", (gltf) => {
+    loaderObj.load("../../assets/models/tokens/grad/scene.gltf", (gltf) => {
       let token2 = new Token();
       token2.object = gltf.scene;
       token2.object.scale.set(0.1, 0.1, 0.1);

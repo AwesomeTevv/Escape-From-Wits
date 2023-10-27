@@ -28,7 +28,7 @@ class FirstLevel extends Game {
     numTokensText.textContent = `${0}/${1}`;
 
     // Add Post-Processing Effects
-    // this._PostProcessing();
+    this._PostProcessing();
   }
 
   _PostProcessing() {
