@@ -765,6 +765,8 @@ class Game {
    */
 
   _BindShooting() {
+
+    /*source: https://sketchfab.com/3d-models/pso-1-1-sniper-scope-lowpoly-gameready-423a3bd9e2344f26b3aff82e0ae185d7 */
     let loaderObj = new GLTFLoader();
     loaderObj.load("../../assets/models/weapons/gun.glb", (gltf) => {
       var gunobj = gltf.scene;
@@ -999,7 +1001,7 @@ class Game {
         if (event.key.toLowerCase() === "r") {
           event.preventDefault();
           // Calculate the distance between the character and sphereTwo
-          document.getElementById("deathText").textContent = "Loser";
+          document.getElementById("deathText").textContent = "Restarting...";
           this.restartBoolean = true;
           //window.location = this.restartLevel;
         }
