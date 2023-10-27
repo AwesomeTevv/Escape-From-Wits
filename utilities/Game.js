@@ -425,6 +425,12 @@ class Game {
     this.gunNoise = new THREE.Audio(this.AudioListener);
     this.damageNoise = new THREE.Audio(this.AudioListener);
 
+    /**
+    * Asset Credit:
+    * Sound Effect: Tomb Door Open (Stone Scrape)
+    * Author: Pixabay.com
+    * Source: https://pixabay.com/sound-effects/tomb-door-open-stone-scrape-102748/
+    */
     new THREE.AudioLoader().load(
       "../../assets/sounds/tomb_door-95246.mp3",
       (buffer) => {
@@ -434,7 +440,13 @@ class Game {
         this.gateNoiseEntrance.setRefDistance(1);
       }
     );
-
+    
+    /**
+    * Asset Credit:
+    * Sound Effect: Tomb Door Open (Stone Scrape)
+    * Author: Pixabay.com
+    * Source: https://pixabay.com/sound-effects/tomb-door-open-stone-scrape-102748/
+    */
     new THREE.AudioLoader().load(
       "../../assets/sounds/tomb_door-95246.mp3",
       (buffer) => {
@@ -444,6 +456,13 @@ class Game {
         this.gateNoiseExit.setRefDistance(1);
       }
     );
+
+    /**
+    * Asset Credit:
+    * Sound Effect: Scary Creaking & Knocking Wood
+    * Author: Pixabay.com
+    * Source: https://pixabay.com/sound-effects/scary-creaking-knocking-wood-6103/
+    */
     new THREE.AudioLoader().load(
       "../../assets/sounds/scary-creaking-knocking-wood-6103.mp3",
       (buffer) => {
@@ -453,6 +472,13 @@ class Game {
         this.complimentNoise.play();
       }
     );
+
+    /**
+    * Asset Credit:
+    * Sound Effect: Vinyl Crackle (33rpm)
+    * Author: Pixabay.com
+    * Source: https://pixabay.com/sound-effects/vinyl-crackle-33rpm-6065/
+    */
     new THREE.AudioLoader().load(
       "../../assets/sounds/vinyl-crackle-33rpm-6065.mp3",
       (buffer) => {
@@ -462,6 +488,13 @@ class Game {
         this.staticNoise.play();
       }
     );
+
+    /**
+    * Asset Credit:
+    * Sound Effect: Thriller Ambient
+    * Author: Pixabay.com
+    * Source: https://pixabay.com/sound-effects/thriller-ambient-14563/
+    */
     new THREE.AudioLoader().load(
       "../../assets/sounds/thriller-ambient-14563.mp3",
       (buffer) => {
@@ -471,6 +504,13 @@ class Game {
         this.ambientNoise.play();
       }
     );
+
+    /**
+    * Asset Credit:
+    * Sound Effect: Demonic Woman Scream
+    * Author: Pixabay.com
+    * Source: https://pixabay.com/sound-effects/demonic-woman-scream-6333/
+    */
     new THREE.AudioLoader().load(
       "../../assets/sounds/demonic-woman-scream-6333.mp3",
       (buffer) => {
@@ -479,6 +519,13 @@ class Game {
         this.npcDeathNoise.setVolume(0.1);
       }
     );
+
+    /**
+    * Asset Credit:
+    * Sound Effect: Meaty Gunshot
+    * Author: Pixabay.com
+    * Source: https://pixabay.com/sound-effects/meaty-gunshot-101257/
+    */
     new THREE.AudioLoader().load(
       "../../assets/sounds/meaty-gunshot-101257.mp3",
       (buffer) => {
@@ -487,6 +534,13 @@ class Game {
         this.gunNoise.setVolume(0.25);
       }
     );
+
+    /**
+    * Asset Credit:
+    * Sound Effect: Heartbeat with Deep Breaths
+    * Author: Pixabay.com
+    * Source: https://pixabay.com/sound-effects/heartbeat-with-deep-breaths-55210/
+    */
     new THREE.AudioLoader().load(
       "../../assets/sounds/heartbeat-with-deep-breaths-55210.mp3",
       (buffer) => {
@@ -1044,6 +1098,13 @@ class Game {
       );
       token.sound = new THREE.PositionalAudio(this.AudioListener);
       token.object.add(token.sound);
+      
+    /**
+    * Asset Credit:
+    * Sound Effect: Wind Chimes & Bells
+    * Author: SoundsForYou (Pixabay.com)
+    * Source: https://pixabay.com/sound-effects/wind-chimes-bells-115747/
+    */
       new THREE.AudioLoader().load(
         "../../assets/sounds/wind-chimes-bells-115747.mp3",
         (buffer) => {
@@ -1086,6 +1147,13 @@ author:    EWTube0 (https://sketchfab.com/EWTube0)*/
 
       t_npc.sound = new THREE.PositionalAudio(this.AudioListener);
       t_npc.mesh.add(t_npc.sound);
+      
+      /**
+      * Asset Credit:
+      * Sound Effect: Banshie Scream
+      * Author: Pixabay.com
+      * Source: https://pixabay.com/sound-effects/banshie-scream-70413/
+      */
       new THREE.AudioLoader().load(
         "../../assets/sounds/banshie-scream-70413.mp3",
         (buffer) => {
@@ -1096,6 +1164,13 @@ author:    EWTube0 (https://sketchfab.com/EWTube0)*/
       );
       t_npc.humm = new THREE.PositionalAudio(this.AudioListener);
       t_npc.mesh.add(t_npc.humm);
+      
+      /**
+      * Asset Credit:
+      * Sound Effect: Ghostly Humming
+      * Author: Pixabay.com
+      * Source: https://pixabay.com/sound-effects/ghostly-humming-63204/
+      */
       new THREE.AudioLoader().load(
         "../../assets/sounds/ghostly-humming-63204.mp3",
         (buffer) => {
