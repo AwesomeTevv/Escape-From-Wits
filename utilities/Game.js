@@ -37,12 +37,12 @@ class Game {
    * @param {boolean} dynamicSkybox Whether or not the skybox should be dynamic
    */
   constructor(
-    skyboxImage,
-    wallTexture,
-    groundTexture,
-    bulletTexture,
-    exitTexture,
-    dynamicSkybox
+    skyboxImage, // Path to skybox image assets
+    wallTexture, // Path to the wall image assets
+    groundTexture, // Path to the ground image assets
+    bulletTexture, // Path to the bullet imagee assets
+    exitTexture, // Path to the entrance and exit image assets
+    dynamicSkybox // Whether or not the skybox should be dynamic
   ) {
     /**@type {THREE.Scene} */
     this.scene = null; // Main ThreeJS Scene
@@ -235,19 +235,19 @@ class Game {
     this.nextLevel = "/levels/Second-Year/First-Year.html";
 
     // Init funcions to build the game
-    this._Init();
-    this._BuildWorld();
-    this._BuildLights();
-    this._AddCharacter();
-    this._BindShooting();
-    this._AddMaze();
-    this._AddTriggerBoxes();
-    this._AddCharacterEquipment();
-    this._AddTokens();
-    this._DecorateLevel();
+    this._Init(); // Initialises the game world
+    this._BuildWorld(); // Builds the game world
+    this._BuildLights(); // Adds lighting to the game world
+    this._AddCharacter(); // Adds the playable character to the game world
+    this._BindShooting(); // Binds the shooting feature
+    this._AddMaze(); // Adds the maze to the game world
+    this._AddTriggerBoxes(); // Adds the trigger boxes for the game world
+    this._AddCharacterEquipment(); // Adds the character equipment to the game world
+    this._AddTokens(); // Add the tokens to the game world
+    this._DecorateLevel(); // Decorates the game world
 
     this._Animate = this._Animate.bind(this);
-    this._Animate();
+    this._Animate(); // Animates the game
 
     // Event listener for resizing the page
     window.addEventListener("resize", () => {
