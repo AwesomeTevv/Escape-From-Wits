@@ -945,7 +945,7 @@ class Game {
         if (event.key.toLowerCase() === "r") {
           event.preventDefault();
           // Calculate the distance between the character and sphereTwo
-          document.getElementById("deathText").textContent = "Loser";
+          document.getElementById("deathText").textContent = "Restarting...";
           this.restartBoolean = true;
           //window.location = this.restartLevel;
         }
