@@ -409,7 +409,7 @@ class Game {
       (buffer) => {
         this.gunNoise.setBuffer(buffer);
         this.gunNoise.setLoop(false);
-        this.gunNoise.setVolume(0.1);
+        this.gunNoise.setVolume(0.5);
       }
     );
     numTokensText.textContent = `${0} out of 1`;
