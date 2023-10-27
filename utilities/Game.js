@@ -394,6 +394,7 @@ class Game {
 
 
     this.gunNoise = new THREE.Audio(this.AudioListener);
+    this.damageNoise = new THREE.Audio(this.AudioListener);
 
     new THREE.AudioLoader().load(
       "../../assets/sounds/scary-creaking-knocking-wood-6103.mp3",
@@ -436,6 +437,14 @@ class Game {
         this.gunNoise.setBuffer(buffer);
         this.gunNoise.setLoop(false);
         this.gunNoise.setVolume(0.5);
+      }
+    );
+    new THREE.AudioLoader().load(
+      "../../assets/sounds/heartbeat-with-deep-breaths-55210.mp3",
+      (buffer) => {
+        this.damageNoise.setBuffer(buffer);
+        this.damageNoise.setLoop(false);
+        this.damageNoise.setVolume(0.7);
       }
     );
     
@@ -1093,7 +1102,6 @@ class Game {
       }
       this.currentHealth = this.healthSize;
       this.playerLives -= 1;
-      console.log("You lost a life!");
     }
   }
 
@@ -1178,7 +1186,9 @@ class Game {
           this.enemyBody[i].position.copy(this.enemy[i].position);
           if (this.player.position.distanceTo(this.enemyBody[i].position) < 3) {
             this.hurt();
+            this.damageNoise.play();
           } else {
+            this.damageNoise.stop();
           }
         }
       }
