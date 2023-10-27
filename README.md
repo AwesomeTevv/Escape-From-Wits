@@ -15,7 +15,7 @@ Welcome to "**Escape from Wits**," an exciting game developed by the JMSP team. 
 
 ## Game Description
 
-"Escape from Wits" is an immersive gaming experience that challenges players to use their wit and strategic thinking to navigate through a series of intriguing puzzles and challenges. The game is brought to life with the help of stunning 3D models and captivating sound effects.
+"**Escape from Wits**" is an immersive gaming experience that challenges players to use their wit and strategic thinking to navigate through a series of intriguing puzzles and challenges. The game is brought to life with the help of stunning 3D models and captivating sound effects.
 
 ## Credits
 
