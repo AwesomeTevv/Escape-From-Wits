@@ -24,6 +24,9 @@ class SecondYear extends Game {
   }
   _AddSecondTokens() {
     console.log("Adding Second Token!");
+
+    /*source:    https://sketchfab.com/3d-models/batman-arkham-asylum-harley-quinn-46b5868a4a8d4a2b9389221a039b24b2
+    author:    EWTube0 (https://sketchfab.com/EWTube0) */
     let loaderObj = new GLTFLoader();
     loaderObj.load(
       "../../../assets/models/tokens/batman/scene.gltf",
