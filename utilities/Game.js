@@ -1162,7 +1162,7 @@ class Game {
           this.entityManager[i].update(dt);
           if (pos.z <= 5 * (19 - 10)) {
             this.animateGateOpen = false;
-            if (this.frameNumber > 10) {
+            if (this.frameNumber > 50) {
               this.npcArr[i].regeneratePath(
                 this.maze,
                 this.player,
