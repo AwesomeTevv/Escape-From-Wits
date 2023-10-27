@@ -1,6 +1,5 @@
 // ThreeJS Imports
 import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "three/examples/jsm/libs/stats.module";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
@@ -20,10 +19,6 @@ import { NPC } from "./NPC";
 import CannonUtils from "./cannonUtils";
 import { Decorator } from "./Decorator";
 
-//Import Shaders
-import { vhsScanlines } from "../assets/Shaders/vhsScanlines";
-import { vhsStatic } from "../assets/Shaders/vhsStatic";
-
 /**
  * Base game class.
  *
@@ -37,9 +32,9 @@ class Game {
    *
    * @param {string} skyboxImage Path to the skybox image assets
    * @param {string} wallTexture Path to the wall texture image assets
-   * @param {string} groundTexture Path to the wall texture image assets
-   * @param {string} exitTexture Path to the wall texture image assets
-   * @param {boolean} dynamicSkybox Path to the wall texture image assets
+   * @param {string} groundTexture Path to the ground texture image assets
+   * @param {string} exitTexture Path to the exit texture image assets
+   * @param {boolean} dynamicSkybox Whether or not the skybox should be dynamic
    */
   constructor(
     skyboxImage,
@@ -49,65 +44,119 @@ class Game {
     exitTexture,
     dynamicSkybox
   ) {
-    this.scene = null; // ThreeJS Scene
-    this.minimapScene = null;
-    this.scopeScene = null;
+    /**@type {THREE.Scene} */
+    this.scene = null; // Main ThreeJS Scene
+    /**@type {THREE.Scene} */
+    this.minimapScene = null; // Minimap ThreeJS Scene
+    /**@type {THREE.Scene} */
+    this.scopeScene = null; // "Thermal" Scope ThreeJS Scene
+
+    /**@type {THREE.Renderer} */
     this.renderer = null; // ThreeJS Renderer
-    this.camera = null; // ThreeJS Perspective Camera for First Person View
-    this.composer = null;
-    this.mapCamera = null; // ThreeJS Orthographic Camera for the Minimap
+    /**@type {THREE.Renderer} */
     this.rendererMap = null; // The Minimap at the top right of the screen
+    /**@type {THREE.Renderer} */
     this.renderScope = null;
+
+    /**@type {THREE.PerspectiveCamera} */
+    this.camera = null; // ThreeJS Perspective Camera for First Person View
+    /**@type {THREE.OrthographicCamera} */
+    this.mapCamera = null; // ThreeJS Orthographic Camera for the Minimap
+
+    /**@type {PointerLockControlsCannon} */
     this.controls = null; // Character/FPS controls
+
+    /**@type {CANNON.World} */
     this.world = null; // CannonJS Physics World
+
+    /**@type {Stats} */
     this.stats = null; // ThreeJS Addon: Stats -- Appears at the top left of the screen
+
+    /**@type {THREE.Mesh} */
     this.skybox = null; // The skybox for the game
+    /**@type {string} */
     this.skyboxImage = skyboxImage; // Skybox image path
+    /**@type {boolean} */
     this.dynamicSkybox = dynamicSkybox;
 
-    this.wallMaterial = null; // ThreeJS material for the walls
+    /**@type {THREE.EffectComposer} */
+    this.composer = null;
+
+    /**@type {string} */
     this.wallTexture = wallTexture; // Path to the wall texture assets
+    /**@type {THREE.Material} */
+    this.wallMaterial = null; // ThreeJS material for the walls
+    /**@type {number} */
     this.wallHeight = 50; // Height of the maze walls -- Adjust accordingly to the feel of the game
 
+    /**@type {string} */
     this.groundTexture = groundTexture;
+    /**@type {string} */
     this.bulletTexture = bulletTexture;
+    /**@type {string} */
     this.exitTexture = exitTexture;
 
+    /**@type {THREE.Mesh} */
     this.glassMaterial = null;
 
+    /**@type {number[][]} */
     this.maze = null; // The generated maze of the game
 
+    /**@type {{mesh: THREE.Mesh, body: CANNON.Body}} */
     this.exitDoor = {
       mesh: null, // The mesh of the exit door
       body: null, // The body of the exit door
     };
 
+    /**@type {{mesh: THREE.Mesh, body: CANNON.Body}} */
     this.entryDoor = {
       mesh: null, // The mesh of the exit door
       body: null, // The body of the exit door
     };
-    this.gateNumber = 0;
-    this.gateFallNumber = 0;
-    this.animateGateOpen = false;
 
-    this.frameNumber = 0;
+    /**@type {number} */
+    this.gateNumber = 0; // Frame number for animating the entrance and exit walls upwards
+    /**@type {number} */
+    this.gateFallNumber = 0; // Frame number for animating the entrance wall downwards
+    /**@type {boolean} */
+    this.animateGateOpen = false; // boolean indicating whether or not to animate the gate
 
+    /**@type {number} */
+    this.frameNumber = 0; // Stores the current frame number
+
+    /**@type {CANNON.Body[]} */
     this.ballBodies = []; // List storing the physics bodies of the projectile balls
-    this.ballMeshes = []; // List storing the meshes of the projectile balls
-    this.scopeBallMeshes = [];
-    this.lastCallTime = 0;
+    /**@type {THREE.Mesh[]} */
+    this.ballMeshes = []; // List storing the meshes of the projectile balls for the main scene
+    /**@type {THREE.Mesh[]} */
+    this.scopeBallMeshes = []; // List storing the meshes of the projectile balls for the scope scene
 
-    this.player = null;
-    this.playerLives = 3;
-    this.healthSize = 100;
-    this.currentHealth = this.healthSize;
+    /**@type {number} */
+    this.lastCallTime = 0; // Stores the last time of call
 
-    this.gun = null;
-    this.torch = null;
-    this.torchTarget = null;
-    this.numberOfKeys = 0;
-    this.totalKeys = 1;
-    this.tokens = [];
+    /**@type {CANNON.Body} */
+    this.player = null; // Cannon-es physics body of the player
+    /**@type {number} */
+    this.playerLives = 3; // Amount of lives the player has
+    /**@type {number} */
+    this.healthSize = 100; // Maximum health of the player
+    /**@type {number} */
+    this.currentHealth = this.healthSize; // Set the current health to the maximum
+
+    /**@type {Token} */
+    this.gun = null; // Stores all the information about the gun
+
+    /**@type {THREE.SpotLight} */
+    this.torch = null; // Torch for the game
+    /**@type {THREE.Object3D} */
+    this.torchTarget = null; // Target for the torch to look at
+
+    /**@type {number} */
+    this.numberOfKeys = 0; // The number of keys the player currently has
+    /**@type {number} */
+    this.totalKeys = 1; // The total number of keys present in the level
+    /**@type {Token[]} */
+    this.tokens = []; // List storing all the tokens of the game
 
     this.AudioListener = null;
     this.staticNoise = null;
@@ -1181,8 +1230,10 @@ class Game {
           this.enemy[i].position.copy(this.vehicle[i].position);
           this.scopeEnemy[i].position.copy(this.enemy[i].position);
           this.enemyBody[i].position.copy(this.enemy[i].position);
-          if(this.enemyBody[i] != null){
-            if (this.player.position.distanceTo(this.enemyBody[i].position) < 3) {
+          if (this.enemyBody[i] != null) {
+            if (
+              this.player.position.distanceTo(this.enemyBody[i].position) < 3
+            ) {
               this.damageNoise.play();
               this.hurt();
             } else {
@@ -1657,7 +1708,7 @@ class Game {
       // wireframe: true,
     });
     const trigger = new THREE.Mesh(triggerGeometry, triggerMaterial);
-    trigger.material.visible=false;
+    trigger.material.visible = false;
     this.scene.add(trigger);
     const boxShape = new CANNON.Box(new CANNON.Vec3(4, 1, 1));
     const triggerBody = new CANNON.Body({ isTrigger: true });
@@ -1691,7 +1742,7 @@ class Game {
       // wireframe: true,
     });
     const triggerEnd = new THREE.Mesh(triggerGeometryEnd, triggerMaterialEnd);
-    trigger.material.visible=false;
+    trigger.material.visible = false;
     this.scene.add(triggerEnd);
     const boxShapee = new CANNON.Box(new CANNON.Vec3(4, 1, 1));
     const triggerBodyEnd = new CANNON.Body({ isTrigger: true });
