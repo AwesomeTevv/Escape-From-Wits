@@ -840,7 +840,7 @@ class Game {
         if (event.key.toLowerCase() === "r") {
           event.preventDefault();
           // Calculate the distance between the character and sphereTwo
-          document.getElementById("deathText").textContent ="Loser";
+          document.getElementById("deathText").textContent = "Loser";
           window.location = this.restartLevel;
         }
       },
@@ -914,7 +914,12 @@ class Game {
       token.loaded = true;
       this.onTokenLoaded(token);
       this.setKeyPos(token);
-      console.log("This is the first token position " + token.object.position.x + " " + token.object.position.z);
+      console.log(
+        "This is the first token position " +
+          token.object.position.x +
+          " " +
+          token.object.position.z
+      );
       token.sound = new THREE.PositionalAudio(this.AudioListener);
       token.object.add(token.sound);
       new THREE.AudioLoader().load(
@@ -1078,7 +1083,7 @@ class Game {
     // console.log(
     //   `NPC Position : (${this.enemy.position.x},${this.enemy.position.y} , ${this.enemy.position.z})`
     //   );
-    
+
     this.controls.update(dt);
     this.stats.update();
 
@@ -1127,7 +1132,8 @@ class Game {
     if (this.playerLives <= 0 && !this.hasReloaded) {
       this.hasReloaded = true;
       //alert("You died!");
-      document.getElementById("deathText").textContent ="You died...reloading...";
+      document.getElementById("deathText").textContent =
+        "You died...reloading...";
       window.location = this.restartLevel;
     }
 
@@ -1655,8 +1661,26 @@ class Game {
       y: sy,
       z: sz,
     };
+    const textureLoader = new THREE.TextureLoader();
+    const nmap = textureLoader.load(
+      "/textures/glassTexture/DirtWindowStains005_NRM_1K.jpg"
+    );
+    const amap = textureLoader.load(
+      "/textures/glassTexture/DirtWindowStains005_ALPHAMASKED_1K.png"
+    );
+    nmap.wrapS = THREE.RepeatWrapping;
+    nmap.wrapT = THREE.RepeatWrapping;
+    const material = new THREE.MeshPhysicalMaterial({
+      metalness: 0,
+      roughness: 0.1,
+      transmission: 1,
+      thickness: 0.5,
+      normalMap: nmap,
+      clearcoatNormalMap: nmap,
+      alphaMap: amap,
+    });
     const geo = new THREE.BoxGeometry(size.x, size.y, size.z);
-    const cube = new THREE.Mesh(geo);
+    const cube = new THREE.Mesh(geo, material);
     cube.position.set(px, py, pz);
     cube.setRotationFromAxisAngle(new CANNON.Vec3(0, 1, 0));
 
