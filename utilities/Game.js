@@ -266,9 +266,8 @@ class Game {
    */
   _Init() {
     this.scene = new THREE.Scene();
-    // this.scene.background = new THREE.Color(0x88ccee);
     this.scene.background = new THREE.Color(0x000000);
-    this.scene.fog = new THREE.Fog(0x000000, 1, 10); // Commented out for development purposes
+    this.scene.fog = new THREE.Fog(0x000000, 1, 10);
 
     this.minimapScene = new THREE.Scene();
     this.minimapScene.background = new THREE.Color(0x000011);
@@ -281,7 +280,6 @@ class Game {
       canvas: scopeCanvas,
       antialias: true,
     });
-    // this.renderScope.setScissorTest(true);
     this.renderScope.setPixelRatio(window.devicePixelRatio);
     this.renderScope.setSize(
       window.innerHeight - 100,
@@ -305,15 +303,6 @@ class Game {
     );
     this.camera.position.set(0, 0, 0);
 
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.listenToKeyEvents(window); // optional
-    this.controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-    this.controls.dampingFactor = 0.05;
-    this.controls.screenSpacePanning = false;
-    this.controls.minDistance = 100;
-    this.controls.maxDistance = 500;
-    this.controls.maxPolarAngle = Math.PI / 2;
-
     this.mapCamera = new THREE.OrthographicCamera(
       window.innerWidth / -25, // Left
       window.innerWidth / 25, // Right
@@ -322,7 +311,6 @@ class Game {
       -5000, // Near
       10000 // Far
     );
-    // mapCamera.up = new THREE.Vector3(0,0,-1);
     this.mapCamera.zoom = 3;
     this.mapCamera.lookAt(new THREE.Vector3(0, -1, 0));
     this.mapCamera.position.set(0, 5, 0);
@@ -343,12 +331,6 @@ class Game {
     this.scopeEnemy.push(scopeEnemyMesh);
     this.scopeEnemy.push(scopeEnemyMesh);
     this.scopeEnemy.push(scopeEnemyMesh);
-
-    //Shader uniform composer
-    this.shaderTime = 0.0;
-    this.vhsUniforms = vhsScanlines.uniforms;
-    this.staticUniforms = vhsStatic.uniforms;
-    //document.getElementById('overlay').style.display = 'block';
 
     this.stats = new Stats();
     this.stats.domElement.style.position = "absolute";
@@ -617,16 +599,6 @@ class Game {
    * Initial lights comprise of a single hemisphere light and the ambient lighting for the game.
    */
   _BuildLights() {
-    // const dirLight1 = new THREE.DirectionalLight(0xffffff, 3);
-    // dirLight1.position.set(1, 1, 1);
-    // dirLight1.castShadow = true;
-    // this.scene.add(dirLight1);
-
-    // const dirLight2 = new THREE.DirectionalLight(0x002288, 3);
-    // dirLight2.position.set(-1, -1, -1);
-    // dirLight2.castShadow = true;
-    // this.scene.add(dirLight2);
-
     const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.5);
     this.scene.add(hemisphereLight);
 
@@ -689,7 +661,6 @@ class Game {
   }
 
   _AddCharacterEquipment() {
-    let gunlight;
     this.torch = new THREE.SpotLight(
       0xffffff,
       200.0,
@@ -698,7 +669,6 @@ class Game {
       0.5,
       2
     );
-    gunlight = new THREE.SpotLight(0xffffff, 10.0, 1);
     this.torch.castShadow = true;
 
     this.torchTarget = new THREE.Object3D();
@@ -801,15 +771,12 @@ class Game {
       }
 
       if (event.button === 2) {
-        //console.log("clicked");
         event.preventDefault();
 
         if (this.isRightMouseDown) {
           //Zoom in when the right mouse button is held down
           this.zoomOut();
           this.isRightMouseDown = false;
-          //console.log("zoom in");
-
           scope.style.display = "none";
           zoomedImage.style.display = "none";
           this.gun.object.position.z = this.gun.object.position.z - 100;
@@ -820,7 +787,6 @@ class Game {
           // Return to normal view when the right mouse button is released
           this.zoomIn();
           this.isRightMouseDown = true;
-          //console.log("zoom out");
           this.gun.object.position.z = this.gun.object.position.z + 100;
         }
       }
@@ -834,11 +800,6 @@ class Game {
       ) {
         return;
       }
-
-      const material = new THREE.MeshPhongMaterial({
-        color: 0xffffff,
-        flatShading: true,
-      });
       const ballBody = new CANNON.Body({ mass: 1 });
       ballBody.addShape(ballShape);
       const ballMesh = new THREE.Mesh(ballGeometry, ballMaterial);
@@ -894,11 +855,9 @@ class Game {
           if (e.body.userData.numberLives) {
             if (e.body.userData.numberLives > 1) {
               let id = e.body.userData.meshId;
-              console.log("Shot at npc id: " + id);
               e.body.userData.numberLives -= 1;
             } else {
               let id = e.body.userData.meshId;
-              console.log("Killed npc id: " + id);
               if (this.enemyBody[id] != null) {
                 this.world.removeBody(this.enemyBody[id]);
                 this.enemyBody[id] = null;
@@ -972,8 +931,6 @@ class Game {
             this.gun.object.position.x = this.gun.object.position.x + 0.2;
             this.gun.object.rotation.x = Math.PI / 15;
             this.gun.object.rotation.y = Math.PI / 40;
-            // this.gun.object.scale.x = 0.9999;
-            // this.gun.object.scale.y = 0.9999;
             this.gun.object.scale.z = 2;
             this.animateGateOpen = true;
           }
