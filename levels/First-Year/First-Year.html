@@ -51,6 +51,9 @@
         transform: translate(-50%, -50%);
         /* background-color: seashell; */
       }
+      
+      
+      
 
       .dot {
         height: 10px;
@@ -288,7 +291,10 @@
     
 
     <script type="module" src="/levels/First-Year/First-Year.js"></script>
+    <img id="zoomedImage" src="../../assets/images/scope 3.png" class="centered-image" style="max-width: 100%; max-height: 100%; display: none;">
+
     <canvas id="scope"></canvas>
+
 
     <script>
       // Function to show game mechanics when the user presses Enter
@@ -299,9 +305,17 @@
           instructions.style.display = "none";
         }
       });
+      
+      window.onload = function() { 
+            var canvas = document.getElementById("scope"); 
+            var context = canvas.getContext("2d"); 
+            var img = document.getElementById("zoomedImage"); 
+            context.drawImage(img, 10, 6); 
+        }; 
+      
     </script>
-    <div id="overlay" style="display: none; pointer-events: none">
+    <!-- <div id="overlay" style="display: none; pointer-events: none">
       <img src="../../assets/images/VCR-Overlay.png" alt="Overlay Image" />
-    </div>
+    </div> -->
   </body>
 </html>
