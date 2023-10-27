@@ -1221,7 +1221,6 @@ author:    EWTube0 (https://sketchfab.com/EWTube0)*/
    */
   _Animate() {
     requestAnimationFrame(this._Animate);
-    console.log(this.renderer.info.render.calls);
     if (this.dynamicSkybox) {
       this.skybox.rotation.x += 0.001;
       this.skybox.rotation.y += 0.001;
@@ -1621,7 +1620,7 @@ author:    EWTube0 (https://sketchfab.com/EWTube0)*/
     let meshCount = 0;
     const geometry = new THREE.BoxGeometry(5, this.wallHeight, 5);
     const matrix = new THREE.Matrix4();
-    const mesh = new THREE.InstancedMesh(geometry,this.wallMaterial,50);
+    const mesh = new THREE.InstancedMesh(geometry,this.wallMaterial,40);
     const minimapMaterial = new THREE.MeshBasicMaterial({ color: 0x000088 });
 
     for (let i = -50; i < 50; i += 5) {
@@ -1792,7 +1791,7 @@ author:    EWTube0 (https://sketchfab.com/EWTube0)*/
     this.visualise(this.maze); // Visualises the maze
     this.exit(); // Adds the exit door
     this.enter(); // Adds the entry door
-    this.bounds(); // Adds invisible boundaries to the starting area
+    // this.bounds(); // Adds invisible boundaries to the starting area
   }
 
   /**
