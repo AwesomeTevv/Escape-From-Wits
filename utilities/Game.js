@@ -173,11 +173,11 @@ class Game {
     /**@type {THREE.Audio} */
     this.npcDeathNoise = null; // The sound the NPC makes at random point. Positional audio
     /**@type {THREE.Audio} */
-    this.gateNoiseEntrance = null;
+    this.gateNoiseEntrance = null; // The sound the entrance gate makes when moving. Positional audio
     /**@type {THREE.Audio} */
-    this.gateNoiseExit = null;
+    this.gateNoiseExit = null; // The sound the entrance gate makes when moving. Positional audio
     /**@type {THREE.Audio} */
-    this.gunNoise = null;
+    this.gunNoise = null; // The sound the gun makes when shooting
 
     /**@type {ConvexObjectBreaker} */
     this.convexObjectBreaker = null; // Convex Object breaker
@@ -200,32 +200,41 @@ class Game {
     this.zoomFactor = 1.2; // Amount the camera zooms in by when scoping
 
     /*
-     * YUKA Variables
+     * NPC Variables
      */
-    this.enemyBody = [];
-    /** @type[] THREE.Mesh */
-    this.enemy = [];
-    /** @type[] THREE.Mesh */
-    this.scopeEnemy = [];
-    /** @type[] YUKA.Vehicle */
-    this.vehicle = [];
-    /** @type[] YUKA.EntityManager */
-    this.entityManager = [];
-    /** @type[]  YUKA.Time*/
+    /**@type {CANNON.Body[]} */
+    this.enemyBody = []; // A list storing the bodies of all enemy NPC's
+    /** @type {THREE.Mesh[]} */
+    this.enemy = []; // A list storing the meshes of all enemy NPC's
+    /** @type {THREE.Mesh[]} */
+    this.scopeEnemy = []; // A list storing the meshes of all enemy NPC's for the thermal vision scope
+    /** @type {YUKA.Vehicle[]} */
+    this.vehicle = []; // A list storing the YUKA vehicles of all enemy NPC's
+    /** @type {YUKA.EntityManager[]} */
+    this.entityManager = []; // A list storing the entity managers of all enemy NPC's
+    /** @type {YUKA.Time[]}*/
     this.time = [];
-    /** @type[] YUKA.Path */
-    this.enemyPath = [];
+    /** @type {YUKA.Path[]} */
+    this.enemyPath = []; // Stores the paths of the enemy NPC's
 
-    /** @type[] NPC */
-    this.npcArr = [];
-    this.npcDeathFrames = [0, 0, 0];
-    this.npcAnimateDeath = [false, false, false];
-    this.npcId = 0;
+    /** @type {NPC[]} */
+    this.npcArr = []; // A list that stores all the NPC's
+    /**@type {Number[]} */
+    this.npcDeathFrames = [0, 0, 0]; // A list that stores the death frames for each NPC
+    /**@type {Boolean[]} */
+    this.npcAnimateDeath = [false, false, false]; // A list that stores whether or we animate the deaths of each respective NPC
+    /**@type {Number} */
+    this.npcId = 0; // The ID of the NPC
+    /**@type {boolean} */
+    this.hasReloaded = false; // Indicates whether the player has reloaded
 
-    this.hasReloaded = false;
-
+    /**@type {boolean} */
     this.liftWall = false; // Whether or not to lift the exit wall
+
+    /**@type {string} */
     this.nextLevel = "/levels/Second-Year/First-Year.html";
+
+    // Init funcions to build the game
     this._Init();
     this._BuildWorld();
     this._BuildLights();
@@ -237,18 +246,10 @@ class Game {
     this._AddTokens();
     this._DecorateLevel();
 
-    // this._CreateBreakableObject(
-    //   2,
-    //   2,
-    //   2,
-    //   this.player.position.x,
-    //   this.player.position.y,
-    //   this.player.position.z + 5
-    // );
-    // this.checkProximity();
-
     this._Animate = this._Animate.bind(this);
     this._Animate();
+
+    // Event listener for resizing the page
     window.addEventListener("resize", () => {
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
