@@ -70,9 +70,7 @@ class Game {
     this.wallHeight = 1000; // Height of the maze walls -- Adjust accordingly to the feel of the game
 
     this.groundTexture = groundTexture;
-
     this.bulletTexture = bulletTexture;
-
     this.exitTexture = exitTexture;
 
     this.glassMaterial = null;
@@ -116,6 +114,7 @@ class Game {
     this.ambientNoise = null;
     this.complimentNoise = null;
     this.npcDeathNoise = null;
+    this.gunNoise = null;
     this.notEnoughKeys = false;
     this.timerKeys = 0;
     this.convexObjectBreaker = null;
@@ -368,6 +367,7 @@ class Game {
     this.ambientNoise = new THREE.Audio(this.AudioListener);
     this.complimentNoise = new THREE.Audio(this.AudioListener);
     this.npcDeathNoise = new THREE.Audio(this.AudioListener);
+    this.gunNoise = new THREE.Audio(this.AudioListener);
 
     new THREE.AudioLoader().load(
       "../../assets/sounds/scary-creaking-knocking-wood-6103.mp3",
@@ -404,7 +404,15 @@ class Game {
         this.npcDeathNoise.setVolume(0.1);
       }
     );
-   
+    new THREE.AudioLoader().load(
+      "../../assets/sounds/Suppressed-Bushmaster-ACR-5.56-Close-Gunshot-A-www.fesliyanstudios.com.mp3",
+      (buffer) => {
+        this.gunNoise.setBuffer(buffer);
+        this.gunNoise.setLoop(false);
+        this.gunNoise.setVolume(0.1);
+      }
+    );
+    numTokensText.textContent = `${0} out of 1`;
     this.convexObjectBreaker = new ConvexObjectBreaker();
   }
 
@@ -630,7 +638,7 @@ class Game {
    * Sets the velocity of the projectiles.
    * Gets the direction that the projectile needs to be shot at.
    */
-  
+
   _BindShooting() {
     let loaderObj = new GLTFLoader();
     loaderObj.load("../../assets/models/weapons/gun.glb", (gltf) => {
@@ -774,7 +782,7 @@ class Game {
       ballBody.position.set(x, y, z);
       ballMesh.position.copy(ballBody.position);
       scopeBallMesh.position.copy(ballBody.position);
-
+      this.gunNoise.play();
       ballBody.addEventListener("collide", (e) => {
         if (e.body.userData) {
           if (e.body.userData.numberLives) {
@@ -841,7 +849,7 @@ class Game {
               this.tokens[tokenid].object.rotation.y = 0;
               this.scene.remove(this.tokens[tokenid].object);
               this.numberOfKeys += 1;
-              numTokensText.textContent=`${this.numberOfKeys} out of ${this.totalKeys}`;
+              numTokensText.textContent = `${this.numberOfKeys} out of ${this.totalKeys}`;
               this.tokens[tokenid].sound.stop();
             }
           }
