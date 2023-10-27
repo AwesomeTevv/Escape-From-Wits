@@ -37,7 +37,7 @@ export default defineConfig({
             // Source directory for your assets
             base: 'assets',
             // Output directory
-            outputDir: 'dist/assets',
+            outputDir: 'assets',
         },
     },
 
