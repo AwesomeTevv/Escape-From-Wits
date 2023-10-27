@@ -157,28 +157,47 @@ class Game {
     this.totalKeys = 1; // The total number of keys present in the level
     /**@type {Token[]} */
     this.tokens = []; // List storing all the tokens of the game
-
-    this.AudioListener = null;
-    this.staticNoise = null;
-    this.ambientNoise = null;
-    this.complimentNoise = null;
-    this.npcDeathNoise = null;
-    this.gateNoiseEntrance = null;
-    this.gateNoiseExit = null;
-    this.gunNoise = null;
+    /**@type {boolean} */
     this.notEnoughKeys = false;
+    /**@type {number} */
     this.timerKeys = 0;
-    this.convexObjectBreaker = null;
-    this.breakableMeshes = [];
-    this.breakableBodies = [];
-    this.breakableMeshID = 0;
 
-    this.restartBoolean = false;
-    this.restartCounter = 0;
+    /**@type {THREE.AudioListener} */
+    this.AudioListener = null; // Handles all the audio for the game
+    /**@type {THREE.Audio} */
+    this.staticNoise = null; // The static noise that is present at all times of the game
+    /**@type {THREE.Audio} */
+    this.ambientNoise = null; // The ambient noise that is present at all times of the game
+    /**@type {THREE.Audio} */
+    this.complimentNoise = null; // The compliment noise that is present at all times of the game
+    /**@type {THREE.Audio} */
+    this.npcDeathNoise = null; // The sound the NPC makes at random point. Positional audio
+    /**@type {THREE.Audio} */
+    this.gateNoiseEntrance = null;
+    /**@type {THREE.Audio} */
+    this.gateNoiseExit = null;
+    /**@type {THREE.Audio} */
+    this.gunNoise = null;
 
-    //Variable for scoping in
-    this.isRightMouseDown = false;
-    this.zoomFactor = 1.2;
+    /**@type {ConvexObjectBreaker} */
+    this.convexObjectBreaker = null; // Convex Object breaker
+    /**@type {THREE.Mesh[]} */
+    this.breakableMeshes = []; // A list that stores the meshes of all the objects that can break
+    /**@type {CANNON.Body[]} */
+    this.breakableBodies = []; // A list that stores the bodies of all the objects that can break
+    /**@type {number} */
+    this.breakableMeshID = 0; // The ID of the breakable mesh
+
+    /**@type {boolean} */
+    this.restartBoolean = false; // Indicates whether or not to restart
+    /** @type {number}*/
+    this.restartCounter = 0; // The number of times the player has restarted
+
+    //Variables for scoping in
+    /**@type {boolean} */
+    this.isRightMouseDown = false; // Indicates whether the player is right-clicking their mouse
+    /**@type {number} */
+    this.zoomFactor = 1.2; // Amount the camera zooms in by when scoping
 
     /*
      * YUKA Variables
