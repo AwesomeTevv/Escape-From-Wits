@@ -70,9 +70,7 @@ class Game {
     this.wallHeight = 1000; // Height of the maze walls -- Adjust accordingly to the feel of the game
 
     this.groundTexture = groundTexture;
-
     this.bulletTexture = bulletTexture;
-
     this.exitTexture = exitTexture;
 
     this.glassMaterial = null;
@@ -108,6 +106,7 @@ class Game {
     this.torch = null;
     this.torchTarget = null;
     this.numberOfKeys = 0;
+    this.totalKeys = 1;
     this.tokens = [];
 
     this.AudioListener = null;
@@ -117,6 +116,7 @@ class Game {
     this.npcDeathNoise = null;
     this.gateNoiseEntrance = null;
     this.gateNoiseExit = null;
+    this.gunNoise = null;
     this.notEnoughKeys = false;
     this.timerKeys = 0;
     this.convexObjectBreaker = null;
@@ -380,7 +380,8 @@ class Game {
         this.gateNoiseEntrance.setRefDistance(1);
       }
     );
-    
+        this.gunNoise = new THREE.Audio(this.AudioListener);
+
     new THREE.AudioLoader().load(
       "../../assets/sounds/scary-creaking-knocking-wood-6103.mp3",
       (buffer) => {
@@ -414,6 +415,14 @@ class Game {
         this.npcDeathNoise.setBuffer(buffer);
         this.npcDeathNoise.setLoop(false);
         this.npcDeathNoise.setVolume(0.1);
+      }
+    );
+    new THREE.AudioLoader().load(
+      "../../assets/sounds/Suppressed-Bushmaster-ACR-5.56-Close-Gunshot-A-www.fesliyanstudios.com.mp3",
+      (buffer) => {
+        this.gunNoise.setBuffer(buffer);
+        this.gunNoise.setLoop(false);
+        this.gunNoise.setVolume(0.5);
       }
     );
     numTokensText.textContent = `${0} out of 1`;
@@ -642,6 +651,7 @@ class Game {
    * Sets the velocity of the projectiles.
    * Gets the direction that the projectile needs to be shot at.
    */
+
   _BindShooting() {
     let loaderObj = new GLTFLoader();
     loaderObj.load("../../assets/models/weapons/gun.glb", (gltf) => {
@@ -785,7 +795,7 @@ class Game {
       ballBody.position.set(x, y, z);
       ballMesh.position.copy(ballBody.position);
       scopeBallMesh.position.copy(ballBody.position);
-
+      this.gunNoise.play();
       ballBody.addEventListener("collide", (e) => {
         if (e.body.userData) {
           if (e.body.userData.numberLives) {
@@ -850,26 +860,9 @@ class Game {
               this.tokens[tokenid].toggled = true;
               this.tokens[tokenid].object.position.set(0, 0, 0);
               this.tokens[tokenid].object.rotation.y = 0;
-              this.camera.add(this.tokens[tokenid].object);
-              this.tokens[tokenid].object.position.x =
-                this.tokens[tokenid].object.position.x +
-                this.tokens[tokenid].toggledOffsetX;
-              this.tokens[tokenid].object.position.y =
-                this.tokens[tokenid].object.position.y +
-                this.tokens[tokenid].toggledOffsetY;
-              this.tokens[tokenid].object.position.z =
-                this.tokens[tokenid].object.position.z +
-                this.tokens[tokenid].toggledOffsetZ;
-              this.tokens[tokenid].object.rotation.y =
-                this.tokens[tokenid].toggledRotation;
-              this.tokens[tokenid].object.scale.x =
-                this.tokens[tokenid].toggledScale.x;
-              this.tokens[tokenid].object.scale.y =
-                this.tokens[tokenid].toggledScale.y;
-              this.tokens[tokenid].object.scale.z =
-                this.tokens[tokenid].toggledScale.z;
+              this.scene.remove(this.tokens[tokenid].object);
               this.numberOfKeys += 1;
-              numTokensText.textContent = `${this.numberOfKeys} out of 1`;
+              numTokensText.textContent = `${this.numberOfKeys} out of ${this.totalKeys}`;
               this.tokens[tokenid].sound.stop();
             }
           }
