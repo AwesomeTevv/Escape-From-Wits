@@ -89,7 +89,7 @@ class ThirdYear extends Game {
       this.onTokenLoaded(token2);
       this.setKeyPos(token2);
       this.totalKeys += 1;
-      numTokensText.textContent=`${0} out of  ${this.totalKeys}`;
+      numTokensText.textContent=`${0}/${this.totalKeys}`;
       //token.object.position.set(this.player.position.x - 2, this.player.position.y, this.player.position.z );
       console.log(
         "This is the third token position " +
