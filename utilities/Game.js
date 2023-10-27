@@ -711,6 +711,8 @@ class Game {
    */
 
   _BindShooting() {
+
+    /*source: https://sketchfab.com/3d-models/pso-1-1-sniper-scope-lowpoly-gameready-423a3bd9e2344f26b3aff82e0ae185d7 */
     let loaderObj = new GLTFLoader();
     loaderObj.load("../../assets/models/weapons/gun.glb", (gltf) => {
       var gunobj = gltf.scene;
@@ -945,7 +947,7 @@ class Game {
         if (event.key.toLowerCase() === "r") {
           event.preventDefault();
           // Calculate the distance between the character and sphereTwo
-          document.getElementById("deathText").textContent = "Loser";
+          document.getElementById("deathText").textContent = "Restarting...";
           this.restartBoolean = true;
           //window.location = this.restartLevel;
         }
@@ -1023,6 +1025,8 @@ class Game {
 
   _AddTokens() {
     let loaderObj = new GLTFLoader();
+    /* source:    https://sketchfab.com/3d-models/sword-91879718299e473e8ac55743d510aa68
+    author:    shedmon (https://sketchfab.com/shedmon)*/
     loaderObj.load("../../assets/models/tokens/sword/scene.gltf", (gltf) => {
       let token = new Token();
       token.object = gltf.scene;
@@ -1057,6 +1061,9 @@ class Game {
   }
 
   _SpawnNPC(token) {
+
+    /* source:    https://sketchfab.com/3d-models/batman-arkham-asylum-harley-quinn-46b5868a4a8d4a2b9389221a039b24b2
+author:    EWTube0 (https://sketchfab.com/EWTube0)*/
     let loaderObj = new GLTFLoader();
     loaderObj.load("../../assets/models/characters/npc/scene.gltf", (gltf) => {
       console.log("Spawning npc: " + this.npcId);
