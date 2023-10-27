@@ -880,7 +880,7 @@ class Game {
               this.tokens[tokenid].object.rotation.y = 0;
               this.scene.remove(this.tokens[tokenid].object);
               this.numberOfKeys += 1;
-              numTokensText.textContent = `${this.numberOfKeys} out of ${this.totalKeys}`;
+              numTokensText.textContent = `${this.numberOfKeys}/${this.totalKeys}`;
               this.tokens[tokenid].sound.stop();
             }
           }
