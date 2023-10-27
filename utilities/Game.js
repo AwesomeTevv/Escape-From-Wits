@@ -37,13 +37,17 @@ class Game {
    *
    * @param {string} skyboxImage Path to the skybox image assets
    * @param {string} wallTexture Path to the wall texture image assets
+   * @param {string} groundTexture Path to the wall texture image assets
+   * @param {string} exitTexture Path to the wall texture image assets
+   * @param {boolean} dynamicSkybox Path to the wall texture image assets
    */
   constructor(
     skyboxImage,
     wallTexture,
     groundTexture,
     bulletTexture,
-    exitTexture
+    exitTexture,
+    dynamicSkybox
   ) {
     this.scene = null; // ThreeJS Scene
     this.minimapScene = null;
@@ -59,6 +63,7 @@ class Game {
     this.stats = null; // ThreeJS Addon: Stats -- Appears at the top left of the screen
     this.skybox = null; // The skybox for the game
     this.skyboxImage = skyboxImage; // Skybox image path
+    this.dynamicSkybox = dynamicSkybox;
 
     this.wallMaterial = null; // ThreeJS material for the walls
     this.wallTexture = wallTexture; // Path to the wall texture assets
@@ -398,7 +403,7 @@ class Game {
         this.npcDeathNoise.setVolume(0.1);
       }
     );
-    numTokensText.textContent=`${0} out of 1`;
+    numTokensText.textContent = `${0} out of 1`;
     this.convexObjectBreaker = new ConvexObjectBreaker();
   }
 
@@ -851,7 +856,7 @@ class Game {
               this.tokens[tokenid].object.scale.z =
                 this.tokens[tokenid].toggledScale.z;
               this.numberOfKeys += 1;
-              numTokensText.textContent=`${this.numberOfKeys} out of 1`;
+              numTokensText.textContent = `${this.numberOfKeys} out of 1`;
               this.tokens[tokenid].sound.stop();
             }
           }
@@ -893,16 +898,16 @@ class Game {
     );
   }
 
-    updateFraction() {
+  updateFraction() {
     var numTokensText = document.getElementById("numTokensText");
     var totalTokens = 100; // You can hard-code the denominator here
-  
+
     // Sample input string
     var inputString = "Your text containing number tokens goes here.";
-  
+
     // Call the function to count number tokens
     var tokenCount = countNumberTokens(inputString);
-  
+
     // Update the content of the <p> element with the fraction
     numTokensText.textContent = "Found " + tokenCount + "/" + totalTokens;
   }
@@ -1053,13 +1058,13 @@ class Game {
     this.currentHealth -= 1;
     console.log(this.currentHealth);
     if (this.currentHealth < 0 && this.playerLives != 0) {
-      if(this.playerLives==3){
+      if (this.playerLives == 3) {
         Heart1.style.display = "none";
       }
-      if(this.playerLives==2){
-        Heart2.style.display = "none";      
+      if (this.playerLives == 2) {
+        Heart2.style.display = "none";
       }
-      if(this.playerLives==1){
+      if (this.playerLives == 1) {
         Heart3.style.display = "none";
       }
       this.currentHealth = this.healthSize;
@@ -1079,6 +1084,12 @@ class Game {
    */
   _Animate() {
     requestAnimationFrame(this._Animate);
+
+    if (this.dynamicSkybox) {
+      this.skybox.rotation.x += 0.001;
+      this.skybox.rotation.y += 0.001;
+    }
+
     const timeStep = 1 / 60;
     const time = performance.now() / 1000;
     const dt = time - this.lastCallTime;
@@ -1199,7 +1210,7 @@ class Game {
     }
 
     if (this.playerLives <= 0 && !this.hasReloaded) {
-     // this.hasReloaded = true;
+      // this.hasReloaded = true;
       //alert("You died!");
       document.getElementById("deathText").textContent =
         "You died...reloading...";
@@ -1236,9 +1247,9 @@ class Game {
     this.vhsUniforms.time.value = this.shaderTime;
     this.staticUniforms.time.value = this.shaderTime;
 
-    if (this.restartBoolean == true){
+    if (this.restartBoolean == true) {
       this.restartCounter += 1;
-      if (this.restartCounter > 50 && !this.hasReloaded){
+      if (this.restartCounter > 50 && !this.hasReloaded) {
         this.hasReloaded = true;
         window.location = this.restartLevel;
       }

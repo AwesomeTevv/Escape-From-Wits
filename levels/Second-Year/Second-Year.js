@@ -15,7 +15,8 @@ class SecondYear extends Game {
       "ZigzagTiles/TilesCeramicHerringbone002",
       "ShinyTiles/TilesZelligeSquaresWeathered001",
       "BrushedSteel/MetalSteelBrushed001",
-      "Dots/TilesMosaicPennyround001"
+      "Dots/TilesMosaicPennyround001",
+      true
     );
     this.nextLevel = "/~sjmsp/levels/Third-Year/Third-Year.html";
     this.restartLevel = "/~sjmsp/levels/Second-Year/Second-Year.html";
