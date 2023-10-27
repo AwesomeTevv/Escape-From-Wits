@@ -418,7 +418,7 @@ class Game {
       }
     );
     new THREE.AudioLoader().load(
-      "../../assets/sounds/Suppressed-Bushmaster-ACR-5.56-Close-Gunshot-A-www.fesliyanstudios.com.mp3",
+      "../../assets/sounds/grenade-launcher-106342.mp3",
       (buffer) => {
         this.gunNoise.setBuffer(buffer);
         this.gunNoise.setLoop(false);
