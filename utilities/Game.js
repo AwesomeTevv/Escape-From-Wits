@@ -109,6 +109,7 @@ class Game {
     this.staticNoise = null;
     this.ambientNoise = null;
     this.complimentNoise = null;
+    this.npcDeathNoise = null;
     this.notEnoughKeys = false;
     this.timerKeys = 0;
     this.convexObjectBreaker = null;
@@ -357,6 +358,7 @@ class Game {
     this.staticNoise = new THREE.Audio(this.AudioListener);
     this.ambientNoise = new THREE.Audio(this.AudioListener);
     this.complimentNoise = new THREE.Audio(this.AudioListener);
+    this.npcDeathNoise = new THREE.Audio(this.AudioListener);
 
     new THREE.AudioLoader().load(
       "../../assets/sounds/scary-creaking-knocking-wood-6103.mp3",
@@ -383,6 +385,14 @@ class Game {
         this.ambientNoise.setLoop(true);
         this.ambientNoise.setVolume(0.1);
         this.ambientNoise.play();
+      }
+    );
+    new THREE.AudioLoader().load(
+      "../../assets/sounds/demonic-woman-scream-6333.mp3",
+      (buffer) => {
+        this.npcDeathNoise.setBuffer(buffer);
+        this.npcDeathNoise.setLoop(false);
+        this.npcDeathNoise.setVolume(0.1);
       }
     );
 
@@ -1148,6 +1158,7 @@ class Game {
     for (let i = 0; i < 3; i++) {
       if (this.npcAnimateDeath[i]) {
         if (this.npcDeathFrames[i] < 100) {
+          this.npcDeathNoise.play();
           console.log(this.npcDeathFrames[i]);
           this.enemy[i].rotateZ(100 * this.npcDeathFrames[i]);
           this.npcDeathFrames[i]++;
