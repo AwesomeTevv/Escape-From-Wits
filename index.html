@@ -12,16 +12,22 @@
         }
 
         body {
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             background-image: url("/assets/images/mazeBGPexels.jpg");
+            
             background-size: cover;
             background-blend-mode: darken;
-            flex-direction: column;
-            display: flex;
-            width: 100vw;
-            height: 100vh;
             user-select: none;
             overflow: hidden;
+            font-family: monospace, Arial, sans-serif;
+            font-size: x-large;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
 
         .align {
@@ -32,6 +38,7 @@
             top: 0px;
             opacity: 1;
             transition: 1s ease-out;
+            visibility: hidden;
 
             h1 {
                 font-size: 40px;
@@ -53,6 +60,66 @@
                 justify-content: center; /* Centers the buttons horizontally */
             }
         }
+
+        .container {
+            width: 75%;
+            height: 75vh; /* Set the height to 75% of the viewport height */
+            justify-content: center;
+        }
+    
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out forwards;
+            text-align: center;
+        }
+    
+        .fade-in-end {
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out forwards;
+            text-align: center;
+            color: red;
+            padding-top: 2rem;
+        }
+    
+        @keyframes fadeIn {
+            from {
+              opacity: 0;
+            }
+            to {
+              opacity: 1;
+            }
+        }
+
+          /* Define the fade-in animation for the background image */
+        @keyframes fadeBackgroundIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Apply the fade-in animation to the body */
+        body.fade-in-background {
+            animation: fadeBackgroundIn 5s ease-in forwards;
+        }
+
+        /* Define the fade-out animation for the container */
+        @keyframes fadeOutContainer {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        /* Apply the fade-out animation to the container */
+        .container.fade-out {
+            animation: fadeOutContainer 5s ease-out backwards;
+        }
+
     </style>
 </head>
 
@@ -67,8 +134,87 @@
                 <a href="/levels/Third-Year/Third-Year.html">Third Year</a>
             </div>
         </div>
+
+       <div id="container" class="container">
+            <p class="fade-in" style="animation-delay: 5s">
+                In a world where the past holds the keys to the future, the Labyrinth of
+                Ages beckons the intrepid and the bold.
+            </p>
+            <p class="fade-in" style="animation-delay: 10s">
+                Legends speak of these ancient relics, said to contain the knowledge and
+                power of civilizations long forgotten. Whoever possesses them can shape
+                the destiny of the world.
+            </p>
+            <p class="fade-in" style="animation-delay: 15s">
+                You are the chosen one, entrusted with a mission of utmost importance.
+            </p>
+            <p class="fade-in" style="animation-delay: 20s">
+                Your quest is to scour the depths of the Labyrinth, unravel its secrets,
+                and retrieve the artifacts that lie within.
+            </p>
+            <p class="fade-in" style="animation-delay: 45s">
+                But be warned, for the Keepers of the Artifacts are relentless in their
+                mission. They will stop at nothing to ensure that these treasures do not
+                leave the maze.
+            </p>
+            <p class="fade-in" style="animation-delay: 55s">
+                Kill or be killed, the choice is yours. Retrieve the artifacts, and
+                then, with haste, escape the Labyrinth.
+            </p>
+            <p class="fade-in" style="animation-delay: 65s">
+                The fate of the world rests in your hands.
+            </p>
+            <p class="fade-in fade-in-end" style="animation-delay: 70s">
+                The Labyrinth awaits.
+            </p>
+        </div>
     </body>
-    <script>
+<script>
+        const paragraphs = document.querySelectorAll(".fade-in");
+        let delay = 0;
+        // Add a variable to keep track of completed paragraphs
+        let completedParagraphs = 0;
+
+        // Function to handle the animation of paragraphs
+        function animateParagraphs() {
+            const paragraphs = document.querySelectorAll(".fade-in");
+            let delay = 0;
+
+            paragraphs.forEach((p, index) => {
+                p.style.animationDelay = `${delay}s`;
+                delay += 10;
+
+                // Add an animationend event listener to each paragraph
+                p.addEventListener("animationend", () => {
+                    // Increment the completed count when an animation ends
+                    completedParagraphs++;
+
+                    // Check if all paragraphs have completed their animations
+                    if (completedParagraphs === paragraphs.length) {
+                        // Call hideContainer when all animations are complete
+                        console.log("done");
+                        document.getElementById("title").style.border = "solid 5px white";
+                        hideContainer(); // Hide the container when the animation is complete
+                        document.getElementById("align").style.visibility = "visible";
+                        intro();
+                    }
+                });
+            });
+        }
+
+        // Call the animateParagraphs function to start the animations
+        animateParagraphs();
+
+        // Function to hide the container div
+        function hideContainer() {
+            const container = document.getElementById("container");
+            if (container) {
+                container.style.display = "none";
+                const body = document.getElementById("body");
+                body.classList.add("fade-in-background");
+            }
+        }
+
         var characters_up = [
             "A",
             "B",
@@ -161,6 +307,7 @@
 
         var complete = 0;
         function intro() {
+            
             complete = 1;
             setTimeout(function () {
                 complete = 2;
@@ -190,7 +337,6 @@
 
             }, 3400);
         }
-        document.onload = intro();
 
         function update_txt(title) {
             var string = "";
@@ -211,6 +357,10 @@
                 }, 1200);
             }
         }
-    </script>
+        
+</script>
 
-    </html>
+<audio loop autoplay>
+    <source src="assets/sounds/dramatic-flute-for-documentaries-about-quotlife-in-the-junglequot-165986.mp3" type="audio/mpeg">
+</audio>
+</html>
