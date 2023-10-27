@@ -38,7 +38,7 @@ class FirstLevel extends Game {
     this.controls.addEventListener("unlock", () => {
       overlay.style.display = "none";
     });
-
+    numTokensText.textContent=`${0} out of  ${this.totalKeys}`;
     // this.decorator = new Decorator(this.maze, this.scene, this.world);
     // this.decorator.GlassBlocks();
 

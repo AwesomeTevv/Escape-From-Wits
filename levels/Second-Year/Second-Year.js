@@ -38,6 +38,8 @@ class SecondYear extends Game {
         token.loaded = true;
         this.onTokenLoaded(token);
         this.setKeyPos(token);
+        this.totalKeys += 1;
+        numTokensText.textContent=`${0} out of  ${this.totalKeys}`;
         console.log(
           "This is the second token position " +
             token.object.position.x +
