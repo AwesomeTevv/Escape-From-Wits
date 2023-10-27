@@ -392,7 +392,6 @@ class Game {
       }
     );
 
-
     this.gunNoise = new THREE.Audio(this.AudioListener);
     this.damageNoise = new THREE.Audio(this.AudioListener);
 
@@ -447,7 +446,7 @@ class Game {
         this.damageNoise.setVolume(0.7);
       }
     );
-    
+
     this.convexObjectBreaker = new ConvexObjectBreaker();
   }
 
@@ -817,10 +816,10 @@ class Game {
       ballBody.position.set(x, y, z);
       ballMesh.position.copy(ballBody.position);
       scopeBallMesh.position.copy(ballBody.position);
-      if(this.gunNoise.isPlaying){
+      if (this.gunNoise.isPlaying) {
         this.gunNoise.stop();
         this.gunNoise.play();
-      }else{
+      } else {
         this.gunNoise.play();
       }
       ballBody.addEventListener("collide", (e) => {
@@ -1185,10 +1184,12 @@ class Game {
           this.scopeEnemy[i].position.copy(this.enemy[i].position);
           this.enemyBody[i].position.copy(this.enemy[i].position);
           if (this.player.position.distanceTo(this.enemyBody[i].position) < 3) {
-            this.hurt();
             this.damageNoise.play();
+            this.hurt();
+            this.complimentNoise.stop();
           } else {
             this.damageNoise.stop();
+            this.complimentNoise.play();
           }
         }
       }
@@ -1202,7 +1203,7 @@ class Game {
 
     if (this.liftWall) {
       if (this.gateNumber < 500) {
-        if(!this.gateNoiseExit.isPlaying){
+        if (!this.gateNoiseExit.isPlaying) {
           this.gateNoiseExit.play();
         }
         this.exitDoor.body.position.copy(this.exitDoor.mesh.position);
@@ -1214,20 +1215,20 @@ class Game {
 
     if (this.animateGateOpen) {
       if (this.gateFallNumber < 500) {
-        if(!this.gateNoiseEntrance.isPlaying){
+        if (!this.gateNoiseEntrance.isPlaying) {
           this.gateNoiseEntrance.play();
         }
         this.entryDoor.body.position.copy(this.entryDoor.mesh.position);
         this.entryDoor.body.quaternion.copy(this.entryDoor.mesh.quaternion);
         this.entryDoor.mesh.translateY((this.gateFallNumber + 15 / 2) * 0.0001);
         this.gateFallNumber++;
-      }else{
+      } else {
         this.gateNoiseEntrance.stop();
       }
     } else {
       if (this.entryDoor.mesh.position.y != 0) {
         if (this.gateFallNumber > 0) {
-          if(!this.gateNoiseEntrance.isPlaying){
+          if (!this.gateNoiseEntrance.isPlaying) {
             this.gateNoiseEntrance.play();
           }
           this.entryDoor.body.position.set(10, this.wallHeight / 2, 50);
@@ -1235,7 +1236,7 @@ class Game {
             -(this.gateFallNumber + 15 / 2) * 0.0001
           );
           this.gateFallNumber--;
-        }else{
+        } else {
           this.gateNoiseEntrance.stop();
         }
       }
@@ -1244,11 +1245,11 @@ class Game {
     for (let i = 0; i < 3; i++) {
       if (this.npcAnimateDeath[i]) {
         if (this.npcDeathFrames[i] < 100) {
-          if(!this.npcDeathNoise.isPlaying){
+          if (!this.npcDeathNoise.isPlaying) {
             this.npcDeathNoise.play();
           }
           console.log(this.npcDeathFrames[i]);
-          this.enemy[i].rotateZ(100 * this.npcDeathFrames[i]);
+          this.enemy[i].translateY(0.5 * this.npcDeathFrames[i]);
           this.npcDeathFrames[i]++;
         } else {
           this.scene.remove(this.enemy[i]);
@@ -1464,9 +1465,8 @@ class Game {
           this.maze[r][c] == 2 ||
           this.maze[r][c] == 3
         ) {
-          
           const decorator = new Decorator(this.maze, this.scene, this.world);
-          if (decorator.isDeadEnd(r,c)){
+          if (decorator.isDeadEnd(r, c)) {
             this.maze[r][c] = 5;
             token.object.position.set(5 * (c - 10), 1.1, 5 * (r - 10));
             // console.log("Token pos " + token.object.position.x + " " + token.object.position.z);
