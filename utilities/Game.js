@@ -839,25 +839,7 @@ class Game {
               this.tokens[tokenid].toggled = true;
               this.tokens[tokenid].object.position.set(0, 0, 0);
               this.tokens[tokenid].object.rotation.y = 0;
-              //this.scene.remove(this.tokens[tokenid].object);
-              this.camera.add(this.tokens[tokenid].object);
-              this.tokens[tokenid].object.position.x =
-                this.tokens[tokenid].object.position.x +
-                this.tokens[tokenid].toggledOffsetX;
-              this.tokens[tokenid].object.position.y =
-                this.tokens[tokenid].object.position.y +
-                this.tokens[tokenid].toggledOffsetY;
-              this.tokens[tokenid].object.position.z =
-                this.tokens[tokenid].object.position.z +
-                this.tokens[tokenid].toggledOffsetZ;
-              this.tokens[tokenid].object.rotation.y =
-                this.tokens[tokenid].toggledRotation;
-              this.tokens[tokenid].object.scale.x =
-                this.tokens[tokenid].toggledScale.x;
-              this.tokens[tokenid].object.scale.y =
-                this.tokens[tokenid].toggledScale.y;
-              this.tokens[tokenid].object.scale.z =
-                this.tokens[tokenid].toggledScale.z;
+              this.scene.remove(this.tokens[tokenid].object);
               this.numberOfKeys += 1;
               numTokensText.textContent=`${this.numberOfKeys} out of ${this.totalKeys}`;
               this.tokens[tokenid].sound.stop();
