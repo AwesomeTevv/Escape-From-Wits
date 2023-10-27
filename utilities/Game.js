@@ -433,7 +433,7 @@ class Game {
       (buffer) => {
         this.gunNoise.setBuffer(buffer);
         this.gunNoise.setLoop(false);
-        this.gunNoise.setVolume(0.5);
+        this.gunNoise.setVolume(0.25);
       }
     );
     new THREE.AudioLoader().load(
