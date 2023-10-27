@@ -33,6 +33,9 @@ class ThirdYear extends Game {
 
   _AddSecondTokens() {
     console.log("Adding Second Token!");
+
+    /*source:    https://sketchfab.com/3d-models/scary-acoustic-guitar-c7022e2914a34189ab11ce5c1240249e
+author:    yotam92 (https://sketchfab.com/yotam92) */
     let loaderObj = new GLTFLoader();
     loaderObj.load(
       "../../../assets/models/tokens/guitar/scene.gltf",
@@ -63,7 +66,8 @@ class ThirdYear extends Game {
         this._SpawnNPC(token);
       }
     );
-
+      /*source:    https://sketchfab.com/3d-models/graduation-86895e10baf54c46896823394766fb86
+      author:    Cyberluna (https://sketchfab.com/cyberluna) */
     loaderObj.load("../../../assets/models/tokens/grad/scene.gltf", (gltf) => {
       let token2 = new Token();
       token2.object = gltf.scene;

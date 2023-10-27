@@ -1023,6 +1023,8 @@ class Game {
 
   _AddTokens() {
     let loaderObj = new GLTFLoader();
+    /* source:    https://sketchfab.com/3d-models/sword-91879718299e473e8ac55743d510aa68
+    author:    shedmon (https://sketchfab.com/shedmon)*/
     loaderObj.load("../../assets/models/tokens/sword/scene.gltf", (gltf) => {
       let token = new Token();
       token.object = gltf.scene;
@@ -1057,6 +1059,9 @@ class Game {
   }
 
   _SpawnNPC(token) {
+
+    /* source:    https://sketchfab.com/3d-models/batman-arkham-asylum-harley-quinn-46b5868a4a8d4a2b9389221a039b24b2
+author:    EWTube0 (https://sketchfab.com/EWTube0)*/
     let loaderObj = new GLTFLoader();
     loaderObj.load("../../assets/models/characters/npc/scene.gltf", (gltf) => {
       console.log("Spawning npc: " + this.npcId);
