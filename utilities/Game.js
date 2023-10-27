@@ -370,17 +370,30 @@ class Game {
     this.complimentNoise = new THREE.Audio(this.AudioListener);
     this.npcDeathNoise = new THREE.Audio(this.AudioListener);
     this.gateNoiseEntrance = new THREE.PositionalAudio(this.AudioListener);
+    this.gateNoiseExit = new THREE.PositionalAudio(this.AudioListener);
 
     new THREE.AudioLoader().load(
       "../../assets/sounds/tomb_door-95246.mp3",
       (buffer) => {
         this.gateNoiseEntrance.setBuffer(buffer);
         this.gateNoiseEntrance.setLoop(false);
-        this.gateNoiseEntrance.setVolume(1);
+        this.gateNoiseEntrance.setVolume(2);
         this.gateNoiseEntrance.setRefDistance(1);
       }
     );
-        this.gunNoise = new THREE.Audio(this.AudioListener);
+
+    new THREE.AudioLoader().load(
+      "../../assets/sounds/tomb_door-95246.mp3",
+      (buffer) => {
+        this.gateNoiseExit.setBuffer(buffer);
+        this.gateNoiseExit.setLoop(false);
+        this.gateNoiseExit.setVolume(2);
+        this.gateNoiseExit.setRefDistance(1);
+      }
+    );
+
+
+    this.gunNoise = new THREE.Audio(this.AudioListener);
 
     new THREE.AudioLoader().load(
       "../../assets/sounds/scary-creaking-knocking-wood-6103.mp3",
@@ -1179,6 +1192,9 @@ class Game {
 
     if (this.liftWall) {
       if (this.gateNumber < 500) {
+        if(!this.gateNoiseExit.isPlaying){
+          this.gateNoiseExit.play();
+        }
         this.exitDoor.body.position.copy(this.exitDoor.mesh.position);
         this.exitDoor.body.quaternion.copy(this.exitDoor.mesh.quaternion);
         this.exitDoor.mesh.translateY((this.gateNumber + 15 / 2) * 0.0001);
@@ -1551,6 +1567,7 @@ class Game {
     cube.position.set(0, this.wallHeight / 2, -50);
     this.exitDoor.mesh = cube;
     this.scene.add(cube);
+    this.gateNoiseExit.position.set(this.exitDoor.mesh.position);
   }
 
   enter() {
