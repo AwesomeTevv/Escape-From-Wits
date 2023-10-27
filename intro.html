@@ -17,7 +17,7 @@
 
       .container {
         width: 75%;
-        height: 75%;
+        height: 75vh; /* Set the height to 75% of the viewport height */
         justify-content: center;
       }
 
@@ -25,6 +25,14 @@
         opacity: 0;
         animation: fadeIn 2s ease-in-out forwards;
         text-align: center;
+      }
+
+      .fade-in-end {
+        opacity: 0;
+        animation: fadeIn 2s ease-in-out forwards;
+        text-align: center;
+        color: red;
+        padding-top: 2rem;
       }
 
       @keyframes fadeIn {
@@ -38,20 +46,20 @@
     </style>
   </head>
   <body>
-    <div id="container">
+    <div id="container" class="container">
       <p class="fade-in" style="animation-delay: 5s">
         In a world where the past holds the keys to the future, the Labyrinth of
         Ages beckons the intrepid and the bold.
       </p>
-      <p class="fade-in" style="animation-delay: 15s">
+      <p class="fade-in" style="animation-delay: 10s">
         Legends speak of these ancient relics, said to contain the knowledge and
         power of civilizations long forgotten. Whoever possesses them can shape
         the destiny of the world.
       </p>
-      <p class="fade-in" style="animation-delay: 25s">
+      <p class="fade-in" style="animation-delay: 15s">
         You are the chosen one, entrusted with a mission of utmost importance.
       </p>
-      <p class="fade-in" style="animation-delay: 35s">
+      <p class="fade-in" style="animation-delay: 20s">
         Your quest is to scour the depths of the Labyrinth, unravel its secrets,
         and retrieve the artifacts that lie within.
       </p>
@@ -64,8 +72,11 @@
         Kill or be killed, the choice is yours. Retrieve the artifacts, and
         then, with haste, escape the Labyrinth.
       </p>
-      <p class="fade-in" style="animation-delay: 55s">
-        The fate of the world rests in your hands. The Labyrinth awaits.
+      <p class="fade-in" style="animation-delay: 65s">
+        The fate of the world rests in your hands.
+      </p>
+      <p class="fade-in-end" style="animation-delay: 70s">
+        The Labyrinth awaits.
       </p>
     </div>
 
