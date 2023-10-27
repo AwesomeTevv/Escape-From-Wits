@@ -20,6 +20,19 @@ class Decorator {
     this.loader = new GLTFLoader();
 
     this.decoration = new Decoration();
+
+    this.glassMeshes = [];
+    this.glassBodies = [];
+
+    this.glassMaterial = new THREE.MeshPhysicalMaterial({
+      metalness: 0,
+      transmission: 0.9,
+      thickness: 5,
+      roughness: 0.1,
+      reflectivity: 1,
+      color: 0xd7e2d5,
+    });
+    this.glassGeometry = new THREE.BoxGeometry(1, 1, 1);
   }
 
   loadBlock = (block) => {
@@ -102,6 +115,18 @@ class Decorator {
     }
 
     return false;
+  }
+
+  GlassBlocks() {
+    for (let i = 0; i < this.maze.length; i++) {
+      for (let j = 0; j < this.maze[i].length; j++) {
+        if ((i + j) % 7 == 0 && !this.isDeadEnd(i, j)) {
+          const mesh = new THREE.Mesh(this.glassGeometry, this.glassMaterial);
+          mesh.position.set(5 * (j - 10), 0.5, 5 * (i - 10));
+          this.scene.add(mesh);
+        }
+      }
+    }
   }
 }
 
