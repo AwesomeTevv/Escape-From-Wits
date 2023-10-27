@@ -1038,6 +1038,15 @@ class Game {
     this.currentHealth -= 1;
     console.log(this.currentHealth);
     if (this.currentHealth < 0 && this.playerLives != 0) {
+      if(this.playerLives==3){
+        Heart1.style.display = "none";
+      }
+      if(this.playerLives==2){
+        Heart2.style.display = "none";      
+      }
+      if(this.playerLives==1){
+        Heart3.style.display = "none";
+      }
       this.currentHealth = this.healthSize;
       this.playerLives -= 1;
       console.log("You lost a life!");
