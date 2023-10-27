@@ -1536,15 +1536,44 @@ class Game {
       }
     }
 
+    let meshCount = 0;
+    const geometry = new THREE.BoxGeometry(5, this.wallHeight, 5);
+    const matrix = new THREE.Matrix4();
+    const mesh = new THREE.InstancedMesh(geometry,this.wallMaterial,50);
+    const minimapMaterial = new THREE.MeshBasicMaterial({ color: 0x000088 });
+
     for (let i = -50; i < 50; i += 5) {
       if (i != Math.floor(20 / 2)) {
-        this.block(i, 50);
+        matrix.set(1,0,0,i,0,1,0,this.wallHeight/2,0,0,1,50,0,0,0,1);
+        mesh.setMatrixAt(meshCount,matrix);
+        this.body(i, 50);
+        meshCount += 1;
+
+        const mapCube = new THREE.Mesh(geometry, minimapMaterial);
+        mapCube.position.set(i, this.wallHeight / 2, 50);
+        this.minimapScene.add(mapCube);
+    
+        const scopeCube = new THREE.Mesh(geometry, new THREE.MeshNormalMaterial());
+        scopeCube.position.set(i, this.wallHeight / 2, 50);
+        this.scopeScene.add(scopeCube);
       }
     }
 
     for (let i = -50; i <= 50; i += 5) {
-      this.block(-55, i);
+      matrix.set(1,0,0,-55,0,1,0,this.wallHeight/2,0,0,1,i,0,0,0,1);
+      mesh.setMatrixAt(meshCount,matrix);
+      this.body(-55, i);
+      meshCount += 1;
+
+      const mapCube = new THREE.Mesh(geometry, minimapMaterial);
+      mapCube.position.set(-55, this.wallHeight / 2, i);
+      this.minimapScene.add(mapCube);
+  
+      const scopeCube = new THREE.Mesh(geometry, new THREE.MeshNormalMaterial());
+      scopeCube.position.set(-55, this.wallHeight / 2, i);
+      this.scopeScene.add(scopeCube);
     }
+    this.scene.add(mesh);
   }
 
   exit() {
