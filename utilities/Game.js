@@ -103,6 +103,7 @@ class Game {
     this.torch = null;
     this.torchTarget = null;
     this.numberOfKeys = 0;
+    this.totalKeys = 1;
     this.tokens = [];
 
     this.AudioListener = null;
@@ -398,7 +399,7 @@ class Game {
         this.npcDeathNoise.setVolume(0.1);
       }
     );
-    numTokensText.textContent=`${0} out of 1`;
+   
     this.convexObjectBreaker = new ConvexObjectBreaker();
   }
 
@@ -624,6 +625,7 @@ class Game {
    * Sets the velocity of the projectiles.
    * Gets the direction that the projectile needs to be shot at.
    */
+  
   _BindShooting() {
     let loaderObj = new GLTFLoader();
     loaderObj.load("../../assets/models/weapons/gun.glb", (gltf) => {
@@ -832,6 +834,7 @@ class Game {
               this.tokens[tokenid].toggled = true;
               this.tokens[tokenid].object.position.set(0, 0, 0);
               this.tokens[tokenid].object.rotation.y = 0;
+              //this.scene.remove(this.tokens[tokenid].object);
               this.camera.add(this.tokens[tokenid].object);
               this.tokens[tokenid].object.position.x =
                 this.tokens[tokenid].object.position.x +
@@ -851,7 +854,7 @@ class Game {
               this.tokens[tokenid].object.scale.z =
                 this.tokens[tokenid].toggledScale.z;
               this.numberOfKeys += 1;
-              numTokensText.textContent=`${this.numberOfKeys} out of 1`;
+              numTokensText.textContent=`${this.numberOfKeys} out of ${this.totalKeys}`;
               this.tokens[tokenid].sound.stop();
             }
           }
@@ -1053,7 +1056,7 @@ class Game {
     this.currentHealth -= 1;
     console.log(this.currentHealth);
     if (this.currentHealth < 0 && this.playerLives != 0) {
-      if(this.playerLives==3){
+if(this.playerLives==3){
         Heart1.style.display = "none";
       }
       if(this.playerLives==2){
