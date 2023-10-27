@@ -6,8 +6,6 @@ import { Game } from "../../utilities/Game";
 import { Decorator } from "../../utilities/Decorator";
 
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
-import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
-import { BloomPass } from "three/examples/jsm/postprocessing/BloomPass";
 import { FilmPass } from "three/examples/jsm/postprocessing/FilmPass";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass";
 import Token from "../../utilities/tokens";
@@ -28,8 +26,6 @@ class ThirdYear extends Game {
       false
     );
 
-    // const decorator = new Decorator(this.maze, this.scene);
-    // decorator.DecorateDeadEnds();
     this._AddSecondTokens();
     this._PostProcessing();
     this.nextLevel = "/~sjmsp/";
@@ -53,14 +49,6 @@ class ThirdYear extends Game {
         this.onTokenLoaded(token);
         this.setKeyPos(token);
         this.totalKeys += 1;
-        //numTokensText.textContent=`${0} out of  ${this.totalKeys}`;
-        //token.object.position.set(this.player.position.x + 2, this.player.position.y, this.player.position.z );
-        console.log(
-          "This is the second token position " +
-            token.object.position.x +
-            " " +
-            token.object.position.z
-        );
         token.sound = new THREE.PositionalAudio(this.AudioListener);
         token.object.add(token.sound);
         new THREE.AudioLoader().load(
@@ -89,14 +77,7 @@ class ThirdYear extends Game {
       this.onTokenLoaded(token2);
       this.setKeyPos(token2);
       this.totalKeys += 1;
-      numTokensText.textContent=`${0}/${3}`;
-      //token.object.position.set(this.player.position.x - 2, this.player.position.y, this.player.position.z );
-      console.log(
-        "This is the third token position " +
-          token2.object.position.x +
-          " " +
-          token2.object.position.z
-      );
+      numTokensText.textContent = `${0}/${3}`;
       token2.sound = new THREE.PositionalAudio(this.AudioListener);
       token2.object.add(token2.sound);
       new THREE.AudioLoader().load(
@@ -122,9 +103,6 @@ class ThirdYear extends Game {
 
     const effectFilm = new FilmPass(1);
     this.composer.addPass(effectFilm);
-
-    // const bloom = new BloomPass(1);
-    // this.composer.addPass(bloom);
 
     const effect4 = new OutputPass();
     this.composer.addPass(effect4);
