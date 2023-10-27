@@ -140,6 +140,8 @@ class Game {
     this.npcAnimateDeath = [false, false, false];
     this.npcId = 0;
 
+    this.hasReloaded = false;
+
     this.liftWall = false; // Whether or not to lift the exit wall
     this.nextLevel = "/levels/Second-Year/First-Year.html";
     this._Init();
@@ -831,6 +833,19 @@ class Game {
       },
       false
     );
+
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key.toLowerCase() === "r") {
+          event.preventDefault();
+          // Calculate the distance between the character and sphereTwo
+          document.getElementById("deathText").textContent ="Loser";
+          window.location = this.restartLevel;
+        }
+      },
+      false
+    );
   }
 
   checkProximity() {
@@ -1063,8 +1078,7 @@ class Game {
     // console.log(
     //   `NPC Position : (${this.enemy.position.x},${this.enemy.position.y} , ${this.enemy.position.z})`
     //   );
-    console.log(this.player.position);
-
+    
     this.controls.update(dt);
     this.stats.update();
 
@@ -1110,8 +1124,10 @@ class Game {
       }
     }
 
-    if (this.playerLives <= 0) {
+    if (this.playerLives <= 0 && !this.hasReloaded) {
+      this.hasReloaded = true;
       //alert("You died!");
+      document.getElementById("deathText").textContent ="You died...reloading...";
       window.location = this.restartLevel;
     }
 
