@@ -21,7 +21,7 @@ window.addEventListener("DOMContentLoaded", () => {
 class FirstLevel extends Game {
   constructor() {
     super(
-      "mayhem/mayhem8/flame",
+      "mayhem/mayhem5/h2s",
       "DesertWall/StuccoRoughCast001",
       "Sand/GroundSand005",
       "GalvanizedZinc/MetalZincGalvanized001",
