@@ -3,7 +3,6 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 // Custom Classes
 import { Game } from "../../utilities/Game";
-import { Decorator } from "../../utilities/Decorator";
 
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { FilmPass } from "three/examples/jsm/postprocessing/FilmPass";
