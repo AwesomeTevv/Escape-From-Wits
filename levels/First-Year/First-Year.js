@@ -25,7 +25,8 @@ class FirstLevel extends Game {
       "DesertWall/StuccoRoughCast001",
       "Sand/GroundSand005",
       "GalvanizedZinc/MetalZincGalvanized001",
-      "Terazzo/TerrazzoSlab018"
+      "Terazzo/TerrazzoSlab018",
+      false
     );
     this.nextLevel = "/~sjmsp/levels/Second-Year/Second-Year.html";
     this.restartLevel = "/~sjmsp/levels/First-Year/First-Year.html";
