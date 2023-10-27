@@ -32,7 +32,7 @@ class FirstLevel extends Game {
     this.restartLevel = "/~sjmsp/levels/First-Year/First-Year.html";
     // this.decorator = new Decorator(this.maze, this.scene, this.world);
     // this.decorator.GlassBlocks();
-
+    numTokensText.textContent=`${0} out of  ${this.totalKeys}`;
     // Add Post-Processing Effects
     this._PostProcessing();
   }
