@@ -13,8 +13,7 @@
 
         body {
             background: rgba(0, 0, 0, 0.8);
-            background-image: url("/assets/images/mazeBGPexels.jpg");
-            
+            background-image: url("/assets/images/maze_outline_seamless_pattern_background.jpg");
             background-size: cover;
             background-blend-mode: darken;
             user-select: none;
@@ -134,7 +133,7 @@
                 <a href="/levels/Third-Year/Third-Year.html">Third Year</a>
             </div>
         </div>
-
+        <!-- <a href="https://www.freepik.com/free-ai-image/businessman-walking-through-spooky-maze-generated-by-ai_42180481.htm#query=4k%20wallpaper%20maze&position=27&from_view=search&track=ais">Image By vecstock</a> -->
        <div id="container" class="container">
             <p class="fade-in" style="animation-delay: 5s">
                 In a world where the past holds the keys to the future, the Labyrinth of
@@ -182,7 +181,7 @@
 
             paragraphs.forEach((p, index) => {
                 p.style.animationDelay = `${delay}s`;
-                delay += 10;
+                delay += 1;
 
                 // Add an animationend event listener to each paragraph
                 p.addEventListener("animationend", () => {
@@ -191,12 +190,12 @@
 
                     // Check if all paragraphs have completed their animations
                     if (completedParagraphs === paragraphs.length) {
-                        // Call hideContainer when all animations are complete
-                        console.log("done");
-                        document.getElementById("title").style.border = "solid 5px white";
-                        hideContainer(); // Hide the container when the animation is complete
-                        document.getElementById("align").style.visibility = "visible";
-                        intro();
+                        setTimeout(function(){
+                            // Call hideContainer when all animations are complete
+                            console.log("done");
+                            document.getElementById("title").style.border = "solid 5px white";
+                            hideContainer(); // Hide the container when the animation is complete
+                        },2000);
                     }
                 });
             });
@@ -209,9 +208,14 @@
         function hideContainer() {
             const container = document.getElementById("container");
             if (container) {
-                container.style.display = "none";
-                const body = document.getElementById("body");
-                body.classList.add("fade-in-background");
+                container.classList.add("fade-out");
+                container.addEventListener("animationend", () =>{
+                    container.style.display = "none";
+                    const body = document.getElementById("body");
+                    body.classList.add("fade-in-background");
+                    document.getElementById("align").style.visibility = "visible";
+                    intro();
+                });
             }
         }
 
