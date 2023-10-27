@@ -1376,11 +1376,15 @@ class Game {
     return materialArray;
   }
 
+  /**
+   * Creates a mesh at a specified location
+   * @param {number} x x-coordinate of where the mesh should be placed
+   * @param {number} z z-coordinate of where the mesh should be placed
+   */
   mesh(x, z) {
     const minimapMaterial = new THREE.MeshBasicMaterial({ color: 0x000088 });
 
     const geometry = new THREE.BoxGeometry(5, this.wallHeight, 5);
-    // const material = new THREE.MeshPhongMaterial({ color: 0x000044 });
     const cube = new THREE.Mesh(geometry, this.wallMaterial);
     cube.position.set(x, this.wallHeight / 2, z);
     this.scene.add(cube);
@@ -1394,6 +1398,11 @@ class Game {
     this.scopeScene.add(scopeCube);
   }
 
+  /**
+   * Creates a body at a specified location
+   * @param {number} x x-coordinate of where the body should go
+   * @param {number} z z-coordinate fo where the body should go
+   */
   body(x, z) {
     const shape = new CANNON.Box(
       new CANNON.Vec3(5 * 0.5, this.wallHeight * 0.5, 5 * 0.5)
@@ -1470,8 +1479,11 @@ class Game {
     return maze;
   }
 
+  /**
+   * Places the token
+   * @param {Token} token The token to be placed
+   */
   setKeyPos = (token) => {
-    let wallcounter = 0;
     for (let r = 1; r < this.maze.length - 1; r++) {
       for (let c = 1; c < this.maze[r].length - 1; c++) {
         if (
@@ -1483,7 +1495,6 @@ class Game {
           if (decorator.isDeadEnd(r, c)) {
             this.maze[r][c] = 5;
             token.object.position.set(5 * (c - 10), 1.1, 5 * (r - 10));
-            // console.log("Token pos " + token.object.position.x + " " + token.object.position.z);
             break;
           }
         }
@@ -1491,6 +1502,9 @@ class Game {
     }
   };
 
+  /**
+   * Creates the invisible bounding box of the starting area
+   */
   bounds() {
     this.body(20, 55);
     this.body(0, 55);
@@ -1670,12 +1684,14 @@ class Game {
     this.bounds(); // Adds invisible boundaries to the starting area
   }
 
+  /**
+   * Adds the trigger boxes to the game
+   */
   _AddTriggerBoxes() {
     // Trigger body End Game -> Destory Exit Wall
     const triggerGeometry = new THREE.BoxGeometry(4, 1, 1);
     const triggerMaterial = new THREE.MeshPhysicalMaterial({
       transmission: 0,
-      // wireframe: true,
     });
     const trigger = new THREE.Mesh(triggerGeometry, triggerMaterial);
     trigger.material.visible = false;
@@ -1695,12 +1711,8 @@ class Game {
           this.liftWall = true;
           this.notEnoughKeys = false;
         } else {
-          // alert("Please collect all keys to escape!");
-          console.log("Need to collect all Keys!");
           this.notEnoughKeys = true;
           this.timerKeys = 0;
-
-          //const newText = ;
         }
       }
     });
@@ -1773,7 +1785,6 @@ class Game {
       }
 
       shards.forEach((d) => {
-        // console.log("Add shard!");
         const nextId = this.breakableMeshID++;
 
         this.scene.add(d);
@@ -1800,6 +1811,16 @@ class Game {
     }
   }
 
+  /**
+   * Places a breakable block of a specified size at a specified location
+   *
+   * @param {number} sx Size in the x-direction
+   * @param {number} sy Size in the y-direction
+   * @param {number} sz Size in the z-direction
+   * @param {number} px x-coordinate of the position to be placed
+   * @param {number} py y-coordinate of the position to be placed
+   * @param {number} pz z-coordinate of the position to be placed
+   */
   _CreateBreakableObject(sx, sy, sz, px, py, pz) {
     const size = {
       x: sx,
@@ -1837,6 +1858,11 @@ class Game {
     this.breakableMeshID++;
   }
 
+  /**
+   * Decorates the level
+   *
+   * Goes through the level and places glasses cubes in the corridors
+   */
   _DecorateLevel() {
     const decorator = new Decorator(this.maze, this.scene, this.world);
 
