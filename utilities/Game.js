@@ -795,7 +795,12 @@ class Game {
       ballBody.position.set(x, y, z);
       ballMesh.position.copy(ballBody.position);
       scopeBallMesh.position.copy(ballBody.position);
-      this.gunNoise.play();
+      if(this.gunNoise.isPlaying){
+        this.gunNoise.stop();
+        this.gunNoise.play();
+      }else{
+        this.gunNoise.play();
+      }
       ballBody.addEventListener("collide", (e) => {
         if (e.body.userData) {
           if (e.body.userData.numberLives) {
