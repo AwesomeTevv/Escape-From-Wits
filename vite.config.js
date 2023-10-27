@@ -35,14 +35,14 @@ export default defineConfig({
             // Include all asset files
             include: assetFiles,
             // Source directory for your assets
-            base: 'public_html/assets',
+            base: '/assets',
             // Output directory
-            outputDir: 'public_html/assets',
+            outputDir: '/assets',
         },
     },
 
     // Set the base URL to an empty string to generate relative URLs
-    base: '/public_html/',
+    base: '/',
 
     // Create a Vite plugin to adjust HTML references
     plugins: [
