@@ -412,7 +412,7 @@ class Game {
         this.gunNoise.setVolume(0.1);
       }
     );
-    numTokensText.textContent = `${0} out of 1`;
+    
     this.convexObjectBreaker = new ConvexObjectBreaker();
   }
 
@@ -1408,25 +1408,14 @@ class Game {
           this.maze[r][c] == 2 ||
           this.maze[r][c] == 3
         ) {
-          if (this.maze[r][c + 1] == 1) {
-            wallcounter += 1;
-          }
-          if (this.maze[r][c - 1] == 1) {
-            wallcounter += 1;
-          }
-          if (this.maze[r + 1][c] == 1) {
-            wallcounter += 1;
-          }
-          if (this.maze[r - 1][c] == 1) {
-            wallcounter += 1;
-          }
-
-          if (wallcounter == 3) {
+          
+          const decorator = new Decorator(this.maze, this.scene, this.world);
+          if (decorator.isDeadEnd(r,c)){
             this.maze[r][c] = 5;
             token.object.position.set(5 * (c - 10), 1.1, 5 * (r - 10));
+            // console.log("Token pos " + token.object.position.x + " " + token.object.position.z);
+            break;
           }
-
-          wallcounter = 0;
         }
       }
     }
