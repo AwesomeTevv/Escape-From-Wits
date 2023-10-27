@@ -17,22 +17,22 @@ class Decorator {
     this.scene = scene;
     this.world = world;
 
-    this.loader = new GLTFLoader();
+    // this.loader = new GLTFLoader();
 
-    this.decoration = new Decoration();
+    // this.decoration = new Decoration();
 
-    this.glassMeshes = [];
-    this.glassBodies = [];
+    // this.glassMeshes = [];
+    // this.glassBodies = [];
 
-    this.glassMaterial = new THREE.MeshPhysicalMaterial({
-      metalness: 0,
-      transmission: 0.9,
-      thickness: 5,
-      roughness: 0.1,
-      reflectivity: 1,
-      color: 0xd7e2d5,
-    });
-    this.glassGeometry = new THREE.BoxGeometry(1, 1, 1);
+    // this.glassMaterial = new THREE.MeshPhysicalMaterial({
+    //   metalness: 0,
+    //   transmission: 0.9,
+    //   thickness: 5,
+    //   roughness: 0.1,
+    //   reflectivity: 1,
+    //   color: 0xd7e2d5,
+    // });
+    // this.glassGeometry = new THREE.BoxGeometry(1, 1, 1);
   }
 
   loadBlock = (block) => {
